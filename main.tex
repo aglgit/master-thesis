@@ -13,12 +13,15 @@
 \author{Author Name}
 \date{Day Month Year}
 
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{references.bib}
+
 \begin{document}
 
 \maketitle
 
 \chapter*{Abstract}
-Abstract goes here
+Abstract goes here \parencite[e.g.][page 300]{einstein}
  
 \chapter*{Dedication}
 To mum and dad
@@ -49,6 +52,8 @@ I want to thank...
 \appendix
 \chapter{Appendix Title}
 \input{chapters/appendix}
+
+\printbibliography
 
 \end{document}
 
