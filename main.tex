@@ -1,0 +1,54 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\title{
+{Thesis Title}\\
+{\Large Institution Name}\\
+{\includegraphics{uio.pdf}}
+}
+\author{Author Name}
+\date{Day Month Year}
+
+\begin{document}
+
+\maketitle
+
+\chapter*{Abstract}
+Abstract goes here
+ 
+\chapter*{Dedication}
+To mum and dad
+ 
+\chapter*{Declaration}
+I declare that..
+ 
+\chapter*{Acknowledgements}
+I want to thank...
+ 
+\tableofcontents
+
+\chapter{Introduction}
+\input{chapters/introduction}
+ 
+\chapter{Chapter Two Title}
+\input{chapters/chapter02}
+ 
+\chapter{Chapter Three Title}
+\input{chapters/chapter03}
+ 
+\chapter{Chapter Four Title}
+\input{chapters/chapter04}
+ 
+\chapter{Conclusion}
+\input{chapters/conclusion}
+
+\appendix
+\chapter{Appendix Title}
+\input{chapters/appendix}
+
+\end{document}
+
