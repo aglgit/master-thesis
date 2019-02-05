@@ -3,15 +3,17 @@
 \usepackage[english]{babel}
 \usepackage{blindtext}
 \usepackage{graphicx}
+\usepackage{bm}
+\usepackage{amsmath}
 \graphicspath{ {images/} }
 
 \title{
-{Thesis Title}\\
-{\Large Institution Name}\\
+{Working Title}\\
+{\Large University of Oslo}\\
 {\includegraphics{uio.pdf}}
 }
-\author{Author Name}
-\date{Day Month Year}
+\author{Andreas Godø Lefdalsnes}
+\date{\today}
 
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{references.bib}
@@ -21,30 +23,24 @@
 \maketitle
 
 \chapter*{Abstract}
-Abstract goes here \parencite[e.g.][page 300]{einstein}
- 
-\chapter*{Dedication}
-To mum and dad
- 
-\chapter*{Declaration}
-I declare that..
- 
-\chapter*{Acknowledgements}
-I want to thank...
+Abstract goes here \parencite[e.g.][page 300]{einstein}.
  
 \tableofcontents
 
 \chapter{Introduction}
 \input{chapters/introduction}
  
-\chapter{Chapter Two Title}
-\input{chapters/chapter02}
+\chapter{Quantum Mechanics}
+\input{chapters/chapter_qm}
+
+\chapter{Manybody Quantum Mechanics}
+\input{chapters/chapter_mbqm}
  
-\chapter{Chapter Three Title}
-\input{chapters/chapter03}
+\chapter{Molecular Dynamics}
+\input{chapters/chapter_md}
  
-\chapter{Chapter Four Title}
-\input{chapters/chapter04}
+\chapter{Machine learning}
+\input{chapters/chapter_ml}
  
 \chapter{Conclusion}
 \input{chapters/conclusion}

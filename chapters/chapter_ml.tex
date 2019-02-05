@@ -1,0 +1,54 @@
+Machine learning is the study of algorithms and statistical models employed by computing systems
+capable of performing tasks without explicit instruction. While traditional algorithms
+rely on some specified input and a ruleset for determining the output, machine learning
+is instead concerned with a set of generic algorithms which can find patterns
+in a broad class of data sets. This section will give a brief overview of machine learning,
+and more specifically the class of algorithms known as neural networks, and will follow closely the review by
+% cite here
+[Mehta et. al.] which the reader is encouraged to seek out.
+\par
+Examples of machine learning problems include identifying objects in images,
+transcribing text from audio and making film recommendations to viewers based on their watch history.
+Machine learning problems are often subdivided into estimation and prediction problems.
+In both cases, we choose some observable $\bm{x}$ (e.g. the period of a pendulum)
+related to some parameters $\bm{\theta}$ (e.g. the length and the gravitational constant)
+through a model $p(\bm{x} \lvert \bm{\theta})$ that describes the probability of observing
+$\bm{x}$ given $\bm{\theta}$. Subsequently we perform an experiment to obtain a dataset
+$\bm{X}$ and use these data to fit the model. Fitting the model means finding
+the parameters $\hat{\bm{\theta}}$ that provide the best explanation for the data. 
+\textit{Estimation} problems are concerned with the accuracy of $\hat{\bm{\theta}}$, whereas
+prediction problems are concerned with the ability of the model $p(\bm{x} \lvert \bm{\theta})$
+to make new predictions.
+Physics has traditionally been more concerned with the estimation of model parameters, while in
+this thesis we will be focused on the accuracy of the model.
+\par
+Many problems in machine learning are defined by the same set of ingredients.
+The first is the dataset $\mathcal{D} = (\bm{X}, \bm{Y})$, where $\bm{X}$ is a matrix
+containing observations of the independent variables $\bm{x}$, and $\bm{Y}$ is a matrix containing
+observations of dependent variables. Second is a model $\bm{F}: \bm{x} \rightarrow \bm{y}$
+which is a function of the parameters $\bm{\theta}$. Finally we have a cost function
+$\mathcal{C}\left(\bm{Y}, \bm{F}\left(\bm{X} ; \bm{\theta}\right)\right)$
+that judges the performance of our model at generating predictions.
+\newline
+In the case of linear regression we consider a set of independent observations
+$ \bm{X} = 
+\begin{bmatrix}
+\bm{x}_1 & \bm{x}_2 & \dots & \bm{x}_N
+\end{bmatrix}
+$
+related to a set of dependent observations $\bm{y} = (y_1, y_2, \dots,y_N)$
+through a linear model 
+%\newline
+$f(\bm{x} ; \bm{\theta}) = 
+x_1\cdot w_1 + x_2\cdot w_2 + \dots + x_P\cdot w_P$,
+with parameters $\bm{\theta} = (w_1, w_2, \dots,w_P)$. The cost function
+is the well known sum of least squares $\mathcal{C}(\bm{y}, f(\bm{X} ; \bm{\theta}))
+= \sum_i^N (y_i - f(\bm{x}_i ; \bm{\theta}))^2 $ and the best fit is chosen as the set
+of parameters which minimize this cost function: $\hat{\bm{\theta}} = \underset{\bm{\theta}}
+{\text{argmin}} \ \mathcal{C}(\bm{Y}, f(\bm{X} ; \bm{\theta})) $.
+
+\subsection{Basics of statistical learning}
+
+\subsection{Neural networks}
+
+\subsection{Optimization}
