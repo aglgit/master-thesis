@@ -48,6 +48,33 @@ of parameters which minimize this cost function: $\hat{\bm{\theta}} = \underset{
 {\text{argmin}} \ \mathcal{C}(\bm{Y}, f(\bm{X} ; \bm{\theta})) $.
 
 \subsection{Basics of statistical learning}
+% needs revision
+Statistical learning theory is a field of statistics dealing with the problem
+of making predictions from data. We begin with an unknown function \newline
+$y = f(x)$ and our goal is to develop a function $h(x)$
+such that $h \sim f$. We fix a hypothesis set $\mathcal{H}$ that the
+algorithm is willing to consider. The expected error of a particular $h$
+over all possible inputs $x$ and outputs $y$ is:
+$$ E[h] = \int_{X \times Y} \mathcal{C}(h(x), y) \rho(x,y) dx dy ,$$
+where $\mathcal{C}$ is a cost function and $\rho(x,y)$ is the joint probability
+distribution for $x$ and $y$. This is known as the \textit{expected error}.
+Since this is impossible to compute without knowledge of the probability distribution
+$\rho$, we instead turn to the \textit{empirical error}. Given $n$ data points
+the empirical error is given as:
+$$ E_S[h] = \frac{1}{n} \sum_i^n \mathcal{C}(h(x_i), y_i) .$$
+The \textit{generalization error} is defined as the difference
+between the expected and empirical errors:
+$$ G = E[h] - E_S[h] .$$
+We say an algorithm is able to learn from data or \textit{generalize} if 
+$$ \lim_{n\to\infty} G = 0 .$$
+
+We are in general unable to compute the expected error, and therefore unable
+to compute the generalization error. The most common approach known as
+\textit{cross-validation} is to estimate the
+generalization error by subdividing our dataset into a \textit{training} set
+and a \textit{test} set. The value of the cost function on the training set
+is called the \textit{in-sample} error and the value of the cost
+function on the test set the \textit{out-of-sample} error.
 
 \subsection{Neural networks}
 
