@@ -75,7 +75,127 @@ generalization error by subdividing our dataset into a \textit{training} set
 and a \textit{test} set. The value of the cost function on the training set
 is called the \textit{in-sample} error and the value of the cost
 function on the test set the \textit{out-of-sample} error.
+Assuming the dataset is sufficiently large and representative of $f$, and the subsampling
+into train and test datasets is unbiased, the in-sample error
+can serve as an appropriate proxy for the generalization error.
+\newline
+In figure \ref{fig:in-out}
+we show the typical evolution of the errors as the number of data points increase.
+It is assumed that the function being learned is sufficiently complicated
+that we cannot learn it exactly, and that we have a sizeable number of data points
+available. The in-sample error will decrease monotonically, as our model
+is not able to learn the underlying data exactly. In contrast, the out-of-sample
+error will decrease, as the sampling noise decreases and the training
+data set becomes more representative of the underlying probability distribution.
+In the limit, these errors both approach same value, which is known the model
+\textit{bias}. The bias represents the best our model could do in the infinite data limit.
+The out-of-sample error produced from the sampling noise
+is known as \textit{variance}, and will vanish completely
+given an infinite representative data set.
+
+% create own figures or cite properly
+\begin{figure}
+    \includegraphics[width=\linewidth]{in-out-sample.png}
+    \caption{Typical in-sample and out-of-sample error as a function
+    of the number of data points. It is assumed that the number
+    of data points is not small, and that the true function
+    cannot be exactly fit.}
+\end{figure}
+
+In figure \ref{fig:bias-variance} we show the typical evolution
+of the out-of-sample error as the model \textit{complexity} increases.
+Model complexity is a measure of the degrees of freedom in the model space,
+for example the number of coefficients in a polynomial regression.
+In the figure we can see that bias decreases monotonically as model complexity
+increases, as the model is able to fit a larger space of functions.
+However, the variance will also increase as the model becomes more
+susceptible to sampling noise. In general the lowest out-of-sample error,
+and therefore generalization error, is achieved at an intermediate
+model complexity. We also find that as model complexity increases,
+a larger amount of data points is required to be able to reasonably
+fit the true function.
+
+% create own figures or cite properly
+\begin{figure}
+    \includegraphics[width=\linewidth]{bias-variance.png}
+    \caption{Typical out-of-sample error as a function
+    of model complexity for a fixed dataset. Bias decreases monotonically with
+    model complexity, while variance increases as a result of
+    sampling noise.}
+\end{figure}
+
+\subsection{Bias-variance decomposition}
+Consider a dataset $\mathcal{D}(\bm{X}, \bm{y})$ of $n$ pairs
+of independent and dependent variables. Assume the true data
+is generated from a noisy model:
+$$ y = f(\bm{x}) + \epsilon ,$$
+where $\epsilon$ is normally distributed with mean $\mu$ and
+standard deviation $\sigma$. Assume that we have an estimator $h(\bm{x}; \bm{\theta})$
+trained by minimizing a cost function $\mathcal{C}(\bm{y}, h(\bm{x}))$
+which we take to be the sum of squared errors:
+$$ \mathcal{C}(\bm{y}, h(\bm{x})) = \sum_i^n (y_i - h(\bm{x}_i; \bm{\theta}))^2 .$$
+Our best estimate for the model parameters:
+$$ \bm{\theta}_{\mathcal{D}} = \underset{\bm{\theta}}{\argmin} \
+\mathcal{C}(\bm{y}, h(\bm{x}; \bm{\theta})) ,$$
+is a function of the dataset $\mathcal{D}$. If we imagine we have a set of
+datasets $\mathcal{D}_j = (\bm{y}_j, \bm{X}_j)$, each with $n$ samples, we would like to calculate
+the expectation value of the cost function over all these datasets $E_{\mathcal{D}, \epsilon}$.
+We would also like to calculate the expectation value over different instances of the noise $\epsilon$.
+The expected generalization error can be decomposed as:
+% more in depth?
+\begin{equation}
+\begin{split}
+    E_{\mathcal{D}, \epsilon} [\mathcal{C}(\bm{y}, h(\bm{X} ; \bm{\theta}_{\mathcal{D}}))]
+    &= E \left[ \sum_i (y_i - h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2 \right] \\
+    &= \sum_i \sigma_{\epsilon}^2 + E_{\mathcal{D}}[(f(\bm{x}_i) - f(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2] .
+\end{split}
+\end{equation}
+
+The second term can be further decomposed as
+\begin{equation}
+\begin{split}
+    &E_{\mathcal{D}}[(f(\bm{x}_i) - f(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2] \\
+    &= (f(\bm{x}_i) - E_{\mathcal{D}}[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}})])^2
+    + E[(h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}) - E[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}])^2]
+\end{split}
+\end{equation}
+
+The first term is what we have referred to as the bias:
+
+\begin{equation}
+    \text{Bias}^2 = \sum_i (f(\bm{x}_i) - E_{\mathcal{D}}[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}})])^2.
+\end{equation}
+
+The bias measures the expectation value of the deviation of our model from the true
+function, i.e. the best we can do in the infinite data limit.
+\newline
+The second term is what we have referred to as the variance:
+\begin{equation}
+    \text{Var} = \sum_i  E[(h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}) - E[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}])^2]
+\end{equation}
+
+The variance measures the deviation of our model due to finite-sampling effects.
+Combining these effects we can decompose the out-of-sample error into:
+\begin{equation}
+    E_{\text{out}} = \text{Bias}^2 + \text{Var} + \text{Noise},
+\end{equation}
+
+with $\text{Noise} = \sum_i \sigma_{\epsilon}^2$.
+\newline
+In general it can be much more difficult to obtain sufficient good data
+than to train a very complex model. Therefore it is often useful in practice
+to use a less complex model with higher bias, because it is less susceptible
+to finite-sampling effects.
 
 \subsection{Neural networks}
+Artificial Neural Networks (ANN) or Deep Neural Networks (DNN) are
+supervised learning models vaguely inspired by biological neural networks.
+
+% own figure or cite
+\begin{figure}
+    \includegraphics[width=\linewidth]{neural-networks.png}
+    \caption{Text.}
+\end{figure}
 
 \subsection{Optimization}
+More text.
