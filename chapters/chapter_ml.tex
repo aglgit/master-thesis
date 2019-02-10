@@ -94,12 +94,14 @@ is known as \textit{variance}, and will vanish completely
 given an infinite representative data set.
 
 % create own figures or cite properly
-\begin{figure}
-    \includegraphics[width=\linewidth]{in-out-sample.png}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{in-out-sample.png}
     \caption{Typical in-sample and out-of-sample error as a function
     of the number of data points. It is assumed that the number
     of data points is not small, and that the true function
     cannot be exactly fit.}
+    \label{fig:in-out}
 \end{figure}
 
 In figure \ref{fig:bias-variance} we show the typical evolution
@@ -116,12 +118,14 @@ a larger amount of data points is required to be able to reasonably
 fit the true function.
 
 % create own figures or cite properly
-\begin{figure}
-    \includegraphics[width=\linewidth]{bias-variance.png}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{bias-variance.png}
     \caption{Typical out-of-sample error as a function
     of model complexity for a fixed dataset. Bias decreases monotonically with
     model complexity, while variance increases as a result of
     sampling noise.}
+    \label{fig:bias-variance}
 \end{figure}
 
 \subsection{Bias-variance decomposition}
@@ -190,12 +194,82 @@ to finite-sampling effects.
 \subsection{Neural networks}
 Artificial Neural Networks (ANN) or Deep Neural Networks (DNN) are
 supervised learning models vaguely inspired by biological neural networks.
+The building blocks of neural networks are neurons that take a
+vector input of $d$ features $\bm{x} = (x_1,\dots,x_d)$
+and produce a scalar output $a(\bm{x})$.
+A neural networks consists of layers of these neurons stacked together
+with the output of one layer serving as input for another. The
+first layer is typically known as the \textit{input layer}, the
+middle layers as \textit{hidden layers} and the final layer
+the \textit{output layer}. The basic architecture is shown in
+figure \ref{fig:neural-networks}.
+In almost all cases the output $a_i(\bm{x})$ of neuron $i$ can be decomposed
+into a linear operation on the inputs passed through a non-linear
+activation function:
+$$ a_i(\bm{x}) = \sigma_i(z_i) ,$$
+where $\sigma_i$ is a non-linear function and $z_i$
+is the dot product between the inputs $\bm{x}$ and a set of
+neuron-specific weights $\bm{w}_i$:
+$$ z_i = \bm{x}^T \bm{w}_i + b_i .$$
+The term $b_i$ is a neuron-specific re-centering of the input.
+\newline
+Typical choices of non-linearities/activation functions include
+the sigmoid and hyperbolic tangent functions, and Rectified Linear Units (ReLU).
+When the activation function is non-linear, the neural network with a single hidden
+layer can be proven to be a \textit{universal function approximator},
+given an arbitrarily large number of neurons. We typically also
+want functions that are monotonic and smooth with a monotonic derivative.
+\newline
 
 % own figure or cite
-\begin{figure}
-    \includegraphics[width=\linewidth]{neural-networks.png}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{neural-networks.png}
     \caption{Text.}
+    \label{fig:neural-networks}
 \end{figure}
+
+The simplest neural networks are known as \textit{feed-forward} neural networks (FNN).
+The input layer is the vector $\bm{x}$ of inputs, while each neuron in the first
+hidden layer performs a dot product between its weights $\bm{w}_i$ and the inputs
+and passes it through a non-linearity $\sigma_i$. The activation function
+is typically shared across one or multiple layers $\sigma_i = \sigma$. The vector of neuron outputs
+$\bm{a}_i$ serves as input to the next hidden layer until we reach the final layer.
+In the final layer the choice of activation function is dependent on the problem
+we are trying to solve. If we are performing non-linear regression the
+final activation function is often the identity $\sigma_i(z) = z$, or if
+we are doing classification the soft-max function is often employed.
+\newpage
+Let $\bm{x}$ be a vector of $d = 1,\dots,D$ inputs or \textit{features}. Let $a_i^{(h)}$
+denote the output of neuron $i = 1,\dots,N_d$ in layer $h = 1,\dots,H$.
+The output of neuron $i$ in the first hidden layer $a_i^{(1)}$ is thus:
+$$ z_i^{(1)} = \bm{x}^T \bm{w}_i^{(1)} + b_i^{(1)} .$$
+$$ a_i^{(1)} = \sigma_i^{(1)}(z_i^{(1)}), $$
+The inputs are iterated through each hidden layer until we reach the final layer:
+$$ z_i^{(H)} = (\bm{a}_{H-1})^T \bm{w}_i^{(H)} + b_i^{(H)} .$$
+\begin{equation}
+\begin{split}
+    a_i^{(H)} &= o_i = \sigma_i^{(H)}(z_i^{(H)}) \\
+    &= \sigma_i^{(H)} \left((\bm{a}_{H-1})^T \bm{w}_i^{(H)} + b_i^{(H)} \right) \\
+    &= \sigma_i^{(H)} \left(
+    \left( (\sigma_1^{(H-1)},\dots,\sigma_{N_{H-1}}^{(H-1)}) \right)^T
+    \bm{w}_i^{(H)} + b_i^{(H)} \right) .
+\end{split}
+\end{equation}
+
+This allows us to compose a complicated function $\bm{F}: \mathbb{R}^D \rightarrow
+\mathbb{R}^O$, with $D$ the number of inputs and $O$ the number of outputs.
+The \textit{universal approximation theorem} tells us that this simple architecture
+can approximate any of a large set of continuous functions
+given appropriate choice of weights $\bm{w}_i^h$ and mild assumptions
+on the activation functions. The theorem requires only a single hidden layer,
+where the strength of the approximation relies on the number of neurons.
+In practice it has been found that adding more layers produces
+faster convergence and higher accuracy, which has given rise
+to the field of \textit{deep learning}.
+
+\subsection{Backpropagation}
+Text.
 
 \subsection{Optimization}
 More text.
