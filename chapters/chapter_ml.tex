@@ -269,7 +269,121 @@ faster convergence and higher accuracy, which has given rise
 to the field of \textit{deep learning}.
 
 \subsection{Backpropagation}
-Text.
+Given a set of datapoints $(\bm{x}_i, y_i), \ i=1,\dots,n$,
+the value of the cost function is entirely determined
+by the weights and biases of each neuron in the network.
+We define learning narrowly as adjusting the parameters of the network
+in order to minimize the cost function.
+\newline
+\textit{Gradient descent} is a simple, but powerful method
+of finding the minima of differentiable functions.
+Given a function $F: \mathbb{R}^d \rightarrow \mathbb{R}$, and an initial
+value $\bm{x}_0$ we define an iterative procedure:
+$$ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n), $$
+where $\eta$ is known as the \textit{learning rate}.
+The procedure terminates when the norm
+$ \left| \nabla F(\bm{x}_n) \right| $ or
+$ \left| x_{n+1} - x_{n} \right| $
+is appropriately small.
+\newline
+The learning rate is not necessarily fixed throughout the procedure,
+and proves crucial to the convergence of the method. If $f$
+is convex, and $\eta$ is reasonably small, convergence is guaranteed.
+Convergence may be very slow however, and if $f$ is not convex
+you are only guaranteed to find local minima, and this makes
+the method very sensitive to initial conditions.
+\par
+In order to train the model, we need to calculate the derivative of the cost
+function with respect to a very large number of parameters multiple times. However,
+numerical calculation of gradients is very time consuming. The \textit{backpropagation}
+algorithm is a clever use of the chain rule that allows us to calculate gradients efficiently.
+\par
+Assume that there are $L$ layers in our network with $l = 1,2,...,L$ indexing the layers, including
+the output layer and all the hidden layers.
+Let $w_{ij}^l$ denote the weight for the connection
+from the $i$-th neuron in layer $l - 1$ to the $j$-th neuron in layer $l$. Let $b_{j}^l$ denote the bias of this $j$-th neuron.
+
+The activation $a_{j}^l$ of the $j$-th neuron in the $l$-th layer is related to the activities of the neurons in the layer $l - 1$ by:
+
+$$ a_{j}^l = f \left( \sum_i w_{ij}^l a_i^{l-1} + b_j^l \right) = f \left( z_j^l \right) ,$$
+
+where $f$ is some activation function.
+
+The cost function $\mathcal{C}$ depends directly on the activations in the output layer, and indirectly on the activations
+in all the lower layers.
+Define the error $\Delta_j^L$ of the $j$-th neuron in the $L$-th (final) layer as the change in cost function
+with respect to the weighted input $z_j^L$:
+
+$$ \Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} .$$
+
+Define analogously the error $\Delta_j^l$ of neuron $j$ in the $l$-th layer as the change in cost function with respect to the weighted input
+$z_j^l$:
+
+$$ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} .$$
+
+This can also be interpreted as the change in cost function with respect to the bias $b_j^l$:
+
+$$ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} 
+\frac{\partial b_j^l}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} ,$$
+
+since $ \partial b_l^j / \partial z_j^l = 1$.
+
+The error depends on neurons in layer $l$ only through the activation of neurons in layer $l + 1$, so using the chain rule we can write:
+
+\begin{equation}
+\begin{split}
+\Delta_j^l &= \frac{\partial \mathcal{C}}{\partial z_j^l} = \sum_i \frac{\partial \mathcal{C}}{\partial z_i^{l+1}}
+\frac{\partial z_i^{l+1}}{\partial z_j^l} \\
+           &= \sum_i \Delta_i^{l+1} \frac{\partial z_i^{l+1}}{\partial z_j^l} \\
+           &= \sum_i \Delta_i^{l+1} w_{ij}^{l+1} f'(z_j^l) \\
+           &= \left( \sum_i \Delta_i^{l+1} w_{ij}^{l+1} \right) f'(z_j^l) .\\
+\end{split}
+\end{equation}
+
+The sum comes from the fact that any error in neuron $j$ in the $l$-th layer propagates to all the neurons
+in the layer $l + 1$,
+so we have to sum up these errors.
+
+This gives us the equations we need to update the weights and biases of our network:
+
+$$ \frac{\partial \mathcal{C}}{\partial w_{ij}^l} = \frac{\partial \mathcal{C}}{\partial z_j^l} \frac{\partial z_j^l}{\partial w_{ij}^l}
+= \Delta_j^l a_i^{l-1} .$$
+
+$$ \frac{\partial \mathcal{C}}{\partial b_{j}^l} = \Delta_j^l .$$
+
+Now, if we have the error of every neuron $j$ at the output layer, $\Delta_j^L$, equation \ref{1} 
+gives us the recipe for calculating the error in the preceding layer until we reach the first hidden layer, 
+and we are done. All we are missing is the error at the output layer:
+
+$$ \Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} = \frac{\partial}{\partial z_j^L} \left( - \sum_c y_{c} \log f(z_{c}^L) \right) ,$$
+
+where $f$ is the softmax function.
+Taking the derivative of each term:
+
+$$ \frac{\partial \log f(z_c^L)}{\partial z_j^L} = \frac{\partial}{\partial z_j^L} \left( z_c^L - \log \left( \sum_c \exp
+\left( z_c^L \right) \right) \right) = \delta_{jc} - f(z_j^L) ,$$
+
+where $\delta_{jc}$ is the Kronecker-Delta.
+This gives us the final expression we need:
+
+\begin{equation}
+\begin{split}
+\Delta_j^L &= -\sum_c y_c \left( \delta_{jc} - f(z_j^L) \right) \\
+           &= -\sum_c y_c \delta_{jc} + \sum_c y_c f(z_j^L) \\
+           &= -y_j + f(z_j^L) \sum_c y_c \\
+           &= f(z_j^L) - y_j \\
+           &= \hat{y}_j - y_j . \\
+\end{split}
+\end{equation}
+
+% own figure or cite properly
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{gradient-descent.png}
+    \caption{Text.}
+    \label{fig:gradient-descent}
+\end{figure}
 
 \subsection{Optimization}
-More text.
+Gradient descent, momentum, ADAM, initialization, batching,
+vanishing, normalization (?).
