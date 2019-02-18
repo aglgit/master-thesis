@@ -36,3 +36,47 @@ We postulate that for every ket $\ket{\alpha}$ there exists a bra
 $\bra{\alpha}$. The bra space is spanned by eigenbras $\bra{a'}$
 corresponding to the eigenkets $\ket{a'}$. The ket and bra spaces
 have a dual correspondence:
+$$ \ket{\alpha} \leftrightarrow \bra{\alpha} $$
+$$ \ket{\alpha '}, \ket{\alpha ''},\dots \leftrightarrow \bra{\alpha '}, \bra{\alpha ''},\dots $$
+$$ \ket{\alpha} + \ket{\beta} \leftrightarrow \bra{\alpha} + \bra{\beta} .$$
+The bra dual to $c \ket{\alpha}$ is postulated to be $c^* \ket{\alpha}$,
+and more generally:
+$$ c_{\alpha} \ket{\alpha} + c_{\beta} \ket{\beta} \leftrightarrow
+c_{\alpha}^* \bra{\alpha} + c_{\beta}^* \bra{\beta} .$$
+The \textit{inner product} of a bra and a ket is a complex number
+written as a bra on the left and a ket on the right.
+It has the fundamental property:
+$$ \braket{\alpha | \beta} = \braket{\beta | \alpha}^* ,$$
+in other words they are complex conjugates.
+For this to satisfy the requirements of an inner product we must have
+$$ \braket{\alpha | \alpha} \geq 0 ,$$
+with equality if and only if $\ket{\alpha}$ is a null ket.
+We define the \textit{norm} of a ket as
+$$ \sqrt{\braket{\alpha | \alpha}} ,$$
+which can be used to form normalized kets
+$$ \ket{\alpha^{~}} \frac{1}{\sqrt{\braket{\alpha | \alpha}}} \ket{\alpha} ,$$
+with the property
+$$ \braket{\alpha^{~} | \alpha^{~}} = 1 .$$
+Two kets are said to be \textit{orthogonal} if
+$$ \braket{\alpha | \beta} = 0 .$$
+
+\subsection{Operators}
+As we briefly mentioned above, operators act on kets from the left
+to produce a new ket. Two operators $A$ and $B$ are equal
+$$ A = B $$
+if
+$$ A \ket{\alpha} = B \ket{\alpha} $$
+for an arbitrary ket in the relevant ket space. An operator $A$
+is said to be the \textit{null operator} if
+$$ A \ket{\alpha} = 0 .$$
+Operators can be added, and addition operations are commutative and associative.
+$$ X + Y = Y + X ,$$
+$$ (X + Y) + Z = X + (Y + Z) .$$
+\par
+Operators act on bras from the right to produce a new bra
+$$ \bra{\alpha} A = \bra{\beta} .$$
+The ket $A \ket{\alpha}$ and the bra $\bra{\alpha} A$ are in general
+not dual to each other. We define the \textit{hermitian adjoint} $A^{\dagger}$ as
+$$ A \ket{\alpha} \leftrightarrow \bra{\alpha} A^{\dagger} .$$
+An operator is said to be \textit{hermitian} if
+$$ A = A^{\dagger} .$$
