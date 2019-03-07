@@ -1,1 +1,37 @@
-\Blindtext
+This chapter will give a brief overview of the Hartree-Fock
+and Density Functional Theory methods, which will be our primary workhorses
+for generating quantum mechanical trajectories.
+\par
+Something something Born-Oppenheimer nucleonic degrees of freedom.
+
+% More intro?
+
+\subsection{Hartree-Fock}
+The theory in this section is adapted from the lectures notes
+for the course FYS4480 - Many-body Physics at the University of Oslo [ref].
+The Hartree-Fock method is an approximate method for solving
+a many-body system of fermions, with a Hamiltonian 
+which can be written as the sum of a onebody part and a twobody interaction:
+
+$$ \hat{H} = \hat{H}_1 + \hat{H}_2 =
+\sum_i \hat{h}_1 (\bm{r}_i) + \sum_{i < j} \hat{v}(r_{ij}) . $$
+
+The onebody part is typically chosen as a potential for which
+we have an exact solution, such as the harmonic oscillator
+or the coulomb attraction of an electron to the nucleus.
+\par
+Hartree-Fock is a method for finding the best possible
+approximation to the ground state wavefunction $\Psi$
+assuming it can be written as a \textit{Slater determinant} $\Phi$
+of orthonormal spin orbitals $\psi$:
+
+\begin{equation}
+\Phi(\bm{r}_1,\dots,\bm{r}_N, \alpha, \beta, \dots, \sigma)
+= \frac{1}{\sqrt{N}}
+\begin{vmatrix}
+ & x_{0} & x_{0}^{2} & \dots & x_{0}^{n} \\ 
+1 & x_{1} & x_{1}^{2} & \dots & x_{1}^{n} \\
+\hdotsfor{5} \\
+1 & x_{n} & x_{n}^{2} & \dots & x_{n}^{n}
+\end{vmatrix}
+\end{equation}
