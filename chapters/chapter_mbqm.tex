@@ -1,10 +1,68 @@
 This chapter will give a brief overview of the Hartree-Fock
-and Density Functional Theory methods, which will be our primary workhorses
-for generating quantum mechanical trajectories.
+and Density Functional Theory methods, which are the primary workhorses
+in manybody quantum theory.
 \par
-Something something Born-Oppenheimer nucleonic degrees of freedom.
+In most applications of quantum theory we are interested in
+finding solutions to the non-relativistic time-independent
+Schrodinger equation:
 
-% More intro?
+$$ \hat{H} \ket{\Psi} = E \ket{\Psi} ,$$
+
+with the Hamiltonian $\hat{H}$ describing a system of nuclei and electrons
+with coordinates $\bm{R}_i, \ i=1,2,\dots,A$ and $\bm{r}_i, \
+i=1,2,\dots,N$ respectively. The distance between nuclei $a$
+and electron $i$ is given as $r_{ai} = \left| \bm{R}_a - \bm{r}_i \right|$
+and correspondingly for the nuclei-nuclei and electron-electron distances.
+\par
+The full Hamiltonian for a set of $N$ electrons and $A$ nuclei
+in atomic units is
+
+\begin{equation}
+    \begin{split}
+        \hat{H} 
+        &= -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
+        -\sum_{a=1}^A \frac{1}{M_a} \nabla_a^2
+        -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{r_{ia}} \\
+        &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
+        + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}}
+    \end{split} .
+\end{equation}
+
+The first two terms describe the kinetic energy operators
+of the electrons and nuclei, with $M_a$ the ratio of the mass
+of nuclei $a$ to the electron mass. The third term describes the
+coulomb attraction between electron and nuclei, while the fourth and fifth
+terms describe the repulsion between electrons and nuclei respectively.
+\par
+From this description we are most often interested in the electronic
+structure problem presented by applying the \textit{Born-Oppenheimer}
+approximation. Since the nuclei are approximately 2000 times heavier
+than the electrons, the electrons can to a good approximation
+be described as moving in the field of fixed nuclei. This means we
+can neglect the kinetic energy terms of the nuclei, while considering
+an averaged effect from the nuclei-nuclei repulsion.
+The nuclei-nuclei repulsion energy adds a constant to the energy
+eigenvalues, but has no effect on the energy eigenfunctions.
+The remaining terms are known as the electronic Hamiltonian:
+
+\begin{equation}
+    \hat{H}_e = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
+    -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_A}{r_{ia}}
+    +\sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}} .
+\end{equation}
+
+The electronic wavefunction $\Psi_e = \Psi_e(\{r_i\}; \{R_a\})$
+is a function of the electronic coordinates with a parametric dependence
+on the fixed nucleic coordinates. We can also choose to neglect
+the relative positions of the nuclei and consider only the
+center of mass of the nucleus with a total charge $Z$,
+which gives us the final expression we want for our Hamiltonian:
+
+\begin{equation}
+    \hat{H} = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
+    - \sum_{i=1}^N \frac{Z}{r_{i}} + \sum_{i=1}^N \sum_{j=i+1}^N
+    \frac{1}{r_{ij}}
+\end{equation}
 
 \subsection{Hartree-Fock}
 The theory in this section is adapted from the lectures notes
@@ -19,19 +77,46 @@ $$ \hat{H} = \hat{H}_1 + \hat{H}_2 =
 The onebody part is typically chosen as a potential for which
 we have an exact solution, such as the harmonic oscillator
 or the coulomb attraction of an electron to the nucleus.
-\par
+For the electronic structure problem these take the form of:
+
+\begin{equation}
+    \hat{H}_1 = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
+    - \sum_{i=1}^N \frac{Z}{r_{i}} 
+\end{equation}
+
+\begin{equation}
+    \hat{H}_2 =
+    \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
+\end{equation}
+
 Hartree-Fock is a method for finding the best possible
 approximation to the ground state wavefunction $\Psi$
 assuming it can be written as a \textit{Slater determinant} $\Phi$
-of orthonormal spin orbitals $\psi$:
+of orthonormal spin orbitals $\phi$:
 
 \begin{equation}
 \Phi(\bm{r}_1,\dots,\bm{r}_N, \alpha, \beta, \dots, \sigma)
 = \frac{1}{\sqrt{N}}
 \begin{vmatrix}
- & x_{0} & x_{0}^{2} & \dots & x_{0}^{n} \\ 
-1 & x_{1} & x_{1}^{2} & \dots & x_{1}^{n} \\
-\hdotsfor{5} \\
-1 & x_{n} & x_{n}^{2} & \dots & x_{n}^{n}
-\end{vmatrix}
+    \phi_{\alpha}(\bm{r}_1) & \phi_{\alpha}(\bm{r}_2) 
+    & \dots & \phi_{\alpha}(\bm{r}_N) \\
+    \phi_{\beta}(\bm{r}_1)  & \phi_{\beta}(\bm{r}_2)
+    & \dots & \phi_{\beta}(\bm{r}_N) \\
+    \hdotsfor{4} \\
+    \phi_{\sigma}(\bm{r}_1) & \phi_{\sigma}(\bm{r}_2) 
+    & \dots & \phi_{\sigma}(\bm{r}_N)
+\end{vmatrix} ,
 \end{equation}
+
+with particle coordinates $\bm{r}_i, \ i=1,2,\dots,N$
+and $\alpha, \beta, \dots \sigma$ quantum numbers
+needed to describe the quantum state of the particles.
+The spin orbitals $\phi$ are solutions to the onebody
+Hamiltonian:
+
+\begin{equation}
+    \hat{H}_1 \phi_{\alpha} = \epsilon_{\alpha} \phi_{\alpha} .
+\end{equation}
+
+
+
