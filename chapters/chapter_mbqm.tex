@@ -230,5 +230,136 @@ we can obtain the one-electron density $\rho(\bm{r})$ as:
 
 \begin{equation}
     \rho(\bm{r}) = \int \left| \Psi(\bm{r}, \sigma, \bm{x}_2,\dots,\bm{x}_N)
-    \right|^2 d\sigma d\bm{x}_2 \dots d\bm{x}_N
+    \right|^2 d\sigma d\bm{x}_2 \dots d\bm{x}_N .
 \end{equation}
+
+Since the wavefunction is a unique functional of the Hamiltonian
+$\hat{H}$, the one-electron density is uniquely determined
+by the Hamiltonian. Hohenberg and Kohn showed in 1964 in their
+first theorem that this mapping
+can be inverted, i.e. that the one-electron density uniquely
+determines the Hamiltonian of our system (up to an arbitrary constant).
+Taken altogether, this means that all properties of our system, including
+the Hamiltonian and the manybody wavefunction are fixed
+by a one-electron density carrying a dependency on only 3 spatial coordinates.
+\par
+The electronic Hamiltonian can be rewritten as
+
+$$ \hat{H} = \hat{F} + \hat{V}_{ne} , $$
+
+where $\hat{F}$ is an operator consisting of the kinetic energy
+and electron-electron operators and $\hat{V}_{ne}$
+is the electron-nuclei interaction.
+\par
+For their second theorem, Hohenberg and Kohn defined
+the universal density functional
+
+$$ F[n] = \braket{\Psi[n] | \hat{F} | \Psi[n]} , $$
+
+and the total electronic energy functional
+
+$$ E[n] = F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} . $$
+
+Hohenberg and Kohn showed the energy functional
+with respect to $N$-electron densitites $n(\bm{r})$
+is an upper bound to the ground state energy:
+
+$$ E_0 \leq F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} , $$
+
+with equality if and only if the one-electron density
+is the one-electron density corresponding to our system $\hat{H}$.
+This suggests a variational procedure, wherein
+we minimize the total electronic energy functional
+until we reach an energy minimum:
+
+$$ E_{min} = \underset{n}{\min} \ E[n] , $$
+
+which serves as our best estimate for the ground state
+one-electron density $\rho_0(\bm{r})$.
+\par
+Levy and Lieb proposed to redefine the universal density functional
+in terms of normalized antisymmetric wavefunctions $\Psi$
+which yield a fixed density $\rho$:
+
+$$ F[n] = \underset{\min}{\Psi \rightarrow \rho}
+    \braket{\Psi | \hat{F} | \Psi}
+    = \braket{\Psi[n] | \hat{F} | \Psi[n]} , $$
+
+wherein the minima search is performed over wavefunctions
+which yield the fixed density $\rho$.
+A search is then performed over densitities $\rho$
+until we reach an energy minimum. This method
+is known as the \textit{constrained search formulation}.
+However, we still do not have an explicit expression
+for the universal density functional $F[n]$, and
+direct approximations have proved difficult.
+\par
+Kohn and Sham proposed to decompose $F[n]$ as
+
+$$ F[n] = T_s[n] + E_{Hxc}[n] , $$
+
+where $T_s[n]$ is a non-interacting kinetic-energy functional
+which can be defined through the constrained-search formulation:
+
+$$ T_s[n] = \underset{\Phi \rightarrow n}{\min}
+    \braket{\Phi | \hat{T} | \Phi}
+    = \braket{\Phi[n] | \hat{T} | \Phi[n]} , $$
+
+wherein the minima search is now performed over normalized
+single-determinant wavefunctions $\Phi$ which yield
+the fixed density $\rho$. The functional
+$E_{Hxc}[n]$ is known as the Hartree-exchange-correlation
+functional. The variational procedure is then
+performed over single-determinant wavefunctions
+which yield a fixed density $\rho$ and then
+minimized over densities:
+
+\begin{equation}
+    \begin{split}
+        E_0
+        &= \underset{n}{\min} \set{
+            F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} } \\
+        &= \underset{n}{\min} \
+            \underset{\Phi \rightarrow n}{\min} \set{
+            \braket{\Phi | \hat{T} + \hat{V}_{ne} | \Phi}
+            + E_{Hxc}[n_{\Phi}]} \\
+        &=  \underset{\Phi}{\min}
+            \set{ \braket{\Psi|\hat{T} + \hat{V}_{ne}|\Phi}
+            + E_{Hxc}[n_{\Phi}]} .
+    \end{split}
+\end{equation}
+
+As with the Hartree-Fock method, the single determinant
+wavefunctions are constructed from an orthonormal basis of spin orbitals
+$\chi_i (\bm{x}), \ i=1,\dots,N$ with $\bm{x} = (\bm{r}, \sigma)$.
+The total electronic energy can be expressed in terms of spatial
+orbitals $\phi_i(\bm{r})$ after integrating over the spin variables:
+
+\begin{equation}
+    E = \sum_i \int \phi_i^* (\bm{r}) (-\frac{1}{2} \nabla^2 + \hat{v}_{ne})
+        \phi_i(\bm{r}) d\bm{r} + E_{Hxc}[n] ,
+\end{equation}
+
+with the density expressed as
+
+\begin{equation}
+    n(\bm{r}) = \sum_i \left| \phi_i(\bm{r}) \right|^2 .
+\end{equation}
+
+With the constraint that the spatial orbitals be normalized
+we obtain the following Lagrangian:
+
+$$ \mathcal{L} [\set{\phi_i}]
+    = E[\set{\phi_i}] - \sum_i \epsilon_i
+    \left( \int \phi_i^* (\bm{r}) \phi_i(\bm{r}) d\bm{r} - 1 \right) , $$
+
+with $\epsilon_i$ the associated Lagrangian multiplier.
+We find the energy minimum where the Lagrangian is stationary:
+
+$$ \frac{\partial \mathcal{L}}{\partial \phi_i^* (\bm{r})} = 0 . $$
+
+The spatial orbitals are expanded as a linear combination
+of a known basis, such as hydrogen-like functions
+or Gaussian-type orbitals:
+
+$$ \phi_i(\bm{r}) = \sum_{\lambda} C_{\lambda i} \chi_i (\bm{r}) . $$

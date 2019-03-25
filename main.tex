@@ -1,6 +1,7 @@
 \documentclass[12pt]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+\usepackage[toc,page]{appendix}
 \usepackage{blindtext}
 \usepackage{graphicx}
 \usepackage{bm}
@@ -34,6 +35,8 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
 
 \chapter{Introduction}
 \input{chapters/introduction}
+
+\part{Theory}
  
 \chapter{Quantum Mechanics}
 \input{chapters/chapter_qm}
@@ -46,13 +49,33 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
  
 \chapter{Machine learning}
 \input{chapters/chapter_ml}
+
+\part{Implementation}
+
+\chapter{Deep potential molecular dynamics}
+
+\chapter{Quantum Espresso and I-PI}
+
+\chapter{Pytorch}
+
+\chapter{LAMMPS}
+
+\part{Results}
+
+\chapter{Empirical potentials}
+
+\chapter{Hydrogen systems}
  
 \chapter{Conclusion}
 \input{chapters/conclusion}
 
-\appendix
-\chapter{Appendix Title}
-\input{chapters/appendix}
+\begin{appendices}
+
+\chapter{Title 1}
+
+\chapter{Title 2}
+
+\end{appendices}
 
 \printbibliography
 
