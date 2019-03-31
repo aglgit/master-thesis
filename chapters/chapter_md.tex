@@ -160,7 +160,211 @@ $$ \hat{H} \Psi_0 = E_0 \Psi_0 . $$
 
 In this limit the Ehrenfest potential is identical
 to the ground state Born-Oppenheimer potential.
+\par
+Since we are now only dealing with a single potential
+energy surface, the problem of computing the energy surface
+can be decoupled from computing the expactation values
+through equation ().
+First one produces an appropriate set of nuclear configurations
+by solving the time-independent Schrodinger equation.
+Second, these configurations are fitted to an analytical
+functional form to produce a global potential energy surface.
+Finally the Newtonian equations of motions are solved
+on this energy surface, producing a set of classical
+trajectories.
+\par
+To deal with the large number of degrees of freedom
+as the number of nuclei in the system increases,
+the global potential energy surface
+is approximated as an expansion of manybody contributions:
+
+$$ V_e^E \approx V_e^{\text{approx}} =
+    \sum_I v_1(R_I) + \sum_{I < J} v_2(R_I, R_J)
+    + \sum_{I < J < K} v_3(R_I, R_J, R_K) , $$
+
+typically truncated at 2, 3 or 4-body interactions
+depending on the complexity of the molecules in the system.
+\par
+This renders the problem of computing dynamics purely classical:
+
+$$ M_I \frac{d^2 R_I}{dt^2} = -\nabla_I V_e^{\text{approx}} . $$
 
 \subsection{Molecular dynamics simulations}
+Classical molecular dynamics is a method
+for computing equilibrium and transport properties
+of manybody systems obeying classical laws of motion.
+While a large number of simplifications have to be made
+in order to describe quantum mechanical systems classically,
+the approximation works surprisingly well
+except for atoms which are quite light ($He, H^2$)
+or for atoms with a vibrational energy
+which is substantially larger than the thermal energy
+of the system ($h\nu > k_B T$).
+\par
+In order to calculate properties of the system
+they have to be expressed in terms of the positions
+and velocities of the constituent nuclei.
+For instance the temperature can be related
+to the average kinetic energy of the system:
+
+$$ \langle \frac{1}{2} m v^2 \rangle = \frac{N_f}{2} k_B T , $$
+
+where $N_f$ is the number of degrees of freedom in our system.
+At every instant of time the total kinetic energy
+of our system defines an instantaneous temperature,
+which has to averaged over a large number of timesteps
+in order to produce the equilibrium property.
+In practice, one is satisfied when the fluctuations
+in the instantaneous temperature appear reasonably small.
+\par
+To run a molecular dynamics simulation one requires
+a set of initial conditions, i.e. a set of initial positions and velocities
+for every atom in the system. Typically the atoms
+are placed by replicating a unit cells a number of times
+in every dimension. A unit cell consists of a set
+of lattice vectors which define the placement of every atom in the
+unit cell. For instance the face-centered cubic cell (FCC)
+contains 4 atoms:
+
+\begin{equation}
+    \begin{split}
+        \bm{r}_1 &= (0, 0, 0) \\
+        \bm{r}_2 &= (\frac{b}{2}, \frac{b}{2}, 0) \\
+        \bm{r}_3 &= (0, \frac{b}{2}, \frac{b}{2}) \\
+        \bm{r}_4 &= (\frac{b}{2}, 0, \frac{b}{2}) , \\
+    \end{split}
+\end{equation}
+
+where $b$ is known as the lattice constant and defines
+the size of the unit cells.
+\par
+The velocities are typically initialized with a random uniform
+distribution or the Maxwell-Boltzmann distribution.
+The Maxwell-Boltzmann distribution is the one most often used,
+since the equilibrium distribution tends towards this distribution.
+The exact form however will differ from the one we started with.
+\par
+Given these initial conditions, the system will not be in an
+equilibrium state at $t=0$. To evolve the system
+to an equilibrium state one most commonly evolves the system
+for a number of timesteps until fluctuations in dynamic
+properties such as the total potential energy or the temperature
+settle down. Once we are in equilibrium we can start calculating
+thermodynamic averages.
+\newline
+\newline
+As we mentioned before, the global energy surface
+is approximated as an expansion of manybody contributions:
+
+$$ V_e^E(\set{\bm{r}}) = 
+    \sum_I v_1(R_I) + \sum_{I < J} v_2(R_I, R_J)
+    + \sum_{I < J < K} v_3(R_I, R_J, R_K) , $$
+
+wherein each n-body term is an analytical function
+of $n$ coordinates.
+As an atom moves on the energy surface
+it feels a force which is the gradient of the potential energy surface.
+This means atom $i$ feels an acceleration:
+
+$$ \bm{F}_i = m_i \frac{d^2 \bm{r}_i}{dt^2} =
+    -\nabla V_e^E(\bm{r}_i, \set{\bm{r}}) . $$
+
+For a system of $N$ atoms with only pairwise interactions
+this means the forces must be calculated $N(N-1)/2$ times
+for every timestep which means we have a time complexity
+of order $\mathcal{O}(N^2)$. The force calculation is by far
+the most important part of any molecular dynamics simulation,
+and the most time consuming.
+A number of techniques are employed in order to reduce
+the time usage, perhaps the most common is the use of neighbor
+lists. Using neighbor lists, each atom carries a list of neighbors
+within a cut-off radius $r_{cut}$ and interactions
+beyond this cut-off are neglected.
+This reduces the time-complexity to merely 
+$\mathcal{O}(cN) = \mathcal{O}(N_{r_c} \cdot N)$,
+where $N_{r_c}$ is the average number of neighbors in the system
+within a cutoff $r_c$. For a large system this can be a
+huge reduction in complexity, but the choice of cut-off
+can obviously massively impact the dynamics of the system.
+\par
+In order to simulate the dynamics of a system governed by
+a conservative force $\bm{F} = - \nabla V_e^E$
+we need to integrate the Newtonian equations of motion.
+The equations of motion are typically not solvable
+analytically, which means we require an effective numerical
+method for integration. Some important considerations
+for molecular dynamics are conservation of energy
+and accuracy for large time steps.
+The most common method used is the Velocity-Verlet algorithm.
+At any given time step $t$, the position $\bm{r}(t + \Delta t)$
+and velocity $\bm{v}(t + \Delta t)$ at the next time step
+$t + \Delta t$ is calculated as:
+
+\begin{equation}
+    \begin{split}
+        \bm{r}(t + \Delta t) 
+        &= \bm{r}(t) + \bm{v}(t) \Delta t
+        + \frac{1}{2} \bm{a}(t)\Delta t^2 , \\
+        \bm{a}(t + \Delta t)
+        &= -\frac{1}{m} \nabla V_e^E(\bm{r}(t + \Delta t)) , \\
+        \bm{v}(t + \Delta t) 
+        &= \bm{v}(t) + \frac{1}{2}
+        (\bm{a}(t) + \bm{a}(t + \Delta t)) \Delta t .
+    \end{split}
+\end{equation}
+
+The error in the Velocity-Verlet method is of order
+$\mathcal{O}(\Delta t^2)$, which means that it is
+not particularly accurate for large time steps
+over a long time. However, the long term
+energy drift of the method is small, which is very desirable.
+It is also not very memory-intensive, which matters
+for simulating very large systems.
+\newline
+\newline
+Molecular dynamics is usually performed within
+a cubic box of fixed volume $V = L_x \cdot L_y \cdot L_z$,
+where $L_i$ is the length of the box in direction $i$.
+Molecular dynamics is typically limited by the number
+of particles we are able to simulate, of the order
+$10^6 - 10^8$, which means the size of the box
+is often decided by the desired density $\rho = N / V$.
+Since the number of particles is always much smaller
+than the number of particles in realistic systems,
+approximations are required. Periodic boundary conditions
+can be applied to the box in order to approximate
+an infinite system. Typically particle coordinates are restricted
+to the simulation box, in pseudocode:
+
+\begin{algorithm}[H]
+\caption{Continuity}
+    \begin{algorithmic}
+        \If{$x < -L_x / 2$}
+            \State{$x \mathrel{+}= L_x$}
+        \EndIf
+        \If{$x > L_x / 2$}
+            \State{$x \mathrel{-}= L_x$}
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
+
+Distance and distance vectors between particles
+should also obey the minimum image convention:
+
+\begin{algorithm}[H]
+\caption{Minimum image}
+    \begin{algorithmic}
+        \State $dx = x_j - x_i$
+        \If{$dx > L_x / 2$}
+            \State{$dx \mathrel{+}= L_x$}
+        \EndIf
+        \If{$x > L_x / 2$}
+            \State{$x \mathrel{-}= L_x$}
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
+
+
+
 
 \subsection{Molecular dynamics potentials}
