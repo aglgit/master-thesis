@@ -355,16 +355,180 @@ should also obey the minimum image convention:
 \caption{Minimum image}
     \begin{algorithmic}
         \State $dx = x_j - x_i$
-        \If{$dx > L_x / 2$}
+        \If{$dx < -L_x / 2$}
             \State{$dx \mathrel{+}= L_x$}
         \EndIf
-        \If{$x > L_x / 2$}
-            \State{$x \mathrel{-}= L_x$}
+        \If{$dx > L_x / 2$}
+            \State{$dx \mathrel{-}= L_x$}
         \EndIf
     \end{algorithmic}
 \end{algorithm}
 
+These conditions should be applied in every dimension.
+This approach runs the risk of introducing nonphysical artifacts
+of the simulation, such as a macromolecule interacting with its own image,
+and for coulombic interactions the system must be charge neutral to avoid
+summing to an infinite charge.
+The optimal system size with periodic boundary conditions
+will therefore depend on the intended simulation length, the desired accuracy
+and the dynamics which are being studied.
+\newline
+\newline
+Thus far we have discussed molecular dynamics for a system of $N$ particles
+within a fixed volume $V$ and constant energy $E$, i.e. in the
+microcanonical ensemble $NVE$. Other ensembles are also impossible,
+such as the canonical ensemble $NVT$ and the isothermal-isobaric ensemble
+$NPT$.
+\par
+Simulations in the canonical ensemble can be achieved by modifying the verlet
+integration algorithm. The simplest thermostat possible
+follows from the equipartion theorem:
 
+$$ T \propto \langle mv^2 \rangle , $$
 
+meaning some amount of kinetic energy i.e. velocity
+can be added or subtracted to every atom in order to maintain
+a constant temperature at every timestep.
+Multiplying every velocity by a factor $\lambda = \sqrt{T_0 / T(t)}$
+where $T(t)$ is the instantaneous temperature and $T_0$
+is the desired temperature will achieve desired effect.
+This approach significantly alters the trajectories of the system however,
+which means this thermostat should only be applied for adjusting
+the temperature of the system and not for taking ensemble averages
+in equilibrium.
+\par
+The most common thermostat used is the Nosé-Hoover thermostat,
+which is one of the most accurate and efficient algorithms
+for achieving realistic constant-temperature conditions.
+[cite: \url{https://engineering.ucsb.edu/~shell/che210d/Advanced_molecular_dynamics.pdf}]
+Nosé introduced an extended Hamiltonian with two additional degrees of freedom:
+
+\begin{itemize}
+    \item $s$ - the position of an imaginary coupled heat reservoir
+    \item $p_s$ - the conjugate momentum of the heat reservoir
+\end{itemize}
+
+In addition it introduces an effective mass $Q$ such that $p_s = Q\frac{ds}{dt}$.
+\par
+Hoover modified Nosé's approach by introducing the Hamiltonian:
+
+$$ H = \frac{1}{2} \sum m_i \left| \bm{p}_i \right|^2 + U(\bm{r}) + \frac{\xi Q}{2}
+    + 3Nk_B T \ln{s} , $$
+
+where $\xi$ is a friction coefficient and $\bm{p}_i = m_i\bm{v}_i \times s$
+are the particle momenta. This leads to a new set of Newtonian equations of motions
+with an additional force that is proportional to the velocity:
+
+\begin{equation}
+\begin{split}
+    \frac{d\bm{r}_i}{dt} &= \bm{v}_i \\
+    \frac{d\bm{v}_i}{dt} &= - \frac{1}{m_i} \frac{\partial U(\bm{r})}{\partial \bm{r}_i}
+    - \xi \bm{v}_i \\
+    \frac{d\xi}{dt} &= \left( \sum m_i \left| \bm{v}_i \right|^2 - 3Nk_b T \right) / Q \\
+    \frac{d \ln{s}}{dt} &= \xi .
+\end{split}
+\end{equation}
+
+These can then be solved with a numerical integration scheme such as the
+velocity-Verlet algorithm.
 
 \subsection{Molecular dynamics potentials}
+The dynamics of an ensemble of particles is governed by
+their interactions. In molecular dynamics we stipulate that
+the interactions are decided only by the relative positions
+of the particles, i.e. only conservative forces act on the atoms.
+This means that the force on atom $i$ is fully described
+by a potential energy $U$:
+
+$$ \bm{F}_i = -\nabla U(\bm{r}_i) , $$
+
+which in principle depends on the position of atom $i$
+and all other atoms in the system. Finding an appropriate potential
+for the system of atoms which you intend to study can be ardous work,
+and usually involves fitting an analytical functional form
+with a large set of parameters to a potential energy surface
+from ab initio quantum mechanical calculations.
+\par
+Potentials can be classified as either bonded or non-bonded.
+Bonded potentials compute the interactions for a predefined
+set of atoms and molecules in the simulations, while
+non-bonded potentials compute the interactions
+between \textit{all} pairs, triplets etc. of atoms
+(usually within a certain radius).
+Larger, more complex systems typically contain a mix of
+bonded and non-bonded potentials, for example a system of rigid water molecules
+interacting with a surface of carbon atoms.
+\par
+One of the simplest potentials meant to simulate a realistic system
+is the Lennard-Jones potential:
+
+$$ U(r_{ij}) = 4\epsilon \left(\left(\frac{\sigma}{r}\right)^{12}
+    - \left(\frac{\sigma}{r}\right)^{6}\right) , $$
+
+with $r_{ij} = \left| \bm{r}_j - \bm{r}_i \right|$.
+For the Lennard-Jones potential there are only two parameters to be decided,
+a characteristic energy $\epsilon$ and a characteristic length $\sigma$.
+This potential is meant to emulate the relatively weak interactions
+between noble gas atoms such as Argon.
+It can be separated into two terms:
+
+\begin{itemize}
+    \item $\mathrel{-} \left(\frac{\sigma}{r}\right)^6$ - owing to the long-term
+        attraction from van der Waals interactions
+    \item $\mathrel{+} \left(\frac{\sigma}{r}\right)^{12}$ - owing to the short-term repulsion
+        from the Pauli principle
+\end{itemize}
+
+While the van der Waals term is justified by theory, the repulsion term
+is justified by numerical efficiency - as it contains the square of the van der Waals
+term - and because it models the Pauli repulsion accurately.
+\par
+While the Lennard-Jones potential is very simple, requiring only two parameters
+to be determined, it has shown to be effective at modelling noble gas atoms
+and is commonly used as a building block for more complicated interactions.
+\par
+[cite \url{http://www.pages.drexel.edu/~cfa22/msim/node41.html}]
+Another simple and common potential is the Stillinger-Weber potential,
+which is meant to model the interactions between silicon atoms.
+Silicon forms tetrahedral bonded structures as well as pairwise interactions
+which means the potential includes a twobody and a threebody interaction:
+
+\begin{equation}
+    U = \sum_{i < j} v_2(r_{ij}) + \sum_{i < j < k} v_3(\bm{r}_i, \bm{r}_j, \bm{r}_k) .
+\end{equation}
+
+The twobody interaction models the pairwise interaction:
+
+\begin{equation}
+    v_2(r) =
+    \begin{cases}
+        \epsilon A (Br^{-p} - r^{-q}) \exp \left[ (r - a)^{-1} \right], 
+        & r < a \\
+        0 & r \geq a
+    \end{cases}
+\end{equation}
+
+This twobody term resembles the Lennard-Jones potential,
+but with an exponential cutoff.
+The threebody term models the tetrahedral angles,
+and is a sum over three triplets:
+
+\begin{equation}
+    v_3(\bm{r}_i, \bm{r}_j, \bm{r}_k) = h_{jik} + h_{ijk} + h_{ikj} ,
+\end{equation}
+
+with the angular interaction $h_{jik} = h(r_{ij}, r_{ik}, \theta_{jik})$ and
+
+\begin{equation}
+    h_{jik} =
+    \begin{cases}
+        \epsilon \lambda \exp \left[ \frac{\gamma}{r_{ij} - a}
+        + \frac{\gamma}{r_{ik} - a} \right]
+        \left(\cos{\theta_{jik}} - \cos{\theta_{jik}^0} \right)^2 & r_{ij} < a \\
+        0 & r_{ij} \geq a
+    \end{cases}
+\end{equation}
+
+where $\theta_{jik}^0$ is an "equilibrium" angle.
+The terms $\epsilon, A, B, p, q, \lambda, \gamma$ are parameters
+to be decided and $a$ is a cutoff radius.

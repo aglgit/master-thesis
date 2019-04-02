@@ -385,5 +385,102 @@ This gives us the final expression we need:
 \end{figure}
 
 \subsection{Optimization}
-Gradient descent, momentum, ADAM, initialization, batching,
-vanishing, normalization (?).
+Gradient descent, momentum, ADAM, batching,
+normalization.
+
+In order to begin the minimization procedure and find an optimal
+set of weights and biases for our network we first need some initial values.
+Often weights are initialized with small values distributed around zero,
+drawn from a uniform or normal distribution. The bias can be initalized to zero,
+but enforcing that all biases have some small value ensures that every
+neuron has output which can be backpropagated in the first training cycle.
+In the Pytorch neural network framework - which is the one we will 
+be using - weights are initialized uniformly as
+
+\begin{equation}
+    \begin{split}
+        \sigma &= 1 / N_{in} \\
+        w &= \mathcal{U}(-\sigma, \sigma)
+    \end{split}
+\end{equation}
+
+where $N_{in}$ is the number of inputs to the weight/layer of weights
+and $\mathcal{U}$ is the uniform distribution.
+\par
+A critical choice for building neural networks is the choice of activation function.
+As we have mentioned briefly above, we have a small set of requirements in order
+for the neural network to be an universal function approximator, namely
+that the function be nonconstant, bounded, continuous and monotonically increasing.
+We also desire that the function be fast to evaluate, with a derivative that
+is simple to calculate.
+\par
+A function that fulfills all of these criteria is the sigmoid function:
+
+\begin{equation}
+    \begin{split}
+        \sigma(x) &= \frac{1}{1 + e^{-x}} , \\
+        \sigma '(x) &= \sigma(x)(1 - \sigma(x)) .
+    \end{split}
+\end{equation}
+
+The sigmoid function is defined on the entire real number line,
+and outputs a number between $0$ and $1$. It also has a continuous derivative
+which is simple to calculate. The sigmoid function is well suited for binary
+classifiers, since it easily creates a decision boundary between two categories
+$0$ and $1$, and is often the first goto for AI programmers.
+\par
+Another simple and commonly used activation function is the hyperbolic tangent
+
+\begin{equation}
+    \begin{split}
+        \tanh(x) &= \frac{e^{2x} -1}{e^{2x} - 1} , \\
+        \tanh '(x) &= (1 - \tanh(x)^2) .
+    \end{split}
+\end{equation}
+
+The hyperbolic tangent is defined on the real number line and outputs
+a number between $-1$ and $1$.
+\par
+Both the sigmoid and the hyperbolic tangent functions exhibit the problem
+of vanishing gradients. In deep learning, you typically have several layers
+of neurons outputting some linear combination of the activation functions.
+Through the backpropagation algorithm, each neuron receives a weight update
+proportional to the partial derivative of the loss with respect to
+its weights. For the sigmoid and hyperbolic tangent activations these
+gradients will be in the range $(-1, 1)$, and therefore often
+exceedingly small. This means that many neurons may receive effectively
+no weight update in any given training epoch, which severely impedes training.
+\par
+The Rectified Linear Unit (ReLU) has gained popularity in recent years
+for its effectiveness in the field of convolutional neural networks.
+The ReLu function is defined as:
+
+\begin{equation}
+    \begin{split}
+        \text{ReLU}(x) &=
+    \begin{cases}
+        x & x \geq 0 \\
+        0 & x < 0
+    \end{cases} \\
+        \text{ReLU}'(x) &=
+    \begin{cases}
+        1 & x \geq 0 \\
+        0 & x < 0
+    \end{cases}
+    \end{split}
+\end{equation}
+
+Since the ReLU function in principle has no upper bound, it does
+not suffer the effect of vanishing gradients. Instead, the ReLU function
+can produce exploding gradients, if one or more activations becomes
+very large. In practice the gradients are often "clipped", i.e.
+truncated above a certain upper bound.
+With the ReLU function one can also encounter "dying" neurons,
+since the input to any neuron that does not exceed zero
+is set to zero, which means that the number of neurons receiving
+an effective weight update
+\newline
+\newline
+From the point of view of the neural network, the inputs are just
+dimensionless numbers, which are passed through layers until it spits
+out some outputs. It is therefore often useful to standardize the inputs
