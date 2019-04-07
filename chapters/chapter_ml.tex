@@ -483,4 +483,186 @@ an effective weight update
 \newline
 From the point of view of the neural network, the inputs are just
 dimensionless numbers, which are passed through layers until it spits
-out some outputs. It is therefore often useful to standardize the inputs
+out some outputs. It is therefore often useful to standardize the inputs.
+A common method is to shift the inputs by their mean and
+normalize by their standard deviation:
+
+$$ x_{i}' = \frac{x_{i} - \bar{x}}{\sigma_x} . $$
+
+This is often useful in speeding up the training of neural networks.
+In theory any shifting and rescaling can be reproduced simply
+by updating the weights and biases of the network.
+In practice however, as the weights often start as
+small numbers, it can take quite a few training cycles before
+the weights are of appropriate size.
+Standardizing the inputs also makes it impose to
+impose a penalty on the weights in order to reduce
+overfitting.
+\newline
+\newline
+The most common methods for training neural networks
+are variations on the simple gradient descent scheme as mentioned
+above:
+
+$$ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n) . $$
+
+Since we are interested in training neural networks,
+$\bm{x}_{n}$ represents the weights and biases of the network
+after $n$ training cycles, $\eta$ is our learning rate
+and $\nabla F(\bm{x}_n)$ is the gradient of the loss function.
+\par
+The learning rate $\eta$ controls how fast we reach a given minimum.
+A small learning rate will require more training cycles
+and a larger learning rate will require fewer.
+The learning rate also controls the numerical stability
+of the method, if it is too large the weights may diverge
+and if it is too small the weight may never converge.
+Gradient descent also tends to exhibit oscillating behaviour
+around the minimum. Often a schedule is imposed
+on the learning rate, such as reducing it by a fixed amount
+every few epochs or incorporating an exponentially decaying learning rate.
+[cite: Mehta et al]
+As discussed in Mehta et. al. using gradient descent to optimize
+our neural network imposes some limitations:
+
+\begin{itemize}
+    \item \textit{Gradient descent finds local minima} - 
+        if the GD algorithm converges, it will converge to
+        a local minimum. This can lead to poor performance
+        in complicated cost function landscapes
+    \item \textit{Gradients are expensive to compute} - 
+        the loss function often includes a term for each
+        data point, which means the gradient also does.
+    \item \textit{GD is sensitive to learning rate} - 
+        as mentioned above, GD is very sensitive to
+        learning rate
+    \item \textit{GD is sensitive to initial conditions} - 
+        gradient descent can take two different initial values
+        and converge at two drastically different values
+    \item \textit{GD does not take curvature into account} - 
+        the learning rate for gradient descent is the same
+        in all directions of parameter space, which means
+        the maximum learning rate is set by the behaviour of the
+        steepest direction
+\end{itemize}
+
+A common method for ameliorating some of these concerns
+is minibatching the inputs. Instead of calculating
+the gradient on the entire dataset for every epoch,
+we instead calculate the gradient on a subset
+of the data called a minibatch.
+If there are $n$ datapoints and a minibatch size
+of $m$ the total number of batches is $n/m$.
+If we denote each minibatch $b_k, \ k=1,2,\dots,n/m$
+the gradient becomes:
+
+$$ \nabla \mathcal{C} = \frac{1}{n} \sum_{i=1}^N
+    \nabla \mathcal{L}_i \rightarrow
+    \frac{1}{m} \sum_{i \in b_k} \nabla \mathcal{L}_i , $$
+
+i.e. instead of averaging the loss over the entire dataset
+we instead average over a minibatch.
+This significantly speeds up the calculation, since
+we do not use the entire dataset for every update.
+In addition, introducing stochasticity in the
+division of the dataset into minibatches introduces stochasticity
+to the weights update, which should help gradient descent
+in overcoming local minima.
+\par
+It is also common to introduce regularization to the weights
+and biases of the networks. Regularization in the context
+of neural networks means adding a term proportional
+to the $L_p$ norm of the weights and biases.
+For example using the L2-norm our cost function becomes:
+
+$$ \nabla \mathcal{C} = \frac{1}{n} \sum_i \nabla \mathcal{L}_i
+    \rightarrow \frac{1}{n} \sum_i \nabla \mathcal{L}_i
+    + \lambda \left| \left| \bm{w} \right| \right|^2
+    = \frac{1}{n} \sum_i \nabla \mathcal{L}_i
+    + \lambda \sum_{ij} w_{ij}^2 , $$
+
+i.e. we sum up all the weights squared.
+The parameter $\lambda$ is known as a regularization parameter.
+This extra term adds a penalty on the size of the weights
+dependant on the regularization parameter. This has
+been shown to reduce overfitting, as the weights
+cannot be adjusted to arbitrary size in order
+to fit the training dataset.
+\par
+Gradient descent is often paired with a momentum parameter
+that serves as a "memory" of the direction we are moving.
+This can be implemented as a modification to the
+gradient descent update:
+
+\begin{equation}
+    \begin{split}
+        \bm{v}_n &= \gamma \bm{v}_{n-1} + \eta \nabla F(\bm{x}_n) , \\
+        \bm{x}_{n+1} &= \bm{x}_n - \bm{v}_n ,
+    \end{split}
+\end{equation}
+
+where $0 < \gamma < 1$ is a memory parameter
+that controls the time scale for the memory.
+It is termed a momentum parameter because the equations
+for updating the parameters $\bm{x}$ are analogous to
+the equations of motion for a particle moving
+in a viscous medium. Momentum helps the gradient descent
+algorithm gain speed in directions where the curvature
+is flat while dampening speed in high curvature directions.
+\par
+First-order gradient descent methods differ from quasi-Newton methods
+in that they do not keep track of the curvature which is encoded
+in the so-called Hessian matrix of second order derivatives.
+Second-order methods accomplish this by calculating or approximating
+the Hessian and normalizing the learning rate by the curvature.
+\par
+The RMSprop algorithm keeps a running average of both the
+first and second moment of the gradient. If we term
+the gradient as $\bm{g} = \nabla F(\bm{x})$
+and the first and second orders as
+$\bm{m} = \mathbb{E}[\bm{g}]$ and $\bm{s} = \mathbb{E}[\bm{g}^2]$
+we can write the update rule as:
+
+\begin{equation}
+    \begin{split}
+        \bm{g}_n &= \nabla F(\bm{x}_n) \\
+        \bm{s}_n &= \beta \bm{s}_{n-1} + (1 - \beta)\bm{g}_{n}^2 \\
+        \bm{x}_{n+1} &= \bm{x}_n - \eta \frac{\bm{g}_n}
+        {\sqrt{\bm{s}_n + \epsilon}}
+    \end{split}
+\end{equation}
+
+where $\beta$ is a parameter which controls the time scale
+of the averaging and $\epsilon$ is a small regularization constant
+to prevent divergences. Operations involving vectors are understood
+to be element-wise. This results in a dampening of the learning rate
+in directions where the gradient is consistently large,
+and allows us to use a larger learning rate for areas
+of flat curvature.
+\par
+Perhaps the most commonly used optimizer today is the closely
+related ADAM optimizer. In addition to keeping a running average
+of the first and second-order moments ADAM performs
+an additional bias correction to account for the 
+fact that we are estimating first and second order moments
+using a running average. The update rule is given as:
+
+\begin{equation}
+    \begin{split}
+        \bm{g}_n &= \nabla F(\bm{x}_n) \\
+        \bm{m}_n &= \beta_1 \bm{m}_{n-1} + (1 - \beta_1)\bm{g}_n \\
+        \bm{s}_n &= \beta_2 \bm{s}_{n-1} + (1 - \beta_2)\bm{g}_n^2 \\
+        \hat{\bm{m}}_n &= \frac{\bm{m}_n}{1 - \beta_1^n} \\
+        \hat{\bm{s}}_n &= \frac{\bm{s}_n}{1 - \beta_2^n} \\
+        \bm{x}_{n+1} &= \bm{x}_n - \eta \frac{\hat{\bm{m}}_n}
+        {\sqrt{\hat{\bm{s}}_n} + \epsilon} ,
+    \end{split}
+\end{equation}
+
+with $\beta_1$ and $\beta_2$ as memory parameters for the first and
+second moments respectively. This update rule
+effectively normalizes the learning rate by the
+standard deviation of the gradient, which is a natural
+measurement scale. This also has the effect
+of cutting off directions where the gradient varies
+by a lot.
