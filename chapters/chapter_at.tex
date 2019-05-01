@@ -1,1 +1,320 @@
-In
+Electronic structure calculations are among the most computationally
+intensive scientific calculations, and the rapid development
+of modern computers have made many previously unthinkable
+computer simulations a central part of the scientific toolkit.
+Because of their computationally demanding nature, electronic
+structure calculations today occupy a large portion of resources
+on modern scientific supercomputer facilities.
+\par
+For small-scale systems, we have discussed the Hartree-Fock
+and Density Functional Theory methods as the primary workhorses
+of ab-initio (i.e. from first principles quantum mechanical principles)
+electronic structure calculations. However, these methods suffer
+from very poor scaling as the system size increases, with Hartree-Fock
+scaling as $\mathcal{O}(N^4)$ with $N$ the number of electrons
+and Density Functional Theory scaling as $\mathcal{O}(N^4)$.
+\par
+In many cases the exact details are electronic structure
+are less important than the long-time behaviour of the atoms
+and molecules involved in the simulation, and classical approximations
+can be made as in molecular dynamics, which comes close
+to linear scaling. This allows us to simulate systems
+of up to millions or hundreds of millions of atoms,
+which can approximate nano- or micro-scale atoms if
+periodic boundary conditions are applied.
+However, the question remains as to how you develop an
+accurate classical potential which can accurately reproduce
+fundamentally quantum systems, with a speed that allows
+us to enter into realistic timescales (i.e. nano or microseconds).
+\par
+The most common approach to developing molecular dynamics potentials
+is to guess a functional form based on your physical intuition
+and experience with the systems and calculate appropriate parameters
+from data obtained from DFT calculations.
+The number of parameters involved can range from two in the case
+of Lennard-Jones or hundreds of parameters in the case
+of complex, many-atom potentials such as the AMBER and CHARMM
+force fields. The imposition of functional forms to quantum data
+is an artform, and the potential must often be tailored to not
+only the chemical species and number of atoms in your system,
+but also the specific experimental quantity you are trying to extract,
+such as the energy, radial distribution function or transport
+coefficients. Notably there are dozens of MD potentials
+describing different models of water (H2O), each fine-tuned
+for a specific system structure or parameter.
+\newline
+\newline
+Due to recent developments in the field of machine learning,
+the question has been raised as to how it may be possible to
+automate the process of developing potentials.
+[cite](https://www.sciencedirect.com/science/article/pii/S0010465516301266)
+The idea is to approximate the potential energy
+with a regression model:
+
+$$ \set{\bm{R}} \overset{\text{Regression}}{\longrightarrow}
+    E = E(\set{\bm{R}}) , $$
+
+where $\set{\bm{R}}$ is the set of nuclear coordinates of our system.
+Most machine learning methods operate over a set of one-dimensional
+so-called \textit{feature vectors}, where every vector element
+represents a feature of the data set. For example the amount
+of precipation in a given area at a given time is a function
+of features such as humidity, cloud cover, air pressure etc.
+This is a vector of some length $F$, while the nuclear coordinates
+represent a point in $3N$-dimensional phase space.
+This difference in representation requires some way of mapping
+the nuclear coordinates to features which can be employed
+by a machine learning method.
+\par
+The naive approach would be to simply feed in the nuclear coordinates
+as a 1D vector, and then perform a regression on the dataset
+in order to obtain the potential energy. However, our physical intuition
+imposes some constraints on the potential energy.
+In particular, the potential energy of a microscopic system should
+be translationally, rotationally and permutationally invariant.
+\par
+Translational invariance implies that the addition of any
+three-dimensional vector to every coordinate in the system should
+not in any way alter the potential energy of the system.
+This should not be the case with a naive mapping, as for a given
+set of weights (or equivalent) smaller/larger coordinates
+values would be mapped to smaller/larger activations, and therefore
+alter the final output.
+Rotational invariance implies that the potential energy
+of the system should not change as the system is rotated
+about an axis. This also should not be the case in the context
+of a naive mapping, as any change to any of the inputs
+would be mapped in a non-linear way to produce a different output.
+Finally, permutation invariance implies that swapping the coordinates
+of any two atoms of the same chemical species would produce the
+same potential energy. This should also not be the case, for
+the same reasons as we just discussed.
+These constraints together heavily restrict the functional form
+that any mapping to the potential energy could have,
+which means a more careful analysis should be considered.
+\newline
+\newline
+In order for the mapping to be applicable to systems of varying size,
+a decomposition into atomic energy contributions is performed:
+
+$$ E(\set{\bm{R}}) = \sum_{i=1}^N E_{\text{atom}}(\set{\bm{R}}) . $$
+
+The individual energy contributions $E_{\text{atom}}$
+are then approximated by performing a regression analysis.
+The atomic energy contributions are usually limited to its
+local environment through the introduction of a cutoff radius $R_c$:
+
+$$ E_{\text{atom}} (\set{\bm{R}}) \approx
+    E_{\text{atom}} (\bm{R}_i, \set{\bm{R}_j | \left| \bm{R}_{ij} \right| 
+    < R_c}) $$
+
+meaning that interactions are only treated if the interatomic distance
+is smaller than the cutoff. This is a good approximation for a sensible
+choice of cutoff radius if no electrostatic interactions are involved.
+Long-range interactions can also be treated through
+the introduction of methods such as Ewald summation, but this will
+not be discussed here.
+\par
+A mapping that satisfies the above constraints we will refer to
+as a \textit{descriptor}, and is used as input to the regression method:
+
+$$ \set{\bm{R}} \rightarrow \bm{G}(\set{\bm{R}}) \overset{\text{regression}}
+    {\longrightarrow} E_{\text{atom}} = 
+    E_{\text{atom}}(\bm{G}(\set{\bm{R}})). $$
+
+Once we have a descriptor and a regression model the dynamics
+can be readily obtained by taking derivatives:
+
+\begin{equation}
+\begin{split}
+    \bm{F}_i &= -\nabla_i E \\
+    &= -\nabla_i \sum_i^{\text{local}}
+    E_{\text{atom}}(\bm{G}(\set{\bm{R}})) \\
+    &= -\sum_i^{\text{local}} \sum_j \frac{\partial E_{\text{atom}}}
+    {\partial G_j} \frac{\partial G_j}{\partial \bm{R}_i} ,
+\end{split}
+\end{equation}
+
+where we have applied the chain rule to break the gradient
+into derivatives with respect to the network inputs (obtained through
+backpropagation) and derivatives of the network inputs with
+respect to the coordinates of atom $i$.
+Once we have the forces the system can be propagated through time
+using the Velocity-Verlet equations.
+
+\subsection{Gaussian descriptors}
+Behler and Parrinello [cite](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.98.146401)
+suggested the decomposition of the mapping $\bm{G}_i$ of atom $i$
+into two subvectors $\bm{G}_i^I$ and $\bm{G}_i^{II}$ representing
+pairwise and three-body interactions respectively.
+The components of $\bm{G}_i^I$ are comprised of
+sums of gaussian functions of the pairwise distance $R_{ij}$:
+
+$$ f_i^I = \sum_{j \neq i}^{\text{local}}
+    \exp \left( -\eta(R_{ij} - R_s)^2 / R_c^2 \right) f_c (R_{ij}) , $$
+
+with the sum over the local environment of atom $i$.
+The parameters $\eta$ and $R_s$ represent the width and center
+of the gaussian functions respectively. The term $f_c$
+is a cutoff function which decays smoothly to zero
+at the cutoff radius. Behler and Parrinello proposed
+the following cutoff:
+
+\begin{equation}
+    f_c(R) = 
+\begin{cases}
+    \frac{1}{2}\left(1 + \cos \left(\pi R / R_c \right) \right) & R < R_c \\
+    0 & R > R_c ,
+\end{cases}
+\end{equation}
+
+however other functional forms are possible. For the angular part
+such terms are multiplied, which means the function decays much more
+rapidly as we approach the cutoff. The only requirement we pose
+is that the function be continuous with a continuous first derivative
+in $r \in [0, \infty)$, 
+approach one as $R \rightarrow 0$
+and zero as $R \rightarrow R_c$.
+\par
+The components of the three-body subvector are defined incorporating
+the angles $\theta_{ijk}$ between every triplet of atoms:
+
+\begin{equation}
+\begin{split}
+    f_i^{II} &= 2^{1 - \zeta} \sum_{j,k \neq i}^{\text{local}}
+    (1 + \lambda \cos \theta_{ijk})^{\zeta}
+    \exp \left( -\eta \left( R_{ij}^2 + R_{ik}^2 + R{jk}^2
+    \right) / R_c^2 \right) \\
+    & \times f_c(R_{ij}) f_c(R_{ik}) f_c(R_{jk}) .
+\end{split}
+\end{equation}
+
+The components for each subvector is calculated by varying
+the different parameters $\eta, R_s, \zeta, \lambda$.
+The choice of neither symmetry functions, cutoff, nor the parameters
+employed by Behler and Parrinello are unique. The guiding
+wisdom is that atomic environments with different
+potential energies should give differing energies,
+while remaining invariant under translation, rotation and permutation.
+Finally we note that the descriptors and the neural network
+models are not interchangeable, as each neural network
+is trained for a specific set of input vectors, and must
+be retrained if the way inputs are composed changes.
+
+% Zernike? Bispectrum?
+
+\subsection{Deep Potential Molecular Dynamics}
+Deep Potential Molecular Dynamics (DPMD) is a method
+proposed by [Wang et. al.](https://reader.elsevier.com/reader/sd/pii/S0010465518300882?token=2AFD04526C4190A36B222675059A56046185149A64D44DF02D74C217C980120776E9581FE684D7044B16724AD779C407)
+in response to the successes of methods such as Behler-Parrinello,
+Gaussian Approximation Potentials (GAP) 
+and Gradient-Domain Machine Learning (GDML).
+These methods all involve some amount of handcrafting the inputs,
+and building these inputs for larger, more complex systems is not
+straightforward.
+The Deep Potential method assigns a local environment and reference
+frame to each atom. The total potential energy is a sum
+of atomic contributions as before:
+
+$$ E = \sum_i E_i , $$
+
+with the atomic energy determined by its nearest neighbors:
+
+$$ E_i = E(\bm{R}_i, \set{\bm{R}_j : \left| \bm{R}_{ij} 
+    \right| < R_c}) . $$
+
+The position of each neighbor of atom $i$ is described
+by the relative positions $\bm{R}_{ij} = \bm{R}_j - \bm{R}_i$,
+which preserves translational symmetry.
+\par
+Rotational symmetry is conserved by constructing a local frame
+for each atom. Two neighboring atoms $a$ and $b$ are picked by a 
+user-specified rule (default: two closest).
+The environment of atom $i$ is then described by three unit vectors:
+
+\begin{equation}
+\begin{split}
+    \bm{e}_{i1} &= \bm{e}(\bm{R}_{ia}) , \\
+    \bm{e}_{i2} &= \bm{e}(\bm{R}_{ib} - (\bm{R}_{ib} \cdot \bm{e}_{i1})
+    \bm{e}_{i1}) , \\
+    \bm{e}_{i3} &= \bm{e}_{i1} \times \bm{e}_{i2} ,
+\end{split}
+\end{equation}
+
+where $\bm{e}(\bm{R})$ denotes the normalized vector $\bm{e}(\bm{R})
+    = \bm{R} / \left| \bm{R} \right|$. Together these vectors
+form an orthonormal basis for the reference frame of atom $i$.
+The local coordinates $\bm{R}_{ij}$
+can then be obtained from the global coordinates $\bm{R}_{ij}^0$
+through the transformation:
+
+\begin{equation}
+    \bm{R}_{ij} = \bm{R}_{ij}^0 \cdot \mathcal{R} ,
+\end{equation}
+
+where $\mathcal{R} = [\bm{e}_{i1} \ \bm{e}_{i2} \ \bm{e}_{i3}]$
+is a rotation matrix with columns given by the local basis vectors.
+\par
+The neural network input vector for every atom-to-atom interaction
+$\bm{D}_{ij}$ can be given with radial-only or full radial-angular
+information:
+
+\begin{equation}
+    D_{ij}^{\alpha} =
+\begin{cases}
+    \left( \frac{1}{R_{ij}}, \frac{\bm{R}_{ij}}{\left| \bm{R}_{ij} \right|}
+    \right) & \text{full information}, \\
+    \left( \frac{1}{R_{ij}} \right) & \text{radial-only information},
+\end{cases}
+\end{equation}
+
+with $\alpha = 0$ when only radial information is specified
+and $\alpha = 0,1,2,3$ when full information is provided. Radial information
+is typically sufficient for long-range interactions such as van-der-Waals
+forces, while covalent bonding can be modeled by including
+only the closest atoms. We therefore specify two separate
+cutoff shells, one for the radial information $R_c$ and one
+for treating angular interactions $R_a$.
+\par
+In order to preserve permutation symmetry the inputs vectors $\bm{D}_{ij}$
+are sorted first according to chemical species, and then within
+each chemical species according to their inverse distance $1 / R_{ij}$.
+The vector of subvectors $\bm{D}_i$ is then fed through a neural
+network to produce the atomic energy contribution.
+The network input size is fixed according to the maximum number of neighbors
+in the system which is being studied, with $\bm{D}_{ij} = \bm{0}$
+if there are fewer neighbors within the radial cutoff.
+\par
+The authors also propose a scheme of force learning, wherein
+the force Root Mean Square Error (RMSE) is incorporated into the Loss Function:
+
+\begin{equation}
+    \mathcal{L} = \frac{p_{\epsilon}}{N} \sum_i
+    \left( \Delta E_i^2 \right)
+    + \frac{p_{f}}{3N} \sum_i \left| \Delta \bm{F}_i \right|^2,
+\end{equation}
+
+with $p_{\epsilon}$ and $p_{f}$ energy and force pre-factors which are
+adjusted throughout the learning process. The term $\Delta E_i$
+denotes the error between the sum of network outputs
+and the correct potential energy, while the term $\Delta \bm{F}_i$
+denotes the error in the force output.
+The pre-factors are adjusted based on the learning rate:
+
+\begin{equation}
+    p(t) = p^{\text{limit}} \left[ 1 - \frac{r_l(t)}{r_l^0} \right]
+    + p^{\text{start}} \left[ \frac{r_l(t)}{r_l^0} \right] ,
+\end{equation}
+
+with $r_l(t)$ and $r_l^0$ the learning rate at time step $t$ and time step
+$0$ respectively. The learning rate decays exponentially as:
+
+$$ r_l(t) = r_l^0 \cdot d_r^{t / d_s} , $$
+
+with $d_r$ the decay rate and $d_s$ the decay steps. The decay
+rate should be less than 1. The force error is often a magnitude or two
+larger than the energy error, and it is believed that incorporating
+the force into the loss should improve the learning rate for
+physics-based applications which incorporate forces.
+The virial information can also be treated in this manner,
+but this will not be discussed here.

@@ -1,0 +1,71 @@
+The Atomic Simulation environment (ASE\footnote{
+\url{https://wiki.fysik.dtu.dk/ase/index.html}})
+[cite](https://iopscience.iop.org/article/10.1088/1361-648X/aa680e)
+is a software package written in Python for the purpose
+of setting up, steering and analyzing atomistic simulations.
+Python is an interpreted, high-level general purpose language,
+with a powerful, consise syntax which allows one to perform
+very complex tasks with few lines of code. Python can also
+easily be extended and interfaced with fast and mature
+libraries. The modular interface of Python makes ASE
+easily extensible: in particular the calculator interface
+for evaluating energies, forces and much more has been
+implemented for software packages such as LAMMPS, VASP,
+Quantum Espresso and many more.
+The Atomic Simulation Environment is intended to be:
+
+\begin{itemize}
+    \item Easy to use
+    \item Flexible
+    \item Customizable
+    \item Pythonic
+    \item Open to participation
+\end{itemize}
+
+The real drawback of Python is that it is an interpreted language,
+which results in slow execution. It can also be quite memory-intensive,
+which makes pure Python unsuitable for large scale computations
+and simulations. It is therefore common to write the
+computationally demanding tasks in a lower level compiled language,
+and build a Python interface for calling functions and classes.
+
+\subsection{Installation}
+ASE requires an installation of
+
+\begin{itemize}
+    \item Python 2.7, 3.4-3.6
+    \item Numpy 1.9 or newer
+    \item Scipy 0.14 or newer
+\end{itemize}
+
+This can be easily obtained through the Anaconda 
+or Miniconda packages\footnote{\url{https://anaconda.org/}},
+or follow the instructions on the Python website\footnote{
+\url{https://www.python.org/}}.
+Once you have the prerequisites ASE can be installed using pip:
+
+\begin{lstlisting}[language=bash]
+pip install ase
+\end{lstlisting}
+
+\subsection{Molecular Dynamics}
+Here we will demonstrate how to setup a simple Argon crystal,
+set the velocities and integrate the system using
+the Velocity Verlet equations.
+First we import some prerequisites and define the system:
+
+\begin{lstlisting}[language=python,basicstyle=\small]
+from ase.lattice.cubic import FaceCenteredCubic
+from ase import units
+from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
+from ase.md.verlet import VelocityVerlet
+
+symbol = "Ar"
+size = (3, 3, 3)
+atoms = FaceCenteredCubic(symbol=symbol, size=size, pbc=True)
+MaxwellBoltzmannDistribution(atoms, 300 * units.kB)
+\end{lstlisting}
+
+This defines a face-centered-cubic (FCC) crystal unit cell
+with 4 atoms, and a system size of $3\times3\times3$ unit cells
+for a total of $4\cdot3^3 = 108$ atoms with periodic boundary conditions.

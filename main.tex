@@ -2,8 +2,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[toc,page]{appendix}
+\usepackage{microtype}
+\usepackage{listings}
 \usepackage{blindtext}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{bm}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -24,6 +27,22 @@
 
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{references.bib}
+
+\definecolor{light-gray}{gray}{0.90}
+
+\lstset{basicstyle=\linespread{1.1}\ttfamily\footnotesize,
+    keywordstyle=\ttfamily,
+    keepspaces=true,
+    columns=fixed,
+    tabsize=4,
+    backgroundcolor=\color{light-gray},
+    xleftmargin=0.7cm,
+    frame=tlbr, 
+    framesep=0.2cm, 
+    framerule=0pt,
+    frame=single,
+    breaklines=true,
+}
 
 \begin{document}
 
@@ -51,22 +70,22 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
 \chapter{Machine learning}
 \input{chapters/chapter_ml}
 
-\part{Advanced theory and implementation}
-
 \chapter{Atom-centered descriptors}
 \input{chapters/chapter_at}
 
-\chapter{Quantum Espresso and I-PI}
+\part{Implementation}
+\chapter{Atomic Simulation Environment}
+\input{chapters/chapter_ase}
+
+\chapter{Atomistic Machine-learning Package}
 
 \chapter{Pytorch}
-
-\chapter{LAMMPS}
 
 \part{Results}
 
 \chapter{Empirical potentials}
 
-\chapter{Hydrogen systems}
+\chapter{Ab-Initio Molecular Dynamics}
  
 \chapter{Conclusion}
 \input{chapters/conclusion}
