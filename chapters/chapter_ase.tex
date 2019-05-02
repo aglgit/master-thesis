@@ -69,3 +69,88 @@ MaxwellBoltzmannDistribution(atoms, 300 * units.kB)
 This defines a face-centered-cubic (FCC) crystal unit cell
 with 4 atoms, and a system size of $3\times3\times3$ unit cells
 for a total of $4\cdot3^3 = 108$ atoms with periodic boundary conditions.
+We thereafter give the atoms velocities according to the
+Maxwell-Boltzmann distribution such that the system temperature
+is approximately 300 Kelvin.
+\par
+Next we give the atoms a Lennard-Jones \textit{calculator}
+for calculating dynamics and create a Velocity Verlet \textit{integrator}
+for operating on the atoms according to their forces.
+Calculators will be discussed in the next section.
+
+\begin{lstlisting}
+calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
+atoms.set_calculator(calc)
+dyn = VelocityVerlet(atoms, 5 * units.fs)
+\end{lstlisting}
+
+The parameters $\sigma$ and $\epsilon$ define the well known
+length and energy scales for the Lennard-Jones potential.
+The Velocity Verlet integrator is initialized with a timestep
+of 5 femtoseconds, which strikes a balance between accuracy
+and the timescale of the simulation.
+Finally we run the system for 1000 steps:
+
+\begin{lstlisting}
+for i in range(100):
+    dyn.run(10)
+\end{lstlisting}
+
+Every 10 timesteps the system can be printed, written to file
+or some other form of analysis and processing.
+
+\subsection{Calculators}
+The calculator interface gives ASE an easy to use,
+flexible and customizable way of computing dynamics,
+and makes ASE viable for a wide range of electronic structure calculations.
+For ASE a calculator is a black box that receives positions, atomic
+numbers and so on and outputs energies, forces, stresses;
+all that is required to perform atomistic simulations.
+The basic interface is defined in the ASE source code as:
+
+\begin{lstlisting}[language=python,basicstyle=\small]
+import numpy as np
+
+
+class Calculator:
+    def get_potential_energy(self, atoms=None, 
+                             force_consistent=False):
+        return 0.0
+
+    def get_forces(self, atoms):
+        return np.zeros((len(atoms), 3))
+
+    def get_stress(self, atoms):
+        return np.zeros(6)
+
+    def calculation_required(self, atoms, quantities):
+        return False
+\end{lstlisting}
+
+There is also an interface for DFT calculators, which also
+requires the implementation of spins, occupation numbers,
+the fermi level and so on.
+\newline
+\newline
+In the previous section we used the Lennard-Jones calculator
+as an example, however this is generally not advised.
+Apart from the Lennard-Jones being a toy potential unsuited
+for real systems, the ASE implementation is also written in pure
+Python, which makes it very, very slow.
+Usually the calculator interface is used as a wrapper for much faster
+compiled code or software packages; for example the
+Asap calculator is a Python wrapper for the Effective Medium Theory
+potential which is implemented in Fortran, and is orders of magnitudes
+faster. A Python molecular dynamics code is justified
+since the bulk of computation code is spent on computing forces,
+however for large scale molecular dynamics simulations
+one would be advised to use fast compiled code such as LAMMPS\footnote{
+\url{https://lammps.sandia.gov/}} or GROMACS\footnote{
+\url{http://www.gromacs.org/}}.
+ASE really shines when it comes to small-scale simulations,
+experimentation and testing out new methods, and this is why
+it has been chosen as a basis for this thesis.
+Fortunately, ASE has an extensive code base of calculators
+for Molecular Dynamics and Density Functional Theory codes
+such as Asap, CP2K, LAMMPS, GROMACS which are all
+implemented in lower-level languages.
