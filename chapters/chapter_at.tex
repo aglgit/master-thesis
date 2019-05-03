@@ -105,7 +105,7 @@ The atomic energy contributions are usually limited to its
 local environment through the introduction of a cutoff radius $R_c$:
 
 $$ E_{\text{atom}} (\set{\bm{R}}) \approx
-    E_{\text{atom}} (\bm{R}_i, \set{\bm{R}_j | \left| \bm{R}_{ij} \right| 
+    E_{\text{atom}} (\bm{R}_i, \set{\bm{R}_j | \left| \bm{R}_{ij} \right|
     < R_c}) $$
 
 meaning that interactions are only treated if the interatomic distance
@@ -119,7 +119,7 @@ A mapping that satisfies the above constraints we will refer to
 as a \textit{descriptor}, and is used as input to the regression method:
 
 $$ \set{\bm{R}} \rightarrow \bm{G}(\set{\bm{R}}) \overset{\text{regression}}
-    {\longrightarrow} E_{\text{atom}} = 
+    {\longrightarrow} E_{\text{atom}} =
     E_{\text{atom}}(\bm{G}(\set{\bm{R}})). $$
 
 Once we have a descriptor and a regression model the dynamics
@@ -161,7 +161,7 @@ at the cutoff radius. Behler and Parrinello proposed
 the following cutoff:
 
 \begin{equation}
-    f_c(R) = 
+    f_c(R) =
 \begin{cases}
     \frac{1}{2}\left(1 + \cos \left(\pi R / R_c \right) \right) & R < R_c \\
     0 & R > R_c ,
@@ -172,7 +172,7 @@ however other functional forms are possible. For the angular part
 such terms are multiplied, which means the function decays much more
 rapidly as we approach the cutoff. The only requirement we pose
 is that the function be continuous with a continuous first derivative
-in $r \in [0, \infty)$, 
+in $r \in [0, \infty)$,
 approach one as $R \rightarrow 0$
 and zero as $R \rightarrow R_c$.
 \par
@@ -207,7 +207,7 @@ be retrained if the way inputs are composed changes.
 Deep Potential Molecular Dynamics (DPMD) is a method
 proposed by [Wang et. al.](https://reader.elsevier.com/reader/sd/pii/S0010465518300882?token=2AFD04526C4190A36B222675059A56046185149A64D44DF02D74C217C980120776E9581FE684D7044B16724AD779C407)
 in response to the successes of methods such as Behler-Parrinello,
-Gaussian Approximation Potentials (GAP) 
+Gaussian Approximation Potentials (GAP)
 and Gradient-Domain Machine Learning (GDML).
 These methods all involve some amount of handcrafting the inputs,
 and building these inputs for larger, more complex systems is not
@@ -220,7 +220,7 @@ $$ E = \sum_i E_i , $$
 
 with the atomic energy determined by its nearest neighbors:
 
-$$ E_i = E(\bm{R}_i, \set{\bm{R}_j : \left| \bm{R}_{ij} 
+$$ E_i = E(\bm{R}_i, \set{\bm{R}_j : \left| \bm{R}_{ij}
     \right| < R_c}) . $$
 
 The position of each neighbor of atom $i$ is described
@@ -228,7 +228,7 @@ by the relative positions $\bm{R}_{ij} = \bm{R}_j - \bm{R}_i$,
 which preserves translational symmetry.
 \par
 Rotational symmetry is conserved by constructing a local frame
-for each atom. Two neighboring atoms $a$ and $b$ are picked by a 
+for each atom. Two neighboring atoms $a$ and $b$ are picked by a
 user-specified rule (default: two closest).
 The environment of atom $i$ is then described by three unit vectors:
 
@@ -262,9 +262,9 @@ information:
 \begin{equation}
     D_{ij}^{\alpha} =
 \begin{cases}
-    \left( \frac{1}{R_{ij}}, \frac{\bm{R}_{ij}}{\left| \bm{R}_{ij} \right|}
-    \right) & \text{full information}, \\
-    \left( \frac{1}{R_{ij}} \right) & \text{radial-only information},
+    \displaystyle\left( \frac{1}{R_{ij}}, \frac{\bm{R}_{ij}}{\left| \bm{R}_{ij} \right|}
+    \right) & \text{full information}, \\[10pt]
+    \displaystyle\left( \frac{1}{R_{ij}} \right) & \text{radial-only information},
 \end{cases}
 \end{equation}
 

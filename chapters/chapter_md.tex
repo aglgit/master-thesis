@@ -3,7 +3,7 @@ the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
 
 \begin{equation}
     \begin{split}
-        \hat{H} 
+        \hat{H}
         &= -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
         -\sum_{a=1}^A \frac{1}{M_a} \nabla_a^2
         -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{r_{ia}} \\
@@ -49,11 +49,11 @@ a single state $k$ is included in the expansion.
 Inserting this ansatz into the Schrodinger equation
 reveals the following set of equations:
 
-$$ i\hbar \frac{\partial \Psi}{\partial t} 
+$$ i\hbar \frac{\partial \Psi}{\partial t}
     = -\sum_i \frac{\hbar^2}{2m_e} \nabla_i^2 \Psi
     + \set{ \int d\bm{R} \chi^* V_{ne} \chi } \Psi , $$
 
-$$ i\hbar \frac{\partial \chi}{\partial t} 
+$$ i\hbar \frac{\partial \chi}{\partial t}
     = -\sum_i \frac{\hbar^2}{2m_e} \nabla_I^2 \chi
     + \set{ \int d\bm{r} \Psi^* \hat{H} \Psi } \chi . $$
 
@@ -105,7 +105,7 @@ we obtain the Newtonian equations of motion:
 
 \begin{equation}
     \begin{split}
-        \frac{d\bm{P}}{dt} 
+        \frac{d\bm{P}}{dt}
     &= -\nabla_I V
     = -\nabla_I \int d\bm{r} \Psi^* \hat{H} \Psi \quad \text{or} \\
         M_I\frac{d^2 \bm{R}_I}{dt^2}
@@ -256,7 +256,7 @@ thermodynamic averages.
 As we mentioned before, the global energy surface
 is approximated as an expansion of manybody contributions:
 
-$$ V_e^E(\set{\bm{r}}) = 
+$$ V_e^E(\set{\bm{r}}) =
     \sum_I v_1(R_I) + \sum_{I < J} v_2(R_I, R_J)
     + \sum_{I < J < K} v_3(R_I, R_J, R_K) , $$
 
@@ -280,7 +280,7 @@ the time usage, perhaps the most common is the use of neighbor
 lists. Using neighbor lists, each atom carries a list of neighbors
 within a cut-off radius $r_{cut}$ and interactions
 beyond this cut-off are neglected.
-This reduces the time-complexity to merely 
+This reduces the time-complexity to merely
 $\mathcal{O}(cN) = \mathcal{O}(N_{r_c} \cdot N)$,
 where $N_{r_c}$ is the average number of neighbors in the system
 within a cutoff $r_c$. For a large system this can be a
@@ -302,12 +302,12 @@ $t + \Delta t$ is calculated as:
 
 \begin{equation}
     \begin{split}
-        \bm{r}(t + \Delta t) 
+        \bm{r}(t + \Delta t)
         &= \bm{r}(t) + \bm{v}(t) \Delta t
         + \frac{1}{2} \bm{a}(t)\Delta t^2 , \\
         \bm{a}(t + \Delta t)
         &= -\frac{1}{m} \nabla V_e^E(\bm{r}(t + \Delta t)) , \\
-        \bm{v}(t + \Delta t) 
+        \bm{v}(t + \Delta t)
         &= \bm{v}(t) + \frac{1}{2}
         (\bm{a}(t) + \bm{a}(t + \Delta t)) \Delta t .
     \end{split}
@@ -502,7 +502,7 @@ The twobody interaction models the pairwise interaction:
 \begin{equation}
     v_2(r) =
     \begin{cases}
-        \epsilon A (Br^{-p} - r^{-q}) \exp \left[ (r - a)^{-1} \right], 
+        \epsilon A (Br^{-p} - r^{-q}) \exp \left[ (r - a)^{-1} \right],
         & r < a \\
         0 & r \geq a
     \end{cases}
@@ -522,10 +522,10 @@ with the angular interaction $h_{jik} = h(r_{ij}, r_{ik}, \theta_{jik})$ and
 \begin{equation}
     h_{jik} =
     \begin{cases}
-        \epsilon \lambda \exp \left[ \frac{\gamma}{r_{ij} - a}
+        \displaystyle\epsilon \lambda \exp \left[ \frac{\gamma}{r_{ij} - a}
         + \frac{\gamma}{r_{ik} - a} \right]
-        \left(\cos{\theta_{jik}} - \cos{\theta_{jik}^0} \right)^2 & r_{ij} < a \\
-        0 & r_{ij} \geq a
+        \left(\cos{\theta_{jik}} - \cos{\theta_{jik}^0} \right)^2 & r_{ij} < a \\[10pt]
+        \displaystyle 0 & r_{ij} \geq a
     \end{cases}
 \end{equation}
 
