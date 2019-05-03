@@ -1,0 +1,31 @@
+The Atomistic Machine-learning Package is a software package
+written in Python with the intent of bringing machine learning
+to electronic structure calculations. The software is intended
+to interface with ASE and the OpenKIM API for usage
+in LAMMPS. The interface to AMP is written purely in Python
+while computationally intensive tasks are outsourced to Fortran
+modules and the machine learning performed through a Tensorflow
+backend. The Python interface makes AMP flexible and easily
+extended, and this makes the package ideal for prototyping
+and testing both newer and more established machine learning
+methods.
+\par
+A suggested workflow is as follows:
+
+\begin{itemize}
+    \item Use AMP for training, testing and validation
+        of novel descriptors and systems
+    \item Use the AMP calculator for smaller scale
+        simulation in the ASE environment
+    \item Export the network compliant with the OpenKIM
+        API for usage in more mature, large-scale
+        electronic structure calculations such as LAMMPS
+\end{itemize}
+
+Unfortunately, the software is not currently fully compliant
+with the latest version of the OpenKIM API,
+which introduces artifacts in the simulation.
+However, the authors have recently received a large grant
+from the U.S. Department of Energy\footnote{\url{
+https://www.brown.edu/news/2018-09-20/simulations}}, 
+which should facilitate further development.
