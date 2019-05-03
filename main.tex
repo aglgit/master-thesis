@@ -12,6 +12,13 @@
 \usepackage{amssymb}
 \usepackage{braket}
 \usepackage{algorithm,algpseudocode}
+\usepackage[% Interactive references and links, colored.
+  colorlinks  = true,
+  linkcolor   = black,
+  urlcolor    = blue,
+  citecolor   = black,
+  linktocpage = true,
+]{hyperref}
 \graphicspath{ {images/} }
 
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -37,8 +44,8 @@
     tabsize=4,
     backgroundcolor=\color{light-gray},
     xleftmargin=0.7cm,
-    frame=tlbr, 
-    framesep=0.2cm, 
+    frame=tlbr,
+    framesep=0.2cm,
     framerule=0pt,
     frame=single,
     breaklines=true,
@@ -50,23 +57,23 @@
 
 \chapter*{Abstract}
 Abstract goes here \parencite[e.g.][page 300]{einstein}.
- 
+
 \tableofcontents
 
 \chapter{Introduction}
 \input{chapters/introduction}
 
 \part{Theory}
- 
+
 \chapter{Quantum Mechanics}
 \input{chapters/chapter_qm}
 
 \chapter{Manybody Quantum Mechanics}
 \input{chapters/chapter_mbqm}
- 
+
 \chapter{Molecular Dynamics}
 \input{chapters/chapter_md}
- 
+
 \chapter{Machine learning}
 \input{chapters/chapter_ml}
 
@@ -86,7 +93,7 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
 \chapter{Empirical potentials}
 
 \chapter{Ab-Initio Molecular Dynamics}
- 
+
 \chapter{Conclusion}
 \input{chapters/conclusion}
 
@@ -101,4 +108,3 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
 \printbibliography
 
 \end{document}
-
