@@ -1,4 +1,4 @@
-The Atomistic Machine-learning Package is a software package
+The Atomistic Machine-learning Package (AMP) is a software package
 written in Python with the intent of bringing machine learning
 to electronic structure calculations. The software is intended
 to interface with ASE and the OpenKIM API for usage
@@ -29,3 +29,121 @@ However, the authors have recently received a large grant
 from the U.S. Department of Energy\footnote{\url{
 https://www.brown.edu/news/2018-09-20/simulations}}, 
 which should facilitate further development.
+
+\subsection{Theory}
+AMP is intended to interface extensively with ASE,
+and the primary interface to AMP is the AMP calculator.
+The AMP calculator is an ASE compliant calculator
+that accepts cartesian coordinates and outputs energies
+and forces, just as a classical molecular dynamics calculator.
+The primary difference between the AMP calculator
+and ASE calculators such as the Lennard-Jones calculator
+is the train method, which takes a set of \textit{images}, i.e.
+a set of snapshots of atomic configurations labeled
+with the potential energy and forces.
+The calculator is fitted to the images and can subsequently
+used to predict atomic energies and forces from never before seen
+atomic configurations.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{scheme.png}
+\caption{Schematics of how AMP works in atom-centered mode.
+    Reprinted from {article}.}
+\label{fig:scheme}
+\end{figure}
+
+\subsection{Installation}
+AMP requires an installation of
+
+\begin{itemize}
+    \item Python 2.7, 3.4-3.6, 3.6 is recommended
+    \item Numpy 1.9 or newer
+    \item Scipy 0.14 or newer
+    \item ASE
+\end{itemize}
+
+Python installations can be easily obtained through the Anaconda 
+or Miniconda packages\footnote{\url{https://anaconda.org/}},
+or follow the instructions on the Python website\footnote{
+\url{https://www.python.org/}}.
+ASE installation is described in the chapter on ASE.
+Once you have the prerequisites AMP can be installed using pip:
+
+\begin{lstlisting}[language=bash]
+pip install amp-atomistics
+\end{lstlisting}
+
+\subsection{Training example}
+In the previous chapter we showed how to run a molecular dynamics
+simulation using ASE. Here we will show how an AMP calculator
+can be fitted to molecular dynamics data with only minor
+modifications to the code.
+\par
+First we import the prerequisites and define the system:
+
+\begin{lstlisting}[language=python,basicstyle=\small]
+import ase.io
+from ase.lattice.cubic import FaceCenteredCubic
+from ase import units
+from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
+from ase.md.verlet import VelocityVerlet
+
+from amp import AMP
+from amp.descriptor.gaussian import Gaussian
+from amp.model.neuralnetwork import NeuralNetwork
+from amp.model import LossFunction
+
+symbol = "Ar"
+size = (3, 3, 3)
+atoms = FaceCenteredCubic(symbol=symbol, size=size, pbc=True)
+MaxwellBoltzmannDistribution(atoms, 300 * units.kB)
+\end{lstlisting}
+
+The class AMP is the primary object of the AMP package,
+and is implemented through the ASE interface.
+We will use a neural network machine learning model
+and Gaussian descriptors, which are an implementation of the
+Behler-Parrinello method. To implement force training we require
+access to the LossFunction class.
+We will also be using the ASE Input/Output (ase.io) module to generate an
+ASE \textit{Trajectory}, which is an object
+storing the time-evolution of a simulation and usually interpreted
+as a time series of atoms.
+
+\begin{lstlisting}
+traj = ase.io.Trajectory("training.traj", "w")
+calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
+atoms.set_calculator(calc)
+atoms.get_potential_energy()
+atoms.get_forces()
+dyn = VelocityVerlet(atoms, 5 * units.fs)
+traj.write(atoms)
+\end{lstlisting}
+
+In order to write the potential energy and forces to file
+they must first be calculated using the ASE Atoms methods,
+which require a calculator and otherwise raise an error.
+We can then evolve the system forward in time
+and save the atomic configuration every 10 time steps:
+
+\begin{lstlisting}
+for i in range(100):
+    dyn.run(10)
+    atoms.get_potential_energy()
+    atoms.get_forces()
+    traj.write(atoms)
+\end{lstlisting}
+
+After the data has been generated we can train the AMP calculator
+using the Lennard-Jones calculations as input:
+
+\begin{lstlisting}
+calc = Amp(descriptor=Gaussian(),
+           model=NeuralNetwork(hiddenlayers=(10, 10, 10)))
+calc.model.lossfunction = LossFunction(convergence={"energy_rmse": 1E-2,
+                                            "force_rmse": 1E-2})
+calc.train(images="training.traj")
+\end{lstlisting}
+
+\subsection{Descriptors}
