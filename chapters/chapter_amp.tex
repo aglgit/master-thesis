@@ -53,6 +53,17 @@ atomic configurations.
 \label{fig:scheme}
 \end{figure}
 
+AMP provides interfaces for both atom-centered descriptors, as we
+discussed in chapter 6, and image-centered descriptors,
+which are formed from the complete set of cartesian coordinates.
+A set of feature vectors are formed from an image, which are fed
+through a neural network to produce the potential energy.
+The neural network is implemented through a Tensorflow interface,
+which provides a full neural network graph with weights and
+activations. The inputs can be backpropagated through the network
+to produce both weight updates and derivatives with respect to
+the inputs.
+
 \subsection{Installation}
 AMP requires an installation of
 
@@ -141,9 +152,71 @@ using the Lennard-Jones calculations as input:
 \begin{lstlisting}
 calc = Amp(descriptor=Gaussian(),
            model=NeuralNetwork(hiddenlayers=(10, 10, 10)))
-calc.model.lossfunction = LossFunction(convergence={"energy_rmse": 1E-2,
-                                            "force_rmse": 1E-2})
+calc.model.lossfunction = LossFunction(
+           convergence={"energy_rmse": 1E-2,
+                        "force_rmse": 1E-2})
 calc.train(images="training.traj")
 \end{lstlisting}
 
+Once the calculator has been trained, the parameters
+are stored in a file called "amp.amp",
+and can be loaded using the command:
+
+\begin{lstlisting}
+calc = Amp.load("amp.amp")
+\end{lstlisting}
+
+From there the calculator can be used as any other ASE calculator,
+in electronic structure calculations on Atoms objects.
+
 \subsection{Descriptors}
+Currently AMP provides support for three different descriptors.
+Gaussian descriptors implement the Behler-Parrinello method
+of radial and angular symmetry functions. For this descriptor
+the derivatives are also available, which means it can be used
+for computing dynamics. Some physical intuition and chemical knowledge
+is necessary to choose various parameters for the symmetry functions -
+unless you wish to do it by trial and error - but AMP provides
+defaults for multiple chemical species.
+\par
+Zernike descriptors represent a tensor product between spherical
+harmonics and Zernike polynomials. The local atomic environment
+of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
+
+
+$$ \rho_i(\bm{r}_i) = \sum_{j\neq i}^{\text{local}}
+    \eta_j \delta \left( \bm{r}_i - \bm{r}_{ij} \right)
+    f_c \left( \lvert \lvert \bm{r}_{ij} \rvert \rvert \right) , $$
+
+with $f_c(r)$ a cutoff function as described in chapter 6.
+The 3-D Zernike basis set $Z$ is formed by a tensor product between
+the Zernike polynomials basis set $R$ and the spherical harmonics
+$Y$. The Zernike basis set is defined inside and on the surface
+of the $S^2$ unit sphere as:
+
+$$ Z_{nl}^m (r, \theta, \phi) = R_n^l(r) Y_l^m(\theta, \phi) , $$
+
+where $n \geq 0$ is an integer, $l$ is restricted to even $n - l \geq 0$
+and $m$ is an integer such that $\left| m \right| \leq l$.
+Functions defined inside and on the $S^2$ sphere
+can be represented by the 3-D Zernike basis as:
+
+$$ f(r, \theta, \phi) = \sum_{n=0}^{\infty} \sum_l \sum_{m=-l}^l
+    c_{nl}^m Z_{nl}^m (r, \theta, \phi) , $$
+
+with coefficients $c_{nl}^m = \langle Z_{nl}^m, f \rangle$
+computed as projections of $f$ onto the Zernike basis.
+These projections form the basis of the Zernike fingerprint,
+$\bm{G}_i$. Centering the atomic density preserves translation
+invariance of the atomic environment, while the projections
+onto the Zernike basis set preserves rotational invariance.
+Permutation invariance is maintained by keeping the constant values
+$\eta_j$ the same within each chemical species.
+\par
+Bispectrum descriptors are computed much in the same way
+as the Zernike descriptors. The 4-D spherical harmonics
+form a complete, orthogonal basis set for the $S^3$ 4-D unit
+sphere, and the components of the Bispectrum fingerprints
+$\bm{G}_i$ can be computed by projecting the atomic
+density function onto them. For more information
+the reader is encouraged to check out the AMP paper [ref here].
