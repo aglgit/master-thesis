@@ -1,8 +1,128 @@
-Intro.
+In recent years the field of artificial intelligence has
+made great strides, particularly in applications such
+as computer vision, natural language processing,
+speech recognition and user behaviour analytics.
+The exponential growth of available and high quality
+data has brough about a large demand for accurate, efficient
+and semi-automated algorithms, capable of building complicated
+mathematical models and making predictions without human supervision.
+Artificial neural networks in particular, partially inspired by simple
+models of human cognition, have found success in a large variety
+of task, largely owing to their ability to scale efficiently
+as the size of the dataset increases.
+\par
+Data analysis and machine learning have become important parts
+of many subfields of physics, such as observational astronomy,
+condensed matter, biophysics and subatomic particle physics.
+Electronic structure calculations are well suited for the
+adoption of machine learning methods, as large datasets
+can be produced on demand and relatively free of noise which
+obscures patterns.
 
 \subsection{Electronic structure calculations}
+Electronic structure calculations - or numerical solutions
+to the manybody Schr\"{o}dinger equation - are methods of modelling
+physical systems based on the principles of quantum mechanics.
+They involve very few parameters, and the results are found
+to be very accurate compared to laboratory measurements.
+However, exponential scaling greatly limits their applications, 
+and we are typically limited to very small and simple systems.
+Approximations can be made which reduces the scaling
+to polynomial, but this limits the accuracy of the method.
+The most succesful and widely applied methods
+are the Density Functional Theory (DFT) method
+and the Hartree-Fock (HF) family of methods.
+The Hartree-Fock scales nominally as $\mathcal{O}(N^4)$,
+where $N$ is the number of particles in the system
+(i.e. electrons), but typically as $\mathcal{O}(N^3)$.
+The Density Functional Theory method scales in a similar
+manner, but with a larger proportionality term.
+However, Hartree-Fock requires us to keep track of
+the coordinates and spin of every particle, while
+DFT offers similar accuracy and scaling
+and is a function of only three spatial coordinates.
+\par
+Molecular Dynamics (MD) freezes out the degrees of freedom of the
+electrons, and treats the atoms as point particles centered on
+the nucleus using a mean-field approach.
+The dynamics of the particles are treated as Newtonian,
+meaning the position and velocity can be integrated using a
+symplectic integrator such as Verlet integration.
+This treatment allows for systems much larger
+than ab-initio methods, but at the cost of neglecting
+both nuclear and electronic phenomena.
+However, the development of molecular dynamics potentials
+involves a large amount of parameters for any realistic system,
+and determining their functional form is more of an
+art than an exact science.
+\par
+An application of machine learning which has shown some promise
+is the development of molecular dynamics potentials
+or Potential Energy Surfaces (PES). Using for example
+artificial neural networks which are universal function approximators
+the parameters are fully determined from the training data.
+This offers the potential of developing potential energy surfaces
+directly from ab-initio data or from well-developed and tested
+empirical potentials.
 
 \subsection{Atom-centered descriptors}
+For electronic structure calculations the potential energy,
+forces and other derived properties are determined by
+the cartesian coordinates. However, it is not sufficient
+to feed neural networks cartesian coordinates labeled with
+the energy. From physical theory and intuition any molecular dynamics
+potential must respect all of translation, rotation and permutation invariance.
+In order to apply machine learning methods we require a mapping from
+the cartesian coordinates to a 1D feature vector which conserves
+all of these properties.
+\par
+The idea is to approximate the potential energy with a regression model:
+
+\begin{equation}
+\set{\bm{R}} \overset{\text{regression}}{\longrightarrow} 
+E = E\left( \set{\bm{R}} \right) ,
+\end{equation}
+
+where $\set{\bm{R}}$ represents the cartesian coordinates of our system.
+A mapping that satisfies the constraints of translation, rotation
+and permutation invariance we will refer to as a \textit{descriptor}.
+The descriptor is a multidimensional function $\bm{G}$
+that serves as input to the regression method:
+
+\begin{equation}
+\set{\bm{R}} \rightarrow \bm{G} \left(\set{\bm{R}} \right)
+\overset{\text{regression}}{\longrightarrow}
+E = E \left(\bm{G}\left(\set{\bm{R}}\right)\right)
+\end{equation}
+
+Once we have a descriptor and a regression model the dynamics
+can be readily obtained by taking derivatives:
+
+\begin{equation}
+\begin{split}
+    \bm{F}_i &= -\nabla_i E \\
+    &= -\nabla_i
+    E(\bm{G}(\set{\bm{R}})) \\
+    &= -\sum_j \frac{\partial E}
+    {\partial G_j} \frac{\partial G_j}{\partial \bm{R}_i} ,
+\end{split}
+\end{equation}
+
+where we have applied the chain rule to break the gradient
+into derivatives with respect to the network inputs (obtained through
+backpropagation) and derivatives of the network inputs with
+respect to the coordinates of atom $i$.
+The potential energy is typically also broken into
+atomic contributions:
+
+\begin{equation}
+E = \sum_{i=1}^N E_{\text{atom}}\left(\bm{R}_i, \set{\bm{R}} \right) ,
+\end{equation}
+
+where each atomic contribution is determined by the atom's
+local environment. This allows us to treat systems with
+a varying amount of particles without retraining
+the machine learning method each time.
 
 \subsection{Goals}
 
