@@ -1,16 +1,29 @@
+In order to proceed to electronic structure calculations
+we require a solid foundation in the principles of quantum mechanics.
+This chapter will give a brief overview of the basic tenets
+of quantum mechanics and describe briefly how these rules lead
+to the Schr\"{o}dinger equation, which is the equation governning
+all non-relativistic quantum mechanics.
+We will assume an undergraduate understanding of calculus and linear algebra,
+and some knowledge of mechanics is also helpful.
 The discussion in this chapter follows closely the discussion in
-[Sakurai | Modern Quantum Mechanics].
-\newline
-In quantum mechanics, a physical state is represented by a \textit{state vector}
+\parencite[Sakurai][pages 10-76]{sakurai1995modern},
+and the reader is referred here for more details.
+
+\subsection{Kets and bras}
+In quantum mechanics, the state of a quantum system 
+is represented by a \textit{state vector}
 in a complex vector space. Such a vector is called a \textit{ket}, denoted
-by $\ket{\alpha}$. The state ket is postulated to contain all information
-about the physical state. Two kets can be added to produce a new ket:
+by $\ket{\alpha}$, following the notation of Paul Dirac. 
+The state ket is postulated to contain all information
+about the state of the quantum system, such as energy, angular momentum,
+mass and so on. Two kets can be added to produce a new ket:
 $$ \ket{\alpha} + \ket{\beta} = \ket{\gamma} .$$
 They can also be multiplied by a complex number:
 $$ c\ket{\alpha} = \ket{\alpha}c = \ket{\delta} .$$
 If $c$ is zero the resulting ket is called a \textit{null ket}.
 If $c$ is non-zero it is postulated that the resulting ket contains
-the same information.
+the same information as the initial ket.
 \newline
 Observables such as momentum and spin are represented by operators
 acting on the vector space in question. Operators
@@ -22,23 +35,37 @@ $$ A \ket{\alpha} = c\ket{\alpha} = \ket{\delta} .$$
 These kets are known as \textit{eigenkets} and the corresponding
 complex numbers are known as \textit{eigenvalues}.
 The physical state represented by an eigenket is known
-as an \textit{eigenstate}. Any ket
+as an \textit{eigenstate}.
+The eigenvalues of an operator $A$ represent
+the only possible values of a measurement of the observable.
+For observables such as position and momentum, the operators
+will have a continuous spectrum of eigenvalues, whereas
+operators such as energy and spin have a discrete or
+\textit{quantized} spectrum, whereby the term
+\textit{quantum} mechanics is derived.
+The eigenkets of a physical observable form
+a complete orthogonal set, meaning any ket
 can be written as an expansion of eigenkets $\ket{a'}$:
 $$ \ket{\alpha} = \sum_{a'} c_{a'} \ket{a'} ,$$
-where $c_{a'}$ is a complex coefficient. In principle
-there are infinitely many linearly indepedent eigenkets,
+where $c_{a'}$ is a complex coefficient.
+In principle there are infinitely many linearly indepedent eigenkets,
 depending on the dimensionality of the vector space.
-The uniqueness of the expansion can be proven
-with orthonogality of the eigenkets, which we will simply postulate.
 \par
 A \textit{bra space} is a vector space "dual" to the ket space.
 We postulate that for every ket $\ket{\alpha}$ there exists a bra
 $\bra{\alpha}$. The bra space is spanned by eigenbras $\bra{a'}$
 corresponding to the eigenkets $\ket{a'}$. The ket and bra spaces
 have a dual correspondence:
-$$ \ket{\alpha} \leftrightarrow \bra{\alpha} $$
-$$ \ket{\alpha '}, \ket{\alpha ''},\dots \leftrightarrow \bra{\alpha '}, \bra{\alpha ''},\dots $$
-$$ \ket{\alpha} + \ket{\beta} \leftrightarrow \bra{\alpha} + \bra{\beta} .$$
+
+\begin{equation}
+\begin{split}
+\ket{\alpha} &\leftrightarrow \bra{\alpha} \\
+\ket{\alpha '}, \ket{\alpha ''},\dots &\leftrightarrow \bra{\alpha '}, 
+    \bra{\alpha ''},\dots \\
+\ket{\alpha} + \ket{\beta} &\leftrightarrow \bra{\alpha} + \bra{\beta} .
+\end{split}
+\end{equation}
+
 The bra dual to $c \ket{\alpha}$ is postulated to be $c^* \ket{\alpha}$,
 and more generally:
 $$ c_{\alpha} \ket{\alpha} + c_{\beta} \ket{\beta} \leftrightarrow
@@ -47,7 +74,7 @@ The \textit{inner product} of a bra and a ket is a complex number
 written as a bra on the left and a ket on the right.
 It has the fundamental property:
 $$ \braket{\alpha | \beta} = \braket{\beta | \alpha}^* ,$$
-in other words they are complex conjugates.
+meaning they are complex conjugates.
 For this to satisfy the requirements of an inner product we must have
 $$ \braket{\alpha | \alpha} \geq 0 ,$$
 with equality if and only if $\ket{\alpha}$ is a null ket.
