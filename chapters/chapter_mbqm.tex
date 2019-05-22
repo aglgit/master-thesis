@@ -241,23 +241,76 @@ F[\Psi] &= E_{HF}[\Psi] - \sum_i \epsilon_i \braket{i | j} \\
 
 with Lagrange multipliers $\epsilon_i$, where we have
 exploited the orthogonality of the basis functions to
-introduce the coefficients.
+introduce the coefficients. The Lagrange multipliers
+are identified with the energy eigenvalues
+of the single-particle orbitals.
 Minimizing with respect to $C_{i\alpha}^*$ yields
-the equation:
+the eigenvalue equation:
 
 \begin{equation}
-\sum_{\beta} \left\{ \braket{\alpha | \hat{h}_1 | \beta} 
-+ \sum_j^N \sum_{\delta \eta} C_{j\delta}^* C_{j\eta} 
-\braket{\alpha \delta | \hat{v} | \beta \eta} \right\} 
-C_{i\beta} = \epsilon_i C_{i\alpha}
+\sum_{\beta} \hat{h}_{\alpha\beta}^{HF} C_{i\beta}
+= \epsilon_i C_{i\alpha} ,
 \end{equation}
 
-\subsection{Density functional theory}
-Density functional theory is a method for
+where we have introduced the Fock matrix elements:
+
+\begin{equation}
+\hat{h}_{\alpha\beta}^{HF} = 
+\braket{\alpha | \hat{h}_1 | \beta}
++ \sum_{j}^N \sum_{\delta\eta} C_{j\delta}^* C_{j\eta}
+\braket{\alpha\delta | \hat{v} | \beta\eta}_{AS} .
+\end{equation}
+
+The single-particle integrals are usually tabulated
+in advance, and depend upon the choice of basis functions.
+Often the single-particle integrals $\braket{\alpha | \hat{h}_1 | \beta}$
+have analytical expressions, while the antisymmetric matrix elements
+must be evaluated using numerical integration.
+The eigenvalue problem can be written more compactly as:
+
+\begin{equation}
+FC = C\epsilon ,
+\end{equation}
+
+where $F$ is the Fock matrix defined above, $C$ is the matrix
+of coefficients and $\epsilon$ is now
+a vector of single-particle energies.
+The Hartree-Fock equations are solved in an iterative way,
+starting with an initial guess for the coefficients $C$.
+Solving the eigenvalue problem yields new eigenvectors
+and eigenvalues.
+The process continues until the change in eigenvalues
+is within some tolerance, for example:
+
+\begin{equation}
+\frac{\sum_p \left| \epsilon_i^n - \epsilon_i^{n-1} \right|}
+{m} \leq \lambda ,
+\end{equation}
+
+where $p$ runs over all the single-particle energies and
+$m$ is the number of single-particle states.
+
+\subsection{Density-functional theory}
+Density-functional theory (DFT) is a method for
 investigating the electronic structure of a manybody system
 by finding approximations to the ground state
-density $\rho(\bm{r})$. Our starting point
-is again the electronic Hamiltonian
+density $n(\bm{r})$.
+It holds many similarities to the Hartree-Fock method,
+since the usual method of obtaining the ground-state density
+involves constructing a single-determinant wave function
+from a set of orthonormal single-particle states,
+and expanding these single-particle states in terms
+of a known basis. However, DFT methods
+offer the benefit of dealing with a function of only
+three spatial coordinates, while Hartree-Fock methods
+require you to keep track of the spatial and spin coordinates
+of every single-particle state.
+\par
+This section is a brief summary of the material covered
+in the \parencite[Toulouse][pages 1-12]{toulouse2017}
+lecture notes from the Université Pierre et Marie Curie,
+which the reader is encouraged to check out for more detail.
+Our starting point is again the electronic Hamiltonian:
 
 \begin{equation}
     \hat{H} = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
@@ -270,77 +323,71 @@ is in principle a function of $4N$ coordinates $\bm{x}_i = (\bm{r}_i, \sigma_i)
 , \ i=1,\dots,N$
 where $N$ is the number of electrons.
 Once we have obtained a solution to the Schr\"{o}dinger equation
-we can obtain the one-electron density $\rho(\bm{r})$ as:
+we can obtain the one-electron density $n(\bm{r})$ as:
 
 \begin{equation}
-    \rho(\bm{r}) = \int \left| \Psi(\bm{r}, \sigma, \bm{x}_2,\dots,\bm{x}_N)
+    n(\bm{r}) = N \int \left| \Psi(\bm{r}, \sigma, \bm{x}_2,\dots,\bm{x}_N)
     \right|^2 d\sigma d\bm{x}_2 \dots d\bm{x}_N .
 \end{equation}
 
 Since the wavefunction is a unique functional of the Hamiltonian
 $\hat{H}$, the one-electron density is uniquely determined
-by the Hamiltonian. Hohenberg and Kohn showed in 1964 in their
-first theorem that this mapping
+by the Hamiltonian. Hohenberg and Kohn showed in 1964
+\cite{hohenberg1964inhomogeneous} in their first theorem that this mapping
 can be inverted, i.e. that the one-electron density uniquely
 determines the Hamiltonian of our system (up to an arbitrary constant).
 Taken altogether, this means that all properties of our system, including
 the Hamiltonian and the manybody wavefunction are fixed
 by a one-electron density carrying a dependency on only 3 spatial coordinates.
-\par
-The electronic Hamiltonian can be rewritten as
+The electronic Hamiltonian can be rewritten as:
 
 $$ \hat{H} = \hat{F} + \hat{V}_{ne} , $$
 
 where $\hat{F}$ is an operator consisting of the kinetic energy
 and electron-electron operators and $\hat{V}_{ne}$
 is the electron-nuclei interaction.
-\par
 For their second theorem, Hohenberg and Kohn defined
-the universal density functional
+the universal density-functional:
 
 $$ F[n] = \braket{\Psi[n] | \hat{F} | \Psi[n]} , $$
 
-and the total electronic energy functional
+and the total electronic energy functional:
 
 $$ E[n] = F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} . $$
 
-Hohenberg and Kohn showed the energy functional
-with respect to $N$-electron densitites $n(\bm{r})$
+Hohenberg and Kohn showed that the energy functional
+with respect to one-electron densitites $n(\bm{r})$
 is an upper bound to the ground state energy:
 
 $$ E_0 \leq F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} , $$
 
 with equality if and only if the one-electron density
-is the one-electron density corresponding to our system $\hat{H}$.
+is the one-electron density corresponding to the Hamiltonian $\hat{H}$.
 This suggests a variational procedure, wherein
-we minimize the total electronic energy functional
+we vary the total electronic energy functional
 until we reach an energy minimum:
 
 $$ E_{min} = \underset{n}{\min} \ E[n] , $$
 
 which serves as our best estimate for the ground state
-one-electron density $\rho_0(\bm{r})$.
-\par
-Levy and Lieb proposed to redefine the universal density functional
+one-electron density $n(\bm{r})$.
+Levy and Lieb \cite{levy1979universal, perdew1982density, perdew1983physical}
+proposed to redefine the universal density-functional
 in terms of normalized antisymmetric wavefunctions $\Psi$
-which yield a fixed density $\rho$:
+which yield a fixed density $n$:
 
-$$ F[n] = \underset{\min}{\Psi \rightarrow \rho}
+$$ F[n] = \underset{\Psi \rightarrow n}{\min}
     \braket{\Psi | \hat{F} | \Psi}
     = \braket{\Psi[n] | \hat{F} | \Psi[n]} , $$
 
 wherein the minima search is performed over wavefunctions
-which yield the fixed density $\rho$.
-A search is then performed over densitities $\rho$
+which yield the fixed density $n$.
+A search is then performed over densitities $n$
 until we reach an energy minimum. This method
 is known as the \textit{constrained search formulation}.
-However, we still do not have an explicit expression
-for the universal density functional $F[n]$, and
-direct approximations have proved difficult.
-\par
-Kohn and Sham proposed to decompose $F[n]$ as
+Kohn and Sham proposed to decompose $F[n]$ as:
 
-$$ F[n] = T_s[n] + E_{Hxc}[n] , $$
+$$ F[n] = T_s[n] + E_{\text{Hxc}}[n] , $$
 
 where $T_s[n]$ is a non-interacting kinetic-energy functional
 which can be defined through the constrained-search formulation:
@@ -351,11 +398,11 @@ $$ T_s[n] = \underset{\Phi \rightarrow n}{\min}
 
 wherein the minima search is now performed over normalized
 single-determinant wavefunctions $\Phi$ which yield
-the fixed density $\rho$. The functional
-$E_{Hxc}[n]$ is known as the Hartree-exchange-correlation
-functional. The variational procedure is then
+the fixed density $n$. The functional
+$E_{\text{Hxc}}[n]$ is known as the Hartree-exchange-correlation
+functional. The variational procedure is now
 performed over single-determinant wavefunctions
-which yield a fixed density $\rho$ and then
+which yield a fixed density $n$ and then
 minimized over densities:
 
 \begin{equation}
@@ -366,10 +413,10 @@ minimized over densities:
         &= \underset{n}{\min} \
             \underset{\Phi \rightarrow n}{\min} \set{
             \braket{\Phi | \hat{T} + \hat{V}_{ne} | \Phi}
-            + E_{Hxc}[n_{\Phi}]} \\
+            + E_{\text{Hxc}}[n_{\Phi}]} \\
         &=  \underset{\Phi}{\min}
             \set{ \braket{\Psi|\hat{T} + \hat{V}_{ne}|\Phi}
-            + E_{Hxc}[n_{\Phi}]} .
+            + E_{\text{Hxc}}[n_{\Phi}]} .
     \end{split}
 \end{equation}
 
@@ -381,7 +428,7 @@ orbitals $\phi_i(\bm{r})$ after integrating over the spin variables:
 
 \begin{equation}
     E = \sum_i \int \phi_i^* (\bm{r}) (-\frac{1}{2} \nabla^2 + \hat{v}_{ne})
-        \phi_i(\bm{r}) d\bm{r} + E_{Hxc}[n] ,
+        \phi_i(\bm{r}) d\bm{r} + E_{\text{Hxc}}[n] ,
 \end{equation}
 
 with the density expressed as
