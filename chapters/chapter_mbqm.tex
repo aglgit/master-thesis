@@ -211,7 +211,7 @@ In order to derive the Hartree-Fock equations
 we perform a linear expansion of the spin orbitals
 $\chi$ in terms of a fixed orthogonal basis $\phi$:
 
-$$ \chi_i = \sum_{\lambda} C_{i\lambda} \phi_{\lambda} , $$
+$$ \chi_i = \sum_{\nu} C_{i\nu} \phi_{\nu} , $$
 
 in principle an infinite sum, but in practice truncated.
 This basis is usually obtained as the eigenfunctions of
@@ -284,7 +284,7 @@ is within some tolerance, for example:
 
 \begin{equation}
 \frac{\sum_p \left| \epsilon_i^n - \epsilon_i^{n-1} \right|}
-{m} \leq \lambda ,
+{m} \leq \nu ,
 \end{equation}
 
 where $p$ runs over all the single-particle energies and
@@ -408,49 +408,135 @@ minimized over densities:
 \begin{equation}
     \begin{split}
         E_0
-        &= \underset{n}{\min} \set{
-            F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} } \\
-        &= \underset{n}{\min} \
-            \underset{\Phi \rightarrow n}{\min} \set{
-            \braket{\Phi | \hat{T} + \hat{V}_{ne} | \Phi}
-            + E_{\text{Hxc}}[n_{\Phi}]} \\
+        &= \underset{n}{\min} \left\{
+            F[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} \right\} \\
+        &= \underset{n}{\min} \left\{
+            \underset{\Phi \rightarrow n}{\min}
+            \braket{\Phi | \hat{T} | \Phi}
+            + E_{\text{Hxc}}[n] + \int \hat{V}_{ne} n(\bm{r}) d\bm{r} \right\} \\
+        &= \underset{n}{\min} \ \underset{\Phi \rightarrow n}{\min}
+        \left\{ \braket{\Phi | \hat{T} + \hat{V}_{ne} | \Phi}
+        + E_{\text{Hxc}}[n_{\Phi}]
+        \right\} \\
         &=  \underset{\Phi}{\min}
-            \set{ \braket{\Psi|\hat{T} + \hat{V}_{ne}|\Phi}
-            + E_{\text{Hxc}}[n_{\Phi}]} .
+            \left\{ \braket{\Psi|\hat{T} + \hat{V}_{ne}|\Phi}
+            + E_{\text{Hxc}}[n_{\Phi}]\right\}.
     \end{split}
 \end{equation}
 
+These equations now involve only a single-determinant wave function,
+which is a large simplification over a variational method involving multi-determinant
+wave functions. Now a major part of the kinetic energy contribution
+can be treated through the single-determinant wave function,
+while only the Hartree-Exchange correlation needs to be approximated
+as a functional of the density.
 As with the Hartree-Fock method, the single determinant
 wavefunctions are constructed from an orthonormal basis of spin orbitals
-$\chi_i (\bm{x}), \ i=1,\dots,N$ with $\bm{x} = (\bm{r}, \sigma)$.
+$\chi_i (\bm{x}), \ i=1,\dots,N$ with spin-spatial
+coordinates $\bm{x}_i = (\bm{r}_i, \sigma_i)$.
 The total electronic energy can be expressed in terms of spatial
-orbitals $\phi_i(\bm{r})$ after integrating over the spin variables:
+orbitals $\phi_i(\bm{r})$ after integrating out the spin variables:
 
 \begin{equation}
-    E = \sum_i \int \phi_i^* (\bm{r}) (-\frac{1}{2} \nabla^2 + \hat{v}_{ne})
+    E[\set{\phi_i}] 
+    = \sum_i \int \phi_i^* (\bm{r}) (-\frac{1}{2} \nabla^2 + \hat{V}_{ne})
         \phi_i(\bm{r}) d\bm{r} + E_{\text{Hxc}}[n] ,
 \end{equation}
 
-with the density expressed as
+with the density expressed as:
 
 \begin{equation}
     n(\bm{r}) = \sum_i \left| \phi_i(\bm{r}) \right|^2 .
 \end{equation}
 
-With the constraint that the spatial orbitals be normalized
-we obtain the following Lagrangian:
+The energy minimum is obtained using the method of Lagrangian multipliers,
+with the constraint that the spatial orbitals be normalized
+we introduce the following Lagrangian:
 
 $$ \mathcal{L} [\set{\phi_i}]
     = E[\set{\phi_i}] - \sum_i \epsilon_i
     \left( \int \phi_i^* (\bm{r}) \phi_i(\bm{r}) d\bm{r} - 1 \right) , $$
 
 with $\epsilon_i$ the associated Lagrangian multiplier.
-We find the energy minimum where the Lagrangian is stationary:
+The energy minimum is where the Lagrangian is stationary
+with respect to the spatial orbitals:
 
-$$ \frac{\partial \mathcal{L}}{\partial \phi_i^* (\bm{r})} = 0 . $$
+$$ \frac{\partial \mathcal{L}}{\partial \phi_i^* (\bm{r})} = 0 , $$
 
-The spatial orbitals are expanded as a linear combination
+which gives us the functional derivative:
+
+$$ \left( -\frac{1}{2} \nabla^2 + \hat{V}_{ne} \right) \phi_i(\bm{r})
+    + \frac{\partial E_{\text{Hxc}}[n]}{\partial \phi_i^*} 
+    = \epsilon_i \phi_i(\bm{r}) . $$
+
+The second term can be expressed through the chain rule as:
+
+$$ \frac{\partial E_{\text{Hxc}}[n]}{\partial \phi_i^*} =
+    \int \frac{\partial E_{\text{Hxc}}}{\partial n(\bm{r}')}
+    \frac{\partial n(\bm{r}')}{\partial \phi_i^*(\bm{r})} d\bm{r}' .
+$$
+
+The second factor can be expressed as:
+
+$$ \frac{\partial n(\bm{r}')}{\partial \phi_i^*(\bm{r})}
+    = \phi_i(\bm{r}) \delta (\bm{r} - \bm{r}') .
+$$
+
+Defining the Hartree-exchange-correlation potential as the functional
+derivative:
+
+$$ \hat{V}_{\text{Hxc}} = \frac{\partial E_{\text{Hxc}}}{\partial
+    \phi_i^*(\bm{r})} , $$
+
+we arrive at the Kohn-Sham eigenvalue equations:
+
+$$ \left( -\frac{1}{2} \nabla^2 + \hat{V}_{ne} + \hat{V}_{\text{Hxc}}
+    \right) \phi_i(\bm{r}) = \epsilon_i \phi_i (\bm{r}) . $$
+
+The eigenfunctions satisfying these equations are known as the
+Kohn-Sham orbitals, and are eigenfunctions of the Kohn-Sham
+one-electron Hamiltonian:
+
+$$ \hat{h}_{KS} = - \frac{1}{2} \nabla^2 + \hat{V}_{KS} , $$
+
+with the Kohn-Sham potential defined as:
+
+$$ \hat{V}_{KS} = \hat{V}_{ne} + \hat{V}_{\text{Hxc}} . $$
+
+The Kohn-Sham one-electron Hamiltonian defines a system of $N$
+non-interacting electrons in an effective external potential
+$\hat{V}_{KS}$ ensuring that the one-electron density
+is the same as that of the ground-state one-electron density
+of a system of interacting electrons.
+\par
+For practical calculation the 
+spatial orbitals are expanded as a linear combination
 of a known basis, such as hydrogen-like functions
 or Gaussian-type orbitals:
 
-$$ \phi_i(\bm{r}) = \sum_{\lambda} C_{\lambda i} \chi_i (\bm{r}) . $$
+$$ \phi_i(\bm{r}) = \sum_{\nu} C_{\nu i} \chi_i (\bm{r}) . $$
+
+We insert these into the Kohn-Sham equations, multiply
+by $\chi_i^*(\bm{r})$ and integrate over $\bm{r}$ to arrive
+at the eigenvalue equations:
+
+$$ \sum_{\nu} F_{\mu\nu} C_{\nu i} =
+    \epsilon_i \sum_{\nu} S_{\mu\nu} C_{\nu i} , $$
+
+where $F_{\mu\nu} = \int \chi_{\mu}^*(\bm{r}) \hat{h}_{KS}
+\chi_{\nu}^*(\bm{r}) d\bm{r} $ are the elements of the Kohn-Sham
+Fock matrix and $S_{\mu\nu} = \int \chi_{\mu}^*(\bm{r}) \chi_{\nu}
+(\bm{r}) d\bm{r}$ are the elements of the overlap matrix
+of basis elements.
+These equations can be written more compactly as the matrix equation:
+
+$$ FC = SC\epsilon , $$
+
+where $\epsilon$ is a vector containing the energy eigenvalues
+of the basis elements. The Fock matrix is further decomposed into:
+
+$$ F_{\mu\nu} = H_{\mu\nu} + J_{\mu\nu} + V_{\text{XC}, \mu\nu} $$
+
+tbc...
+
+

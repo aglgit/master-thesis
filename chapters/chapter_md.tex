@@ -1,4 +1,31 @@
-Our starting point for molecular dynamics is
+The ab-initio methods discussed in the previous chapter
+are appropriate for systems with a relatively small amount of electrons,
+but suffer from cubic scaling as the number of electrons grows.
+If we would like to study systems of molecules, nanoscale structures
+or calculate transport coefficients we have to make further approximations
+limiting the degrees of freedom of our system.
+Instead of solving Schr\"{o}dinger's equation to obtain
+the wave function, classical approximations are made to
+treat the atoms as point particles, with their interactions
+governed by a classical potential. This eliminates both the nucleonic
+and electronic degrees of freedom and allows for much larger systems
+to be simulated, though at the cost of quantum effects
+exhibited by the electrons. In addition, the construction
+of molecular dynamics potentials involves guessing at a functional
+form, and typically a large amount of parameters to be determined
+from experiments and simulations.
+In this chapter we will show how quantum mechanics
+and classical mechanics can be bridged semi-rigorously,
+and also give an introduction to central concepts of molecular dynamics,
+such as initialization, integration and construction and evaluation
+of potentials.
+
+\subsection{From quantum mechanics to molecular dynamics}
+We will follow the route described in the lecture notes
+\parencite[Marx, Dominik and Hutter, J\"{o}rg][pages 1-10]{marx2000}
+given at the Winterschool 2000 at the John von Neuman Institute
+for Computing, J\"{o}lich.
+Our starting point is
 the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
 
 \begin{equation}
@@ -6,7 +33,7 @@ the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
         \hat{H}
         &= -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
         -\sum_{a=1}^A \frac{1}{M_a} \nabla_a^2
-        -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{r_{ia}} \\
+        -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{R_{ia}} \\
         &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
         + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}}
     \end{split} .
@@ -17,51 +44,45 @@ Schrodinger equation:
 
 $$ i\hbar \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
 
-\subsection{From quantum mechanics to molecular dynamics}
-
-We will follow the route of Tully described in
-[https://core.ac.uk/download/pdf/35009882.pdf?repositoryId=810](here).
 The wavefunction is separated in terms of the electronic and nuclear
-coordinates with an ansatz
+coordinates with the ansatz:
 
-$$ \Psi(\set{\bm{r}_i}, \set{\bm{R}_I}, t)
-    \approx \Psi(\set{\bm{r}_i}) \chi(\set{\bm{R}_I})
+$$ \Psi \left(\set{\bm{r}_i}, \set{\bm{R}_a}, t \right)
+    \approx \Phi(\set{\bm{r}_i}) \chi(\set{\bm{R}_a})
     \exp \left[ \frac{i}{\hbar} \int_{t_0}^t
-    dt^{'} \hat{E}_e(t^{'}) \right] ,
+    dt' E_e(t') \right] ,
 $$
 
 with the electronic and nuclear wavefunctions normalized to unity
 at every instance of time. A phase factor is introduced to make
 the equations look nice:
 
-$$ \hat{E}_e = \int d\bm{r} d\bm{R} \Psi* \chi* \hat{H} \Psi \chi , $$
+$$ E_e = \int d\bm{r} d\bm{R} \Phi^* \chi^* \hat{H} \Phi \chi , $$
 
 where the integration occurs over all spatial coordinates
-$\set{\bm{r}_i}, \set{\bm{R}_I}$. This is a single determinant
+$\set{\bm{r}_i}, \set{\bm{R}_a}$. This is a single determinant
 ansatz which must lead to a mean-field description of the dynamics.
 This ansatz differs from the Born-Oppenheimer approximation:
 
-$$ \Psi_{BO} = \sum_{k=0}^{\infty} \Psi_k \chi_k , $$
+$$ \Psi_{BO} = \sum_{k=0}^{\infty} \Phi_k \chi_k , $$
 
 even in the single-determinant limit where only
 a single state $k$ is included in the expansion.
-\par
 Inserting this ansatz into the Schrodinger equation
 reveals the following set of equations:
 
-$$ i\hbar \frac{\partial \Psi}{\partial t}
-    = -\sum_i \frac{\hbar^2}{2m_e} \nabla_i^2 \Psi
-    + \set{ \int d\bm{R} \chi^* V_{ne} \chi } \Psi , $$
+$$ i\hbar \frac{\partial \Phi}{\partial t}
+    = -\sum_i \frac{\hbar^2}{2m_e} \nabla_i^2 \Phi
+    + \left\{ \int d\bm{R} \chi^* V_{ne} \chi \right\} \Phi , $$
 
 $$ i\hbar \frac{\partial \chi}{\partial t}
-    = -\sum_i \frac{\hbar^2}{2m_e} \nabla_I^2 \chi
+    = -\sum_i \frac{\hbar^2}{2M_a} \nabla_I^2 \chi
     + \set{ \int d\bm{r} \Psi^* \hat{H} \Psi } \chi . $$
 
 This set of equations is the basis for the time-dependent
 self-consistent field (TDSCF) method, wherein particles move
 in time-dependent effective potentials obtained from quantum
 mechanical expectation values.
-\par
 In the framework of classical molecular dynamics
 we approximate the nuclei as classical point particles.
 This can be done be rewriting the nuclear wavefunction as
