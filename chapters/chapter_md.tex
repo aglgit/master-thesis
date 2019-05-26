@@ -32,7 +32,7 @@ the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
     \begin{split}
         \hat{H}
         &= -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
-        -\sum_{a=1}^A \frac{1}{M_a} \nabla_a^2
+        -\sum_{a=1}^A \frac{1}{2M_a} \nabla_a^2
         -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{R_{ia}} \\
         &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
         + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}}
@@ -42,14 +42,14 @@ the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
 We want to find solutions to the time-dependent non-relativistic
 Schrodinger equation:
 
-$$ i\hbar \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
+$$ i \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
 
 The wavefunction is separated in terms of the electronic and nuclear
 coordinates with the ansatz:
 
 $$ \Psi \left(\set{\bm{r}_i}, \set{\bm{R}_a}, t \right)
     \approx \Phi(\set{\bm{r}_i}) \chi(\set{\bm{R}_a})
-    \exp \left[ \frac{i}{\hbar} \int_{t_0}^t
+    \exp \left[ i \int_{t_0}^t
     dt' E_e(t') \right] ,
 $$
 
@@ -76,8 +76,8 @@ $$ i\hbar \frac{\partial \Phi}{\partial t}
     + \left\{ \int d\bm{R} \chi^* V_{ne} \chi \right\} \Phi , $$
 
 $$ i\hbar \frac{\partial \chi}{\partial t}
-    = -\sum_i \frac{\hbar^2}{2M_a} \nabla_I^2 \chi
-    + \set{ \int d\bm{r} \Psi^* \hat{H} \Psi } \chi . $$
+    = -\sum_i \frac{\hbar^2}{2M_a} \nabla_a^2 \chi
+    + \left\{ \int d\bm{r} \Phi^* \hat{H} \Phi \right\} \chi . $$
 
 This set of equations is the basis for the time-dependent
 self-consistent field (TDSCF) method, wherein particles move
@@ -211,13 +211,18 @@ This renders the problem of computing dynamics purely classical:
 $$ M_I \frac{d^2 R_I}{dt^2} = -\nabla_I V_e^{\text{approx}} . $$
 
 \subsection{Molecular dynamics simulations}
+The theory in this and the following sections
+is based partly on \parencite[Frenkel, Daan
+and Smit, Berend][pages 63-107]{frenkel2001understanding},
+which explains the physics behind many popular methods 
+for computer calculation and simulation.
 Classical molecular dynamics is a method
 for computing equilibrium and transport properties
 of manybody systems obeying classical laws of motion.
 While a large number of simplifications have to be made
 in order to describe quantum mechanical systems classically,
 the approximation works surprisingly well
-except for atoms which are quite light ($He, H^2$)
+except for atoms which are quite light ($\text{He}, \text{H}^2$)
 or for atoms with a vibrational energy
 which is substantially larger than the thermal energy
 of the system ($h\nu > k_B T$).
@@ -302,8 +307,8 @@ lists. Using neighbor lists, each atom carries a list of neighbors
 within a cut-off radius $r_{cut}$ and interactions
 beyond this cut-off are neglected.
 This reduces the time-complexity to merely
-$\mathcal{O}(cN) = \mathcal{O}(N_{r_c} \cdot N)$,
-where $N_{r_c}$ is the average number of neighbors in the system
+$\mathcal{O}(N)$, with a proportionality constant
+dependent upon the average number of neighbors in the system
 within a cutoff $r_c$. For a large system this can be a
 huge reduction in complexity, but the choice of cut-off
 can obviously massively impact the dynamics of the system.
@@ -420,8 +425,8 @@ in equilibrium.
 \par
 The most common thermostat used is the Nosé-Hoover thermostat,
 which is one of the most accurate and efficient algorithms
-for achieving realistic constant-temperature conditions.
-[cite: \url{https://engineering.ucsb.edu/~shell/che210d/Advanced_molecular_dynamics.pdf}]
+for achieving realistic constant-temperature conditions
+(see the lecture notes \parencite[Shell, M. Scott]{che210D2012}).
 Nosé introduced an extended Hamiltonian with two additional degrees of freedom:
 
 \begin{itemize}
@@ -508,9 +513,9 @@ While the Lennard-Jones potential is very simple, requiring only two parameters
 to be determined, it has shown to be effective at modelling noble gas atoms
 and is commonly used as a building block for more complicated interactions.
 \par
-[cite \url{http://www.pages.drexel.edu/~cfa22/msim/node41.html}]
 Another simple and common potential is the Stillinger-Weber potential,
-which is meant to model the interactions between silicon atoms.
+which is meant to model the interactions between silicon atoms
+(see the lecture notes \parencite[Abrams, Cameron]{che8002013}).
 Silicon forms tetrahedral bonded structures as well as pairwise interactions
 which means the potential includes a twobody and a threebody interaction:
 

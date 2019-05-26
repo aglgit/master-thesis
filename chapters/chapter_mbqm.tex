@@ -432,7 +432,7 @@ while only the Hartree-Exchange correlation needs to be approximated
 as a functional of the density.
 As with the Hartree-Fock method, the single determinant
 wavefunctions are constructed from an orthonormal basis of spin orbitals
-$\chi_i (\bm{x}), \ i=1,\dots,N$ with spin-spatial
+$\chi_i (\bm{x}), \ i=1,\dots,M$ with spin-spatial
 coordinates $\bm{x}_i = (\bm{r}_i, \sigma_i)$.
 The total electronic energy can be expressed in terms of spatial
 orbitals $\phi_i(\bm{r})$ after integrating out the spin variables:
@@ -508,7 +508,29 @@ non-interacting electrons in an effective external potential
 $\hat{V}_{KS}$ ensuring that the one-electron density
 is the same as that of the ground-state one-electron density
 of a system of interacting electrons.
-\par
+The Hartree-exchange-correlation potential is further
+decomposed as:
+
+\begin{equation}
+\hat{V}_{\text{Hxc}} = \hat{V}_{\text{H}} + \hat{V}_{\text{XC}} ,
+\end{equation}
+
+where $\hat{V}_{\text{H}}$ is the Hartree potential and
+$\hat{V}_{\text{XC}}$ is the exchange-correlation potential.
+The Hartree potential can be expressed through the density:
+
+\begin{equation}
+\hat{V}_{\text{H}} = \int \frac{n(\bm{r})}{\left| \bm{r} -
+    \bm{r}' \right|} d\bm{r}' .
+\end{equation}
+
+The exchange-correlation potential is decomposed
+into the exchange potential and the correlation potential:
+
+\begin{equation}
+\hat{V}_{\text{XC}} = \hat{V}_{\text{X}} + \hat{V}_{\text{C}} .
+\end{equation}
+
 For practical calculation the 
 spatial orbitals are expanded as a linear combination
 of a known basis, such as hydrogen-like functions
@@ -528,15 +550,75 @@ where $F_{\mu\nu} = \int \chi_{\mu}^*(\bm{r}) \hat{h}_{KS}
 Fock matrix and $S_{\mu\nu} = \int \chi_{\mu}^*(\bm{r}) \chi_{\nu}
 (\bm{r}) d\bm{r}$ are the elements of the overlap matrix
 of basis elements.
-These equations can be written more compactly as the matrix equation:
+The Fock matrix is decomposed into its constituent parts:
+
+\begin{equation}
+F_{\mu\nu} = H_{\mu\nu} \ J_{\mu\nu} + V_{XC,\mu\nu} ,
+\end{equation}
+
+where $H_{\mu\nu}$ are the one-electron integrals:
+
+\begin{equation}
+H_{\mu\nu} = \int \chi_{\mu}^*(\bm{r})
+    \left( -\frac{1}{2} \nabla^2 + \hat{V}_{ne}(\bm{r}) \right)
+    \chi_{\mu}(\bm{r}) d\bm{r} ,
+\end{equation}
+
+$J_{\mu\nu}$ is the Hartree-potential contribution:
+
+\begin{equation}
+    \sum_{\lambda} \sum_{\gamma} P_{\lambda\gamma}
+    \left(\chi_{\mu}\chi_{\nu} | \chi_{\lambda}\chi_{\gamma}\right) ,
+\end{equation}
+
+where we have defined the density matrix $P_{\lambda\gamma}$ as:
+
+\begin{equation}
+P_{\gamma\lambda} = \sum_i C_{\gamma i} C_{\lambda i}^* ,
+\end{equation}
+
+and the two-electron integrals are defined as:
+
+\begin{equation}
+\left(\chi_{\mu}\chi_{\nu} | \chi_{\lambda}\chi_{\gamma}\right)
+    = \int \int \frac{\chi_{\mu}^*(\bm{r}_1) \chi_{\nu}
+    \chi_{\lambda}(\bm{r}_2) \chi_{\gamma}}
+    {\left| \bm{r}_1 - \bm{r}_2 \right|}
+    d\bm{r}_1 d\bm{r}_2 .
+\end{equation}
+
+and finally the exchange-correlation potential contribution:
+
+\begin{equation}
+\hat{V}_{\text{XC},\mu\nu} = \int \chi_{\mu}^*(\bm{r})
+    \hat{V}_{\text{XC}}(\bm{r}) \chi_{\mu}(\bm{r}) d\bm{r} .
+\end{equation}
+
+The Kohn-Sham equations can be written more compactly as the matrix equation:
 
 $$ FC = SC\epsilon , $$
 
 where $\epsilon$ is a vector containing the energy eigenvalues
-of the basis elements. The Fock matrix is further decomposed into:
+of the basis elements. The equations are then solved
+iteratively through diagonalization to obtain
+the matrix of coefficients $C$. Once we have obtained the 
+coefficients the density $n(\bm{r})$ is calculated as:
 
-$$ F_{\mu\nu} = H_{\mu\nu} + J_{\mu\nu} + V_{\text{XC}, \mu\nu} $$
+$$ n(\bm{r}) = \sum_{\gamma} \sum_{\lambda} P_{\gamma\lambda}
+    \chi_{\gamma}(\bm{r}) \chi_{\lambda}^*(\bm{r}) , $$
 
-tbc...
+where the summation is over the number of basis functions $M$.
+The total electronic energy can now be expressed
+as:
 
+\begin{equation}
+E = \sum_{\mu} \sum_{\nu} P_{\nu\mu} H_{\mu\nu}
+    +\frac{1}{2} \sum_{\mu} \sum_{\nu} P_{\nu\mu}
+    J_{\mu\nu}
+    + E_{\text{XC}} .
+\end{equation}
 
+Typically the energy contribution from the exchange-correlation
+$E_{\text{XC}}$ has a complicated non-linear dependence on the
+density and must therefore be evaluated through
+numerical integration.
