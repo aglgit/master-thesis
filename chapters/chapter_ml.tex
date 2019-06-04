@@ -50,7 +50,7 @@ of parameters which minimize this cost function: $\hat{\bm{\theta}} = \underset{
 \subsection{Basics of statistical learning}
 % needs revision
 Statistical learning theory is a field of statistics dealing with the problem
-of making predictions from data. We begin with an unknown function \newline
+of making predictions from data. We start with an unknown function \newline
 $y = f(x)$ and our goal is to develop a function $h(x)$
 such that $h \sim f$. We fix a hypothesis set $\mathcal{H}$ that the
 algorithm is willing to consider. The expected error of a particular $h$
@@ -239,21 +239,33 @@ In the final layer the choice of activation function is dependent on the problem
 we are trying to solve. If we are performing non-linear regression the
 final activation function is often the identity $\sigma_i(z) = z$, or if
 we are doing classification the soft-max function is often employed.
+
 \newpage
-Let $\bm{x}$ be a vector of $d = 1,\dots,D$ inputs or \textit{features}. Let $a_i^{(h)}$
-denote the output of neuron $i = 1,\dots,N_d$ in layer $h = 1,\dots,H$.
+
+Let $\bm{x}$ be a vector of $d = 1,\dots,D$ inputs or 
+\textit{features}. Let $a_i^{(h)}$
+denote the output of neuron $i = 1,\dots,N_l$ in layer $l = 1,\dots,L$.
 The output of neuron $i$ in the first hidden layer $a_i^{(1)}$ is thus:
-$$ z_i^{(1)} = \bm{x}^T \bm{w}_i^{(1)} + b_i^{(1)} .$$
-$$ a_i^{(1)} = \sigma_i^{(1)}(z_i^{(1)}), $$
-The inputs are iterated through each hidden layer until we reach the final layer:
-$$ z_i^{(H)} = (\bm{a}_{H-1})^T \bm{w}_i^{(H)} + b_i^{(H)} .$$
+
 \begin{equation}
 \begin{split}
-    a_i^{(H)} &= o_i = \sigma_i^{(H)}(z_i^{(H)}) \\
-    &= \sigma_i^{(H)} \left((\bm{a}_{H-1})^T \bm{w}_i^{(H)} + b_i^{(H)} \right) \\
-    &= \sigma_i^{(H)} \left(
-    \left( (\sigma_1^{(H-1)},\dots,\sigma_{N_{H-1}}^{(H-1)}) \right)^T
-    \bm{w}_i^{(H)} + b_i^{(H)} \right) .
+    z_i^{(1)} &= \bm{x}^T \bm{w}_i^{(1)} + b_i^{(1)} , \\
+    a_i^{(1)} &= \sigma_i^{(1)}(z_i^{(1)}) . 
+\end{split}
+\end{equation}
+
+The inputs are iterated through each hidden layer until we reach the final layer.
+Denote the vector of outputs $\bm{o} = \left(o_1,\dots,o_O\right)$:
+
+\begin{equation}
+\begin{split}
+    z_i^{(L)} &= (\bm{a}_{L-1})^T \bm{w}_i^{(L)} + b_i^{(L)} , \\
+    a_i^{(L)} &= o_i \\
+              &= \sigma_i^{(L)}(z_i^{(L)}) \\
+    &= \sigma_i^{(L)} \left((\bm{a}_{L-1})^T \bm{w}_i^{(L)} + b_i^{(L)} \right) \\
+    &= \sigma_i^{(L)} \left(
+    \left( \sigma_1^{(L-1)},\dots,\sigma_{N_{L-1}}^{(L-1)} \right)^T
+    \bm{w}_i^{(L)} + b_i^{(L)} \right) .
 \end{split}
 \end{equation}
 
@@ -328,9 +340,10 @@ $$ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} = \frac{\partial \ma
 
 since $ \partial b_l^j / \partial z_j^l = 1$.
 
-The error depends on neurons in layer $l$ only through the activation of neurons in layer $l + 1$, so using the chain rule we can write:
+The error depends on neurons in layer $l$ only through the 
+activation of neurons in layer $l + 1$, so using the chain rule we can write:
 
-\begin{equation}
+\begin{equation}\label{eq:error}
 \begin{split}
 \Delta_j^l &= \frac{\partial \mathcal{C}}{\partial z_j^l} = \sum_i \frac{\partial \mathcal{C}}{\partial z_i^{l+1}}
 \frac{\partial z_i^{l+1}}{\partial z_j^l} \\
@@ -346,35 +359,33 @@ so we have to sum up these errors.
 
 This gives us the equations we need to update the weights and biases of our network:
 
-$$ \frac{\partial \mathcal{C}}{\partial w_{ij}^l} = \frac{\partial \mathcal{C}}{\partial z_j^l} \frac{\partial z_j^l}{\partial w_{ij}^l}
+$$ \frac{\partial \mathcal{C}}{\partial w_{ij}^l} 
+= \frac{\partial \mathcal{C}}{\partial z_j^l} 
+\frac{\partial z_j^l}{\partial w_{ij}^l}
 = \Delta_j^l a_i^{l-1} .$$
 
 $$ \frac{\partial \mathcal{C}}{\partial b_{j}^l} = \Delta_j^l .$$
 
-Now, if we have the error of every neuron $j$ at the output layer, $\Delta_j^L$, equation \ref{1} 
+Now, if we have the error of every neuron $j$ at the output layer,
+$\Delta_j^L$, equation \ref{eq:error}
 gives us the recipe for calculating the error in the preceding layer until we reach the first hidden layer, 
 and we are done. All we are missing is the error at the output layer:
 
-$$ \Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} = \frac{\partial}{\partial z_j^L} \left( - \sum_c y_{c} \log f(z_{c}^L) \right) ,$$
-
-where $f$ is the softmax function.
-Taking the derivative of each term:
-
-$$ \frac{\partial \log f(z_c^L)}{\partial z_j^L} = \frac{\partial}{\partial z_j^L} \left( z_c^L - \log \left( \sum_c \exp
-\left( z_c^L \right) \right) \right) = \delta_{jc} - f(z_j^L) ,$$
-
-where $\delta_{jc}$ is the Kronecker-Delta.
-This gives us the final expression we need:
-
 \begin{equation}
-\begin{split}
-\Delta_j^L &= -\sum_c y_c \left( \delta_{jc} - f(z_j^L) \right) \\
-           &= -\sum_c y_c \delta_{jc} + \sum_c y_c f(z_j^L) \\
-           &= -y_j + f(z_j^L) \sum_c y_c \\
-           &= f(z_j^L) - y_j \\
-           &= \hat{y}_j - y_j . \\
-\end{split}
+\Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} 
+= \frac{\partial}{\partial z_j^L} \left(
+    \sum_o \frac{1}{2}\left( z_o^L - y_o\right)^2 \right) 
+    = z_j^L - y_j .
 \end{equation}
+
+Now, since the derivatives for the weights depend on
+the activations in the preceding layer, this suggests
+an iterative procedure for training the network.
+First we feed the input data through the network
+and obtain activations and an output, then these
+outputs are backpropagated through the network to update the
+weights and biases. This is then repeated for some number
+of steps or until the network achieves acceptable accuracy.
 
 % own figure or cite properly
 \begin{figure}
@@ -385,9 +396,6 @@ This gives us the final expression we need:
 \end{figure}
 
 \subsection{Optimization}
-Gradient descent, momentum, ADAM, batching,
-normalization.
-
 In order to begin the minimization procedure and find an optimal
 set of weights and biases for our network we first need some initial values.
 Often weights are initialized with small values distributed around zero,

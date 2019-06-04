@@ -25,35 +25,35 @@ We will follow the route described in the lecture notes
 \parencite[Marx, Dominik and Hutter, J\"{o}rg][pages 1-10]{marx2000}
 given at the Winterschool 2000 at the John von Neuman Institute
 for Computing, J\"{o}lich.
-Our starting point is
-the full Hamiltonian for a set of $N$ electrons and $A$ nuclei:
+Our starting point is the full Hamiltonian 
+for a set of $N$ electrons and $A$ nuclei:
 
 \begin{equation}
     \begin{split}
         \hat{H}
-        &= -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
-        -\sum_{a=1}^A \frac{1}{2M_a} \nabla_a^2
-        -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{R_{ia}} \\
-        &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
-        + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}}
+        &= -\sum_{i=1}^N \frac{\hbar^2}{2m_e} \nabla_i^2
+        -\sum_{a=1}^A \frac{\hbar^2}{2M_a} \nabla_a^2
+        -\sum_{i=1}^N \sum_{a=1}^A \frac{e^2 Z_a}{R_{ia}} \\
+        &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{e^2}{r_{ij}}
+        + \sum_{a=1}^A \sum_{b=a+1}^A \frac{e^2 Z_a Z_b}{R_{ab}}
     \end{split} .
 \end{equation}
 
 We want to find solutions to the time-dependent non-relativistic
 Schrodinger equation:
 
-$$ i \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
+$$ i\hbar \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
 
-The wavefunction is separated in terms of the electronic and nuclear
+The wave function is separated in terms of the electronic and nuclear
 coordinates with the ansatz:
 
 $$ \Psi \left(\set{\bm{r}_i}, \set{\bm{R}_a}, t \right)
     \approx \Phi(\set{\bm{r}_i}) \chi(\set{\bm{R}_a})
-    \exp \left[ i \int_{t_0}^t
+    \exp \left[ \frac{i}{\hbar} \int_{t_0}^t
     dt' E_e(t') \right] ,
 $$
 
-with the electronic and nuclear wavefunctions normalized to unity
+with the electronic and nuclear wave functions normalized to unity
 at every instance of time. A phase factor is introduced to make
 the equations look nice:
 
@@ -62,12 +62,6 @@ $$ E_e = \int d\bm{r} d\bm{R} \Phi^* \chi^* \hat{H} \Phi \chi , $$
 where the integration occurs over all spatial coordinates
 $\set{\bm{r}_i}, \set{\bm{R}_a}$. This is a single determinant
 ansatz which must lead to a mean-field description of the dynamics.
-This ansatz differs from the Born-Oppenheimer approximation:
-
-$$ \Psi_{BO} = \sum_{k=0}^{\infty} \Phi_k \chi_k , $$
-
-even in the single-determinant limit where only
-a single state $k$ is included in the expansion.
 Inserting this ansatz into the Schrodinger equation
 reveals the following set of equations:
 
@@ -79,13 +73,15 @@ $$ i\hbar \frac{\partial \chi}{\partial t}
     = -\sum_i \frac{\hbar^2}{2M_a} \nabla_a^2 \chi
     + \left\{ \int d\bm{r} \Phi^* \hat{H} \Phi \right\} \chi . $$
 
-This set of equations is the basis for the time-dependent
-self-consistent field (TDSCF) method, wherein particles move
-in time-dependent effective potentials obtained from quantum
-mechanical expectation values.
+These coupled equations form the framework for the
+time-dependent self-consistent field (TDSCF) method.
+The electrons and nucleons move on a potential energy surface
+obtained from averages over the opposite class of
+degrees of freedom (the nuclear and electronic wave functions
+respectively).
 In the framework of classical molecular dynamics
 we approximate the nuclei as classical point particles.
-This can be done be rewriting the nuclear wavefunction as
+This can be done be rewriting the nuclear wave function as
 
 $$ \chi = A \exp[iS/\hbar] , $$
 
@@ -93,19 +89,19 @@ with an amplitude factor $A$ and a phase $S$
 which are both considered to be real.
 The TDSCF equations are rewritten in terms of these variables
 
-$$ \frac{\partial S}{\partial t} + \sum_I \frac{1}{2M_I}
-    (\nabla_I S)^2 + \int d\bm{r} \Psi^* \hat{H} \Psi
-    = \hbar^2 \sum_I \frac{1}{2M_I} \frac{\nabla_I^2 A}{A} , $$
+$$ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
+    (\nabla_a S)^2 + \int d\bm{r} \Phi^* \hat{H} \Phi
+    = \hbar^2 \sum_a \frac{1}{2M_a} \frac{\nabla_a^2 A}{A} , $$
 
-$$ \frac{\partial A}{\partial t} + \sum_I \frac{1}{M_I} (\nabla_I A)
-    (\nabla_I S) + \sum_I \frac{1}{2M_I} A (\nabla_I^2 S) = 0 . $$
+$$ \frac{\partial A}{\partial t} + \sum_a \frac{1}{M_a} (\nabla_a A)
+    (\nabla_a S) + \sum_a \frac{1}{2M_a} A (\nabla_a^2 S) = 0 . $$
 
 This set of equations is known as the "quantum fluid dynamical representation".
 The term for $S$ contains a term for $\hbar$ which vanishes in
 the classical limit $\hbar \rightarrow 0$:
 
-$$ \frac{\partial S}{\partial t} + \sum_I \frac{1}{2M_I}
-    (\nabla_I S)^2 + \int d\bm{r} \Psi^* \hat{H} \Psi = 0 . $$
+$$ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
+    (\nabla_a S)^2 + \int d\bm{r} \Phi^* \hat{H} \Phi = 0 . $$
 
 This formulation of the nuclear dynamics is isomorphic
 to the Hamilton-Jacobi formulation:
@@ -114,101 +110,111 @@ $$ \frac{\partial S}{\partial t} + \hat{H} = 0 , $$
 
 with the classical Hamilton function
 
-$$ \hat{H} = T(P_I) + V(R_I) , $$
+$$ \hat{H} = T(\left\{P_a\right\}) + V(\left\{R_a\right\}) , $$
 
-with coordinates $R_I$ and conjugate momenta $P_I$.
-\par
-If we identify the conjugate momenta
+with coordinates $\left\{R_a\right\}$ and conjugate momenta 
+$\left\{P_a\right\}$.
+If we identify the conjugate momenta with the phase $S$ as:
 
-$$ \bm{P}_I = \nabla_I S , $$
+$$ \bm{P}_a = \nabla_a S , $$
 
-we obtain the Newtonian equations of motion:
+we obtain the following Newtonian equations of motion:
 
 \begin{equation}
     \begin{split}
-        \frac{d\bm{P}}{dt}
-    &= -\nabla_I V
-    = -\nabla_I \int d\bm{r} \Psi^* \hat{H} \Psi \quad \text{or} \\
-        M_I\frac{d^2 \bm{R}_I}{dt^2}
-    &= -\nabla_I \int d\bm{r} \Psi^* \hat{H} \Psi \\
-    &= -\nabla_I V_e^E (R_I(t)) .
+        \frac{d\bm{P}_a}{dt}
+    &= -\nabla_a V
+    = -\nabla_a \int d\bm{r} \Phi^* \hat{H} \Phi \quad \text{or} \\
+        M_a\frac{d^2 \bm{R}_I}{dt^2}
+    &= -\nabla_a \int d\bm{r} \Phi^* \hat{H} \Phi \\
+    &= -\nabla_a V_e^E \left(\left\{ R_a(t) \right\}\right) .
     \end{split}
 \end{equation}
 
-The nuclei now move according to classical mechanics
-in an effective potential $V_e^E$ generated by the electrons.
-This potential is a function only of the nuclear
-degrees of freedom at time $t$ after averaging out
+Under this formulation of nuclear dynamics
+the nuclei move according to the laws of classical
+mechanics in an effective potential $V_e^E$ generated
+by the electrons.
+After averaging out the electronic degress of freedom
+this potential is now only a function of the nuclear coordinates.
 the electronic degrees of freedom.
-\par
-For consistency the nuclear wavefunction appearing
+For consistency the nuclear wave function appearing
 in the TDSCF equation for the electronic
 degrees of freedom has to be replaced by the positions
-of the nuclei point particles.
-This is done by replacing the nuclear density $\left| \chi \right|^2$
-in the limit $\hbar \rightarrow 0$ by a product of delta functions
-$ \prod_I \delta (\bm{R}_I - \bm{R}_I(t)) $ centered
-at the instantaneous positions $\set{\bm{R}_I(t)}$
+of the nuclei.
+This is accomplished by replacing the nuclear density 
+$\left| \chi \right|^2$ in the limit $\hbar \rightarrow 0$
+by a product of delta functions
+$ \prod_a \delta (\bm{R}_a - \bm{R}_a(t)) $ centered
+at the instantaneous positions $\left\{ \bm{R}_a(t) \right\}$
 of the classical nuclei.
 This leads to a time-dependent wave equation
 for the electrons:
 
-$$ i\hbar\frac{\partial \Psi}{\partial t} =
-    -\sum_i \frac{\hbar}{2m_e} \nabla_i^2 \Psi
-    + V_{ne} \Psi , $$
+$$ i\hbar\frac{\partial \Phi}{\partial t} =
+    -\sum_i \frac{\hbar}{2m_e} \nabla_i^2 \Phi
+    + \hat{V}_{ne} \Phi , $$
 
 which evolve quantum mechanically as the nuclei propagate
-classically.
-This mixed approach is commonly referred to as
+classically. This mixed approach is commonly referred to as
 \textit{Ehrenfest molecular dynamics}.
+Under this formulation of nuclear dynamics the
+nuclei evolve classically while the electrons
+evolve according to the laws of quantum mechanics.
 Although the underlying equations describe a mean-field
 theory, the Ehrenfest approach includes transitions
 between electronic states.
-\par
-To arrive at a purely classical description of the
+In order to arrive at a purely classical description of the
 dynamics of both the nuclei and the electrons
-we need to make further simplifications. \\
-Firstly we restrict the electronic wave function $\Psi$
-to the ground state wave function $\Psi_0$
-at every instant of time.
-This means the nuclei move on a single potential energy surface
+we need to make further simplifications.
+Firstly we restrict the electronic wave function $\Phi$
+to the ground state wave function $\Phi_0$
+at every instant of time. 
+This means the nuclei move on a single potential energy surface:
 
-$$ V_e^E = \int d\bm{r} \Psi_0^* \hat{H} \Psi_0 = E_0(R_I) , $$
+$$ V_e^E = \int d\bm{r} \Phi_0^* \hat{H} \Phi_0 
+    = E_0 \left(\left\{ R_I \right\}\right) , $$
 
-that is determined by solving the Schrodinger equation
+that is obtained by solving the Schrodinger equation
+for the ground state electron wave function:
 
-$$ \hat{H} \Psi_0 = E_0 \Psi_0 . $$
+$$ \hat{H} \Phi_0 = E_0 \Phi_0 . $$
 
-In this limit the Ehrenfest potential is identical
-to the ground state Born-Oppenheimer potential.
-\par
-Since we are now only dealing with a single potential
+Since we are now dealing with a single potential
 energy surface, the problem of computing the energy surface
-can be decoupled from computing the expactation values
-through equation ().
+can be decoupled from computing the
+expectation values from the electronic wave function.
 First one produces an appropriate set of nuclear configurations
 by solving the time-independent Schrodinger equation.
 Second, these configurations are fitted to an analytical
 functional form to produce a global potential energy surface.
 Finally the Newtonian equations of motions are solved
-on this energy surface, producing a set of classical
-trajectories.
-\par
+on this energy surface, producing a set of classical trajectories.
 To deal with the large number of degrees of freedom
 as the number of nuclei in the system increases,
 the global potential energy surface
 is approximated as an expansion of manybody contributions:
 
 $$ V_e^E \approx V_e^{\text{approx}} =
-    \sum_I v_1(R_I) + \sum_{I < J} v_2(R_I, R_J)
-    + \sum_{I < J < K} v_3(R_I, R_J, R_K) , $$
+    \sum_a v_1(R_a) + \sum_{a < b} v_2(R_a, R_b)
+    + \sum_{a < b < c} v_3(R_a, R_b, R_c) , $$
 
-typically truncated at 2, 3 or 4-body interactions
-depending on the complexity of the molecules in the system.
-\par
+and is typically truncated at 2, 3 or 4-body interactions
+depending on the complexity of the atoms and molecules in the system.
 This renders the problem of computing dynamics purely classical:
 
-$$ M_I \frac{d^2 R_I}{dt^2} = -\nabla_I V_e^{\text{approx}} . $$
+$$ M_a \frac{d^2 R_I}{dt^2} = -\nabla_a V_e^{\text{approx}} . $$
+
+This reduction in the number of degrees of freedom is a huge simplification
+which allows us to study much larger and more complex systems
+than ab-initio methods. However, many approximations have to be made
+to get to this formulation of atomic/molecular mechanics, and neglecting
+the electronic degrees of freedom effectively precludes chemical
+transformations from appearing in the simulations.
+In addition, the analytical functional forms of the potentials
+usually include many parameters to be determined,
+and they often have to be tailored to the quantities
+one is trying to compute.
 
 \subsection{Molecular dynamics simulations}
 The theory in this and the following sections
@@ -280,11 +286,12 @@ thermodynamic averages.
 \newline
 \newline
 As we mentioned before, the global energy surface
+as a function of nuclear coordinates $\left\{ \bm{r} \right\}$
 is approximated as an expansion of manybody contributions:
 
-$$ V_e^E(\set{\bm{r}}) =
-    \sum_I v_1(R_I) + \sum_{I < J} v_2(R_I, R_J)
-    + \sum_{I < J < K} v_3(R_I, R_J, R_K) , $$
+$$ V_e^E \left(\left\{ \bm{r} \right\}\right) =
+    \sum_i v_1(r_i) + \sum_{i < j} v_2(r_i, r_j)
+    + \sum_{i < j < k} v_3(r_i, r_j, r_k) , $$
 
 wherein each n-body term is an analytical function
 of $n$ coordinates.
@@ -293,7 +300,7 @@ it feels a force which is the gradient of the potential energy surface.
 This means atom $i$ feels an acceleration:
 
 $$ \bm{F}_i = m_i \frac{d^2 \bm{r}_i}{dt^2} =
-    -\nabla V_e^E(\bm{r}_i, \set{\bm{r}}) . $$
+    -\nabla_i V_e^E \left( \left\{ \bm{r} \right\}\right) . $$
 
 For a system of $N$ atoms with only pairwise interactions
 this means the forces must be calculated $N(N-1)/2$ times
@@ -309,7 +316,7 @@ beyond this cut-off are neglected.
 This reduces the time-complexity to merely
 $\mathcal{O}(N)$, with a proportionality constant
 dependent upon the average number of neighbors in the system
-within a cutoff $r_c$. For a large system this can be a
+within a cutoff $r_{cut}$. For a large system this can be a
 huge reduction in complexity, but the choice of cut-off
 can obviously massively impact the dynamics of the system.
 \par
@@ -360,7 +367,7 @@ than the number of particles in realistic systems,
 approximations are required. Periodic boundary conditions
 can be applied to the box in order to approximate
 an infinite system. Typically particle coordinates are restricted
-to the simulation box, in pseudocode:
+to the simulation box, which can be expressed in pseudocode as:
 
 \begin{algorithm}[H]
 \caption{Continuity}
@@ -466,7 +473,7 @@ of the particles, i.e. only conservative forces act on the atoms.
 This means that the force on atom $i$ is fully described
 by a potential energy $U$:
 
-$$ \bm{F}_i = -\nabla U(\bm{r}_i) , $$
+$$ \bm{F}_i = -\nabla_i U \left(\left\{ \bm{r} \right\} \right) , $$
 
 which in principle depends on the position of atom $i$
 and all other atoms in the system. Finding an appropriate potential
@@ -488,8 +495,8 @@ interacting with a surface of carbon atoms.
 One of the simplest potentials meant to simulate a realistic system
 is the Lennard-Jones potential:
 
-$$ U(r_{ij}) = 4\epsilon \left(\left(\frac{\sigma}{r}\right)^{12}
-    - \left(\frac{\sigma}{r}\right)^{6}\right) , $$
+$$ U(r_{ij}) = 4\epsilon \left(\left(\frac{\sigma}{r_{ij}}\right)^{12}
+    - \left(\frac{\sigma}{r_{ij}}\right)^{6}\right) , $$
 
 with $r_{ij} = \left| \bm{r}_j - \bm{r}_i \right|$.
 For the Lennard-Jones potential there are only two parameters to be decided,
@@ -558,3 +565,8 @@ with the angular interaction $h_{jik} = h(r_{ij}, r_{ik}, \theta_{jik})$ and
 where $\theta_{jik}^0$ is an "equilibrium" angle.
 The terms $\epsilon, A, B, p, q, \lambda, \gamma$ are parameters
 to be decided and $a$ is a cutoff radius.
+The inclusion of the threebody terms prove to be quite important
+in silicon maintaining its equilibrium crystal structure.
+The Stillinger-Weber potential agrees quite well with experiment,
+and its relatively simple form makes it well suited for
+the testing and evaluation of new potentials.

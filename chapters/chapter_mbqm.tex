@@ -11,11 +11,11 @@ focused more on understanding and intuition than rigor.
 Eventually we will take these methods to be black boxes of
 electronic structure calculations, given some cartesian
 coordinates and outputting energies and forces.
-\par
 This section will give a brief overview of the discussion
 of the electronic Hamiltonian in \parencite[Szabo][pages 39-89]
 {szabo1996modern}, which also covers Hartree-Fock theory
 which will be expanded upon in the next section.
+\par
 We want to find solutions to the non-relativistic time-independent
 Schr\"{o}dinger equation:
 
@@ -280,7 +280,7 @@ starting with an initial guess for the coefficients $C$.
 Solving the eigenvalue problem yields new eigenvectors
 and eigenvalues.
 The process continues until the change in eigenvalues
-is within some tolerance, for example:
+is within some tolerance $\nu$:
 
 \begin{equation}
 \frac{\sum_p \left| \epsilon_i^n - \epsilon_i^{n-1} \right|}
@@ -419,7 +419,7 @@ minimized over densities:
         + E_{\text{Hxc}}[n_{\Phi}]
         \right\} \\
         &=  \underset{\Phi}{\min}
-            \left\{ \braket{\Psi|\hat{T} + \hat{V}_{ne}|\Phi}
+            \left\{ \braket{\Phi|\hat{T} + \hat{V}_{ne}|\Phi}
             + E_{\text{Hxc}}[n_{\Phi}]\right\}.
     \end{split}
 \end{equation}
@@ -428,7 +428,7 @@ These equations now involve only a single-determinant wave function,
 which is a large simplification over a variational method involving multi-determinant
 wave functions. Now a major part of the kinetic energy contribution
 can be treated through the single-determinant wave function,
-while only the Hartree-Exchange correlation needs to be approximated
+while only the Hartree-exchange-correlation needs to be approximated
 as a functional of the density.
 As with the Hartree-Fock method, the single determinant
 wavefunctions are constructed from an orthonormal basis of spin orbitals
@@ -567,7 +567,7 @@ H_{\mu\nu} = \int \chi_{\mu}^*(\bm{r})
 $J_{\mu\nu}$ is the Hartree-potential contribution:
 
 \begin{equation}
-    \sum_{\lambda} \sum_{\gamma} P_{\lambda\gamma}
+    J_{\mu\nu} = \sum_{\lambda} \sum_{\gamma} P_{\lambda\gamma}
     \left(\chi_{\mu}\chi_{\nu} | \chi_{\lambda}\chi_{\gamma}\right) ,
 \end{equation}
 
@@ -582,7 +582,7 @@ and the two-electron integrals are defined as:
 \begin{equation}
 \left(\chi_{\mu}\chi_{\nu} | \chi_{\lambda}\chi_{\gamma}\right)
     = \int \int \frac{\chi_{\mu}^*(\bm{r}_1) \chi_{\nu}
-    \chi_{\lambda}(\bm{r}_2) \chi_{\gamma}}
+    \chi_{\lambda}^*(\bm{r}_2) \chi_{\gamma}}
     {\left| \bm{r}_1 - \bm{r}_2 \right|}
     d\bm{r}_1 d\bm{r}_2 .
 \end{equation}

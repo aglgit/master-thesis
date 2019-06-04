@@ -8,19 +8,20 @@ on modern scientific supercomputer facilities.
 \par
 For small-scale systems, we have discussed the Hartree-Fock
 and Density Functional Theory methods as the primary workhorses
-of ab-initio (i.e. from first principles quantum mechanical principles)
+of ab-initio
 electronic structure calculations. However, these methods suffer
 from very poor scaling as the system size increases, with Hartree-Fock
-scaling as $\mathcal{O}(N^4)$ with $N$ the number of electrons
-and Density Functional Theory scaling as $\mathcal{O}(N^4)$.
+naively scaling as $\mathcal{O}(N^4)$ with $N$ the number of electrons
+and Density Functional Theory scaling as $\mathcal{O}(N^4)$,
+but with a larger proportionality scaling.
 \par
-In many cases the exact details are electronic structure
+In many cases the exact details of the electronic structure
 are less important than the long-time behaviour of the atoms
 and molecules involved in the simulation, and classical approximations
 can be made as in molecular dynamics, which comes close
 to linear scaling. This allows us to simulate systems
 of up to millions or hundreds of millions of atoms,
-which can approximate nano- or micro-scale atoms if
+which can approximate nano- or micro-scale systems if
 periodic boundary conditions are applied.
 However, the question remains as to how you develop an
 accurate classical potential which can accurately reproduce
@@ -47,14 +48,16 @@ for a specific system structure or parameter.
 Due to recent developments in the field of machine learning,
 the question has been raised as to how it may be possible to
 automate the process of developing potentials.
-[cite](https://www.sciencedirect.com/science/article/pii/S0010465516301266)
+In their article introducing the Atomistic Machine-Learning Package
+(AMP) \parencite[Khorshidi, Alireza and Peterson, Andrew A.]
+{khorshidi2016amp} outline one potential way forward.
 The idea is to approximate the potential energy
 with a regression model:
 
-$$ \set{\bm{R}} \overset{\text{Regression}}{\longrightarrow}
-    E = E(\set{\bm{R}}) , $$
+$$ \left\{ \bm{R} \right\} \overset{\text{Regression}}{\longrightarrow}
+    E = E\left( \left\{ \bm{R} \right\}\right) , $$
 
-where $\set{\bm{R}}$ is the set of nuclear coordinates of our system.
+where $\left\{\bm{R}\right\}$ is the set of nuclear coordinates of our system.
 Most machine learning methods operate over a set of one-dimensional
 so-called \textit{feature vectors}, where every vector element
 represents a feature of the data set. For example the amount
@@ -143,7 +146,9 @@ Once we have the forces the system can be propagated through time
 using the Velocity-Verlet equations.
 
 \subsection{Gaussian descriptors}
-Behler and Parrinello [cite](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.98.146401)
+In their paper on neural-network representations of
+potential energy surfaces \parencite[Behler, J\"{o}rg and
+Parrinello, Michele]{behler2007generalized}
 suggested the decomposition of the mapping $\bm{G}_i$ of atom $i$
 into two subvectors $\bm{G}_i^I$ and $\bm{G}_i^{II}$ representing
 pairwise and three-body interactions respectively.
@@ -205,7 +210,7 @@ be retrained if the way inputs are composed changes.
 
 \subsection{Deep Potential Molecular Dynamics}
 Deep Potential Molecular Dynamics (DPMD) is a method
-proposed by [Wang et. al.](https://reader.elsevier.com/reader/sd/pii/S0010465518300882?token=2AFD04526C4190A36B222675059A56046185149A64D44DF02D74C217C980120776E9581FE684D7044B16724AD779C407)
+proposed by \parencite[Zhang et al.]{PhysRevLett.120.143001}
 in response to the successes of methods such as Behler-Parrinello,
 Gaussian Approximation Potentials (GAP)
 and Gradient-Domain Machine Learning (GDML).
