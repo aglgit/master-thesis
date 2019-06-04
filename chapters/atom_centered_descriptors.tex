@@ -54,8 +54,12 @@ In their article introducing the Atomistic Machine-Learning Package
 The idea is to approximate the potential energy
 with a regression model:
 
-$$ \left\{ \bm{R} \right\} \overset{\text{Regression}}{\longrightarrow}
-    E = E\left( \left\{ \bm{R} \right\}\right) , $$
+
+\begin{equation}
+ \left\{ \bm{R} \right\} \overset{\text{Regression}}{\longrightarrow}
+    E = E\left( \left\{ \bm{R} \right\}\right) , 
+\end{equation}
+
 
 where $\left\{\bm{R}\right\}$ is the set of nuclear coordinates of our system.
 Most machine learning methods operate over a set of one-dimensional
@@ -100,16 +104,24 @@ which means a more careful analysis should be considered.
 In order for the mapping to be applicable to systems of varying size,
 a decomposition into atomic energy contributions is performed:
 
-$$ E(\set{\bm{R}}) = \sum_{i=1}^N E_{\text{atom}}(\set{\bm{R}}) . $$
+
+\begin{equation}
+ E(\set{\bm{R}}) = \sum_{i=1}^N E_{\text{atom}}(\set{\bm{R}}) . 
+\end{equation}
+
 
 The individual energy contributions $E_{\text{atom}}$
 are then approximated by performing a regression analysis.
 The atomic energy contributions are usually limited to its
 local environment through the introduction of a cutoff radius $R_c$:
 
-$$ E_{\text{atom}} (\set{\bm{R}}) \approx
+
+\begin{equation}
+ E_{\text{atom}} (\set{\bm{R}}) \approx
     E_{\text{atom}} (\bm{R}_i, \set{\bm{R}_j | \left| \bm{R}_{ij} \right|
-    < R_c}) $$
+    < R_c}) 
+\end{equation}
+
 
 meaning that interactions are only treated if the interatomic distance
 is smaller than the cutoff. This is a good approximation for a sensible
@@ -121,9 +133,13 @@ not be discussed here.
 A mapping that satisfies the above constraints we will refer to
 as a \textit{descriptor}, and is used as input to the regression method:
 
-$$ \set{\bm{R}} \rightarrow \bm{G}(\set{\bm{R}}) \overset{\text{regression}}
+
+\begin{equation}
+ \set{\bm{R}} \rightarrow \bm{G}(\set{\bm{R}}) \overset{\text{regression}}
     {\longrightarrow} E_{\text{atom}} =
-    E_{\text{atom}}(\bm{G}(\set{\bm{R}})). $$
+    E_{\text{atom}}(\bm{G}(\set{\bm{R}})). 
+\end{equation}
+
 
 Once we have a descriptor and a regression model the dynamics
 can be readily obtained by taking derivatives:
@@ -155,8 +171,12 @@ pairwise and three-body interactions respectively.
 The components of $\bm{G}_i^I$ are comprised of
 sums of gaussian functions of the pairwise distance $R_{ij}$:
 
-$$ f_i^I = \sum_{j \neq i}^{\text{local}}
-    \exp \left( -\eta(R_{ij} - R_s)^2 / R_c^2 \right) f_c (R_{ij}) , $$
+
+\begin{equation}
+ f_i^I = \sum_{j \neq i}^{\text{local}}
+    \exp \left( -\eta(R_{ij} - R_s)^2 / R_c^2 \right) f_c (R_{ij}) , 
+\end{equation}
+
 
 with the sum over the local environment of atom $i$.
 The parameters $\eta$ and $R_s$ represent the width and center
@@ -221,12 +241,20 @@ The Deep Potential method assigns a local environment and reference
 frame to each atom. The total potential energy is a sum
 of atomic contributions as before:
 
-$$ E = \sum_i E_i , $$
+
+\begin{equation}
+ E = \sum_i E_i , 
+\end{equation}
+
 
 with the atomic energy determined by its nearest neighbors:
 
-$$ E_i = E(\bm{R}_i, \set{\bm{R}_j : \left| \bm{R}_{ij}
-    \right| < R_c}) . $$
+
+\begin{equation}
+ E_i = E(\bm{R}_i, \set{\bm{R}_j : \left| \bm{R}_{ij}
+    \right| < R_c}) . 
+\end{equation}
+
 
 The position of each neighbor of atom $i$ is described
 by the relative positions $\bm{R}_{ij} = \bm{R}_j - \bm{R}_i$,
@@ -314,7 +342,11 @@ The pre-factors are adjusted based on the learning rate:
 with $r_l(t)$ and $r_l^0$ the learning rate at time step $t$ and time step
 $0$ respectively. The learning rate decays exponentially as:
 
-$$ r_l(t) = r_l^0 \cdot d_r^{t / d_s} , $$
+
+\begin{equation}
+ r_l(t) = r_l^0 \cdot d_r^{t / d_s} , 
+\end{equation}
+
 
 with $d_r$ the decay rate and $d_s$ the decay steps. The decay
 rate should be less than 1. The force error is often a magnitude or two

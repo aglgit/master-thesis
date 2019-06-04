@@ -12,6 +12,7 @@
 \usepackage{amssymb}
 \usepackage{braket}
 \usepackage{algorithm,algpseudocode}
+\usepackage[backend=bibtex]{biblatex}
 \usepackage[% Interactive references and links, colored.
   colorlinks  = true,
   linkcolor   = black,
@@ -19,6 +20,7 @@
   citecolor   = black,
   linktocpage = true,
 ]{hyperref}
+
 \graphicspath{ {images/} }
 
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -32,7 +34,6 @@
 \author{Andreas Godø Lefdalsnes}
 \date{\today}
 
-\usepackage[backend=bibtex]{biblatex}
 \addbibresource{references.bib}
 
 \definecolor{light-gray}{gray}{0.90}
@@ -66,34 +67,34 @@ Abstract goes here \parencite[e.g.][page 300]{einstein}.
 \part{Theory}
 
 \chapter{Quantum Mechanics}
-\input{chapters/chapter_qm}
+\input{chapters/quantum_mechanics}
 
 \chapter{Manybody Quantum Mechanics}
-\input{chapters/chapter_mbqm}
+\input{chapters/manybody_quantum_mechanics}
 
 \chapter{Molecular Dynamics}
-\input{chapters/chapter_md}
+\input{chapters/molecular_dynamics}
 
 \chapter{Machine learning}
-\input{chapters/chapter_ml}
+\input{chapters/machine_learning}
 
 \chapter{Atom-centered descriptors}
-\input{chapters/chapter_at}
+\input{chapters/atom_centered_descriptors}
 
 \part{Implementation}
 \chapter{Atomic Simulation Environment}
-\input{chapters/chapter_ase}
+\input{chapters/atomic_simulation_environment}
 
 \chapter{Atomistic Machine-learning Package}
-\input{chapters/chapter_amp}
+\input{chapters/atomistic_machine_learning_package}
 
 \part{Results}
 
 \chapter{Empirical potentials}
-\input{chapters/chapter_emp}
+\input{chapters/empirical_potentials_results}
 
 \chapter{Ab-Initio Molecular Dynamics}
-\input{chapters/chapter_abinit}
+\input{chapters/ab_initio_results}
 
 \chapter{Conclusion}
 \input{chapters/conclusion}

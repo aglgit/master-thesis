@@ -1,32 +1,48 @@
-Machine learning is the study of algorithms and statistical models employed by computing systems
-capable of performing tasks without explicit instruction. While traditional algorithms
-rely on some specified input and a ruleset for determining the output, machine learning
+Machine learning is the study of algorithms and 
+statistical models employed by computing systems
+capable of performing tasks without explicit instruction.
+While traditional algorithms rely on some specified input 
+and a ruleset for determining the output, machine learning
 is instead concerned with a set of generic algorithms which can find patterns
-in a broad class of data sets. This section will give a brief overview of machine learning,
-and more specifically the class of algorithms known as neural networks, and will follow closely the review by
+in a broad class of data sets.
+This section will give a brief overview of machine learning,
+and more specifically the class of algorithms known as neural networks,
+and will follow closely the review by
 \parencite[Mehta et al.][pages 1-64]{mehta2019high}
 which the reader is encouraged to seek out for further information.
 \par
 Examples of machine learning problems include identifying objects in images,
-transcribing text from audio and making film recommendations to viewers based on their watch history.
-Machine learning problems are often subdivided into estimation and prediction problems.
-In both cases, we choose some observable $\bm{x}$ (e.g. the period of a pendulum)
-related to some parameters $\bm{\theta}$ (e.g. the length and the gravitational constant)
-through a model $p(\bm{x} \lvert \bm{\theta})$ that describes the probability of observing
-$\bm{x}$ given $\bm{\theta}$. Subsequently we perform an experiment to obtain a dataset
-$\bm{X}$ and use these data to fit the model. Fitting the model means finding
-the parameters $\hat{\bm{\theta}}$ that provide the best explanation for the data. 
-\textit{Estimation} problems are concerned with the accuracy of $\hat{\bm{\theta}}$, whereas
-prediction problems are concerned with the ability of the model $p(\bm{x} \lvert \bm{\theta})$
+transcribing text from audio and making film recommendations to viewers 
+based on their watch history.
+Machine learning problems are often subdivided into 
+estimation and prediction problems.
+In both cases, we choose some observable 
+$\bm{x}$ (e.g. the period of a pendulum)
+related to some parameters $\bm{\theta}$ 
+(e.g. the length and the gravitational constant)
+through a model $p(\bm{x} \lvert \bm{\theta})$ 
+that describes the probability of observing
+$\bm{x}$ given $\bm{\theta}$. 
+Subsequently we perform an experiment to obtain a dataset
+$\bm{X}$ and use these data to fit the model. 
+Fitting the model means finding the parameters 
+$\hat{\bm{\theta}}$ that provide the best explanation for the data. 
+\textit{Estimation} problems are concerned with the accuracy of 
+$\hat{\bm{\theta}}$, whereas prediction problems are concerned with 
+the ability of the model $p(\bm{x} \lvert \bm{\theta})$
 to make new predictions.
-Physics has traditionally been more concerned with the estimation of model parameters, while in
-this thesis we will be focused on the accuracy of the model.
+Physics has traditionally been more concerned with the estimation 
+of model parameters, while in this thesis we will be focused 
+on the accuracy of the model.
 \par
 Many problems in machine learning are defined by the same set of ingredients.
-The first is the dataset $\mathcal{D} = (\bm{X}, \bm{Y})$, where $\bm{X}$ is a matrix
-containing observations of the independent variables $\bm{x}$, and $\bm{Y}$ is a matrix containing
-observations of dependent variables. Second is a model $\bm{F}: \bm{x} \rightarrow \bm{y}$
-which is a function of the parameters $\bm{\theta}$. Finally we have a cost function
+The first is the dataset $\mathcal{D} = (\bm{X}, \bm{Y})$,
+where $\bm{X}$ is a matrix containing observations of the 
+independent variables $\bm{x}$, and $\bm{Y}$ is a matrix containing
+observations of dependent variables.
+Second is a model $\bm{F}: \bm{x} \rightarrow \bm{y}$
+which is a function of the parameters $\bm{\theta}$. 
+Finally we have a cost function
 $\mathcal{C}\left(\bm{Y}, \bm{F}\left(\bm{X} ; \bm{\theta}\right)\right)$
 that judges the performance of our model at generating predictions.
 \newline
@@ -38,35 +54,52 @@ $ \bm{X} =
 $
 related to a set of dependent observations $\bm{y} = (y_1, y_2, \dots,y_N)$
 through a linear model 
-%\newline
 $f(\bm{x} ; \bm{\theta}) = 
 x_1\cdot w_1 + x_2\cdot w_2 + \dots + x_P\cdot w_P$,
-with parameters $\bm{\theta} = (w_1, w_2, \dots,w_P)$. The cost function
-is the well known sum of least squares $\mathcal{C}(\bm{y}, f(\bm{X} ; \bm{\theta}))
-= \sum_i^N (y_i - f(\bm{x}_i ; \bm{\theta}))^2 $ and the best fit is chosen as the set
-of parameters which minimize this cost function: $\hat{\bm{\theta}} = \underset{\bm{\theta}}
+with parameters $\bm{\theta} = (w_1, w_2, \dots,w_P)$. 
+The cost function is the well known sum of least squares 
+$\mathcal{C}(\bm{y}, f(\bm{X} ; \bm{\theta}))
+= \sum_i^N (y_i - f(\bm{x}_i ; \bm{\theta}))^2 $
+and the best fit is chosen as the set
+of parameters which minimize this cost function: 
+$\hat{\bm{\theta}} = \underset{\bm{\theta}}
 {\text{argmin}} \ \mathcal{C}(\bm{Y}, f(\bm{X} ; \bm{\theta})) $.
 
 \subsection{Basics of statistical learning}
-% needs revision
+% needs revision?
 Statistical learning theory is a field of statistics dealing with the problem
 of making predictions from data. We start with an unknown function \newline
 $y = f(x)$ and our goal is to develop a function $h(x)$
 such that $h \sim f$. We fix a hypothesis set $\mathcal{H}$ that the
 algorithm is willing to consider. The expected error of a particular $h$
 over all possible inputs $x$ and outputs $y$ is:
-$$ E[h] = \int_{X \times Y} \mathcal{C}(h(x), y) \rho(x,y) dx dy ,$$
+
+\begin{equation}
+ E[h] = \int_{X \times Y} \mathcal{C}(h(x), y) \rho(x,y) dx dy ,
+\end{equation}
+
 where $\mathcal{C}$ is a cost function and $\rho(x,y)$ is the joint probability
 distribution for $x$ and $y$. This is known as the \textit{expected error}.
 Since this is impossible to compute without knowledge of the probability distribution
 $\rho$, we instead turn to the \textit{empirical error}. Given $n$ data points
 the empirical error is given as:
-$$ E_S[h] = \frac{1}{n} \sum_i^n \mathcal{C}(h(x_i), y_i) .$$
+
+\begin{equation}
+ E_S[h] = \frac{1}{n} \sum_i^n \mathcal{C}(h(x_i), y_i) .
+\end{equation}
+
 The \textit{generalization error} is defined as the difference
 between the expected and empirical errors:
-$$ G = E[h] - E_S[h] .$$
+
+\begin{equation}
+ G = E[h] - E_S[h] .
+\end{equation}
+
 We say an algorithm is able to learn from data or \textit{generalize} if 
-$$ \lim_{n\to\infty} G = 0 .$$
+
+\begin{equation}
+ \lim_{n\to\infty} G = 0 .
+\end{equation}
 
 We are in general unable to compute the expected error, and therefore unable
 to compute the generalization error. The most common approach known as
@@ -132,15 +165,27 @@ fit the true function.
 Consider a dataset $\mathcal{D}(\bm{X}, \bm{y})$ of $n$ pairs
 of independent and dependent variables. Assume the true data
 is generated from a noisy model:
-$$ y = f(\bm{x}) + \epsilon ,$$
+
+\begin{equation}
+ y = f(\bm{x}) + \epsilon ,
+\end{equation}
+
 where $\epsilon$ is normally distributed with mean $\mu$ and
 standard deviation $\sigma$. Assume that we have an estimator $h(\bm{x}; \bm{\theta})$
 trained by minimizing a cost function $\mathcal{C}(\bm{y}, h(\bm{x}))$
 which we take to be the sum of squared errors:
-$$ \mathcal{C}(\bm{y}, h(\bm{x})) = \sum_i^n (y_i - h(\bm{x}_i; \bm{\theta}))^2 .$$
+
+\begin{equation}
+ \mathcal{C}(\bm{y}, h(\bm{x})) = \sum_i^n (y_i - h(\bm{x}_i; \bm{\theta}))^2 .
+\end{equation}
+
 Our best estimate for the model parameters:
-$$ \bm{\theta}_{\mathcal{D}} = \underset{\bm{\theta}}{\argmin} \
-\mathcal{C}(\bm{y}, h(\bm{x}; \bm{\theta})) ,$$
+
+\begin{equation}
+ \bm{\theta}_{\mathcal{D}} = \underset{\bm{\theta}}{\argmin} \
+\mathcal{C}(\bm{y}, h(\bm{x}; \bm{\theta})) ,
+\end{equation}
+
 is a function of the dataset $\mathcal{D}$. If we imagine we have a set of
 datasets $\mathcal{D}_j = (\bm{y}_j, \bm{X}_j)$, each with $n$ samples, we would like to calculate
 the expectation value of the cost function over all these datasets $E_{\mathcal{D}, \epsilon}$.
@@ -206,11 +251,19 @@ figure \ref{fig:neural-networks}.
 In almost all cases the output $a_i(\bm{x})$ of neuron $i$ can be decomposed
 into a linear operation on the inputs passed through a non-linear
 activation function:
-$$ a_i(\bm{x}) = \sigma_i(z_i) ,$$
+
+\begin{equation}
+ a_i(\bm{x}) = \sigma_i(z_i) ,
+\end{equation}
+
 where $\sigma_i$ is a non-linear function and $z_i$
 is the dot product between the inputs $\bm{x}$ and a set of
 neuron-specific weights $\bm{w}_i$:
-$$ z_i = \bm{x}^T \bm{w}_i + b_i .$$
+
+\begin{equation}
+ z_i = \bm{x}^T \bm{w}_i + b_i .
+\end{equation}
+
 The term $b_i$ is a neuron-specific re-centering of the input.
 \newline
 Typical choices of non-linearities/activation functions include
@@ -291,7 +344,11 @@ in order to minimize the cost function.
 of finding the minima of differentiable functions.
 Given a function $F: \mathbb{R}^d \rightarrow \mathbb{R}$, and an initial
 value $\bm{x}_0$ we define an iterative procedure:
-$$ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n), $$
+
+\begin{equation}
+ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n), 
+\end{equation}
+
 where $\eta$ is known as the \textit{learning rate}.
 The procedure terminates when the norm
 $ \left| \nabla F(\bm{x}_n) \right| $ or
@@ -317,7 +374,9 @@ from the $i$-th neuron in layer $l - 1$ to the $j$-th neuron in layer $l$. Let $
 
 The activation $a_{j}^l$ of the $j$-th neuron in the $l$-th layer is related to the activities of the neurons in the layer $l - 1$ by:
 
-$$ a_{j}^l = f \left( \sum_i w_{ij}^l a_i^{l-1} + b_j^l \right) = f \left( z_j^l \right) ,$$
+\begin{equation}
+ a_{j}^l = f \left( \sum_i w_{ij}^l a_i^{l-1} + b_j^l \right) = f \left( z_j^l \right) ,
+\end{equation}
 
 where $f$ is some activation function.
 
@@ -326,17 +385,23 @@ in all the lower layers.
 Define the error $\Delta_j^L$ of the $j$-th neuron in the $L$-th (final) layer as the change in cost function
 with respect to the weighted input $z_j^L$:
 
-$$ \Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} .$$
+\begin{equation}
+ \Delta_j^L = \frac{\partial \mathcal{C}}{\partial z_j^L} .
+\end{equation}
 
 Define analogously the error $\Delta_j^l$ of neuron $j$ in the $l$-th layer as the change in cost function with respect to the weighted input
 $z_j^l$:
 
-$$ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} .$$
+\begin{equation}
+ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} .
+\end{equation}
 
 This can also be interpreted as the change in cost function with respect to the bias $b_j^l$:
 
-$$ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} 
-\frac{\partial b_j^l}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} ,$$
+\begin{equation}
+ \Delta_j^l = \frac{\partial \mathcal{C}}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} 
+\frac{\partial b_j^l}{\partial z_j^l} = \frac{\partial \mathcal{C}}{\partial b_j^l} ,
+\end{equation}
 
 since $ \partial b_l^j / \partial z_j^l = 1$.
 
@@ -359,12 +424,16 @@ so we have to sum up these errors.
 
 This gives us the equations we need to update the weights and biases of our network:
 
-$$ \frac{\partial \mathcal{C}}{\partial w_{ij}^l} 
+\begin{equation}
+ \frac{\partial \mathcal{C}}{\partial w_{ij}^l} 
 = \frac{\partial \mathcal{C}}{\partial z_j^l} 
 \frac{\partial z_j^l}{\partial w_{ij}^l}
-= \Delta_j^l a_i^{l-1} .$$
+= \Delta_j^l a_i^{l-1} .
+\end{equation}
 
-$$ \frac{\partial \mathcal{C}}{\partial b_{j}^l} = \Delta_j^l .$$
+\begin{equation}
+ \frac{\partial \mathcal{C}}{\partial b_{j}^l} = \Delta_j^l .
+\end{equation}
 
 Now, if we have the error of every neuron $j$ at the output layer,
 $\Delta_j^L$, equation \ref{eq:error}
@@ -495,7 +564,9 @@ out some outputs. It is therefore often useful to standardize the inputs.
 A common method is to shift the inputs by their mean and
 normalize by their standard deviation:
 
-$$ x_{i}' = \frac{x_{i} - \bar{x}}{\sigma_x} . $$
+\begin{equation}
+ x_{i}' = \frac{x_{i} - \bar{x}}{\sigma_x} . 
+\end{equation}
 
 This is often useful in speeding up the training of neural networks.
 In theory any shifting and rescaling can be reproduced simply
@@ -512,7 +583,9 @@ The most common methods for training neural networks
 are variations on the simple gradient descent scheme as mentioned
 above:
 
-$$ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n) . $$
+\begin{equation}
+ \bm{x}_{n+1} = \bm{x}_{n} - \eta \nabla F(\bm{x}_n) . 
+\end{equation}
 
 Since we are interested in training neural networks,
 $\bm{x}_{n}$ represents the weights and biases of the network
@@ -564,9 +637,11 @@ of $m$ the total number of batches is $n/m$.
 If we denote each minibatch $b_k, \ k=1,2,\dots,n/m$
 the gradient becomes:
 
-$$ \nabla \mathcal{C} = \frac{1}{n} \sum_{i=1}^N
+\begin{equation}
+ \nabla \mathcal{C} = \frac{1}{n} \sum_{i=1}^N
     \nabla \mathcal{L}_i \rightarrow
-    \frac{1}{m} \sum_{i \in b_k} \nabla \mathcal{L}_i , $$
+    \frac{1}{m} \sum_{i \in b_k} \nabla \mathcal{L}_i , 
+\end{equation}
 
 i.e. instead of averaging the loss over the entire dataset
 we instead average over a minibatch.
@@ -583,11 +658,13 @@ of neural networks means adding a term proportional
 to the $L_p$ norm of the weights and biases.
 For example using the L2-norm our cost function becomes:
 
-$$ \nabla \mathcal{C} = \frac{1}{n} \sum_i \nabla \mathcal{L}_i
+\begin{equation}
+ \nabla \mathcal{C} = \frac{1}{n} \sum_i \nabla \mathcal{L}_i
     \rightarrow \frac{1}{n} \sum_i \nabla \mathcal{L}_i
     + \lambda \left| \left| \bm{w} \right| \right|^2
     = \frac{1}{n} \sum_i \nabla \mathcal{L}_i
-    + \lambda \sum_{ij} w_{ij}^2 , $$
+    + \lambda \sum_{ij} w_{ij}^2 , 
+\end{equation}
 
 i.e. we sum up all the weights squared.
 The parameter $\lambda$ is known as a regularization parameter.

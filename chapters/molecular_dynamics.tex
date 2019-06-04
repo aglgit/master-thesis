@@ -42,22 +42,27 @@ for a set of $N$ electrons and $A$ nuclei:
 We want to find solutions to the time-dependent non-relativistic
 Schrodinger equation:
 
-$$ i\hbar \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . $$
+\begin{equation}
+ i\hbar \frac{\partial}{\partial t} \Psi = \hat{H} \Psi . 
+\end{equation}
 
 The wave function is separated in terms of the electronic and nuclear
 coordinates with the ansatz:
 
-$$ \Psi \left(\set{\bm{r}_i}, \set{\bm{R}_a}, t \right)
+\begin{equation}
+ \Psi \left(\set{\bm{r}_i}, \set{\bm{R}_a}, t \right)
     \approx \Phi(\set{\bm{r}_i}) \chi(\set{\bm{R}_a})
     \exp \left[ \frac{i}{\hbar} \int_{t_0}^t
     dt' E_e(t') \right] ,
-$$
+\end{equation}
 
 with the electronic and nuclear wave functions normalized to unity
 at every instance of time. A phase factor is introduced to make
 the equations look nice:
 
-$$ E_e = \int d\bm{r} d\bm{R} \Phi^* \chi^* \hat{H} \Phi \chi , $$
+\begin{equation}
+ E_e = \int d\bm{r} d\bm{R} \Phi^* \chi^* \hat{H} \Phi \chi , 
+\end{equation}
 
 where the integration occurs over all spatial coordinates
 $\set{\bm{r}_i}, \set{\bm{R}_a}$. This is a single determinant
@@ -65,13 +70,17 @@ ansatz which must lead to a mean-field description of the dynamics.
 Inserting this ansatz into the Schrodinger equation
 reveals the following set of equations:
 
-$$ i\hbar \frac{\partial \Phi}{\partial t}
+\begin{equation}
+ i\hbar \frac{\partial \Phi}{\partial t}
     = -\sum_i \frac{\hbar^2}{2m_e} \nabla_i^2 \Phi
-    + \left\{ \int d\bm{R} \chi^* V_{ne} \chi \right\} \Phi , $$
+    + \left\{ \int d\bm{R} \chi^* V_{ne} \chi \right\} \Phi , 
+\end{equation}
 
-$$ i\hbar \frac{\partial \chi}{\partial t}
+\begin{equation}
+ i\hbar \frac{\partial \chi}{\partial t}
     = -\sum_i \frac{\hbar^2}{2M_a} \nabla_a^2 \chi
-    + \left\{ \int d\bm{r} \Phi^* \hat{H} \Phi \right\} \chi . $$
+    + \left\{ \int d\bm{r} \Phi^* \hat{H} \Phi \right\} \chi . 
+\end{equation}
 
 These coupled equations form the framework for the
 time-dependent self-consistent field (TDSCF) method.
@@ -83,40 +92,54 @@ In the framework of classical molecular dynamics
 we approximate the nuclei as classical point particles.
 This can be done be rewriting the nuclear wave function as
 
-$$ \chi = A \exp[iS/\hbar] , $$
+\begin{equation}
+ \chi = A \exp[iS/\hbar] , 
+\end{equation}
 
 with an amplitude factor $A$ and a phase $S$
 which are both considered to be real.
 The TDSCF equations are rewritten in terms of these variables
 
-$$ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
+\begin{equation}
+ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
     (\nabla_a S)^2 + \int d\bm{r} \Phi^* \hat{H} \Phi
-    = \hbar^2 \sum_a \frac{1}{2M_a} \frac{\nabla_a^2 A}{A} , $$
+    = \hbar^2 \sum_a \frac{1}{2M_a} \frac{\nabla_a^2 A}{A} , 
+\end{equation}
 
-$$ \frac{\partial A}{\partial t} + \sum_a \frac{1}{M_a} (\nabla_a A)
-    (\nabla_a S) + \sum_a \frac{1}{2M_a} A (\nabla_a^2 S) = 0 . $$
+\begin{equation}
+ \frac{\partial A}{\partial t} + \sum_a \frac{1}{M_a} (\nabla_a A)
+    (\nabla_a S) + \sum_a \frac{1}{2M_a} A (\nabla_a^2 S) = 0 . 
+\end{equation}
 
 This set of equations is known as the "quantum fluid dynamical representation".
 The term for $S$ contains a term for $\hbar$ which vanishes in
 the classical limit $\hbar \rightarrow 0$:
 
-$$ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
-    (\nabla_a S)^2 + \int d\bm{r} \Phi^* \hat{H} \Phi = 0 . $$
+\begin{equation}
+ \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
+    (\nabla_a S)^2 + \int d\bm{r} \Phi^* \hat{H} \Phi = 0 . 
+\end{equation}
 
 This formulation of the nuclear dynamics is isomorphic
 to the Hamilton-Jacobi formulation:
 
-$$ \frac{\partial S}{\partial t} + \hat{H} = 0 , $$
+\begin{equation}
+ \frac{\partial S}{\partial t} + \hat{H} = 0 , 
+\end{equation}
 
 with the classical Hamilton function
 
-$$ \hat{H} = T(\left\{P_a\right\}) + V(\left\{R_a\right\}) , $$
+\begin{equation}
+ \hat{H} = T(\left\{P_a\right\}) + V(\left\{R_a\right\}) , 
+\end{equation}
 
 with coordinates $\left\{R_a\right\}$ and conjugate momenta 
 $\left\{P_a\right\}$.
 If we identify the conjugate momenta with the phase $S$ as:
 
-$$ \bm{P}_a = \nabla_a S , $$
+\begin{equation}
+ \bm{P}_a = \nabla_a S , 
+\end{equation}
 
 we obtain the following Newtonian equations of motion:
 
@@ -151,9 +174,11 @@ of the classical nuclei.
 This leads to a time-dependent wave equation
 for the electrons:
 
-$$ i\hbar\frac{\partial \Phi}{\partial t} =
+\begin{equation}
+ i\hbar\frac{\partial \Phi}{\partial t} =
     -\sum_i \frac{\hbar}{2m_e} \nabla_i^2 \Phi
-    + \hat{V}_{ne} \Phi , $$
+    + \hat{V}_{ne} \Phi , 
+\end{equation}
 
 which evolve quantum mechanically as the nuclei propagate
 classically. This mixed approach is commonly referred to as
@@ -172,13 +197,17 @@ to the ground state wave function $\Phi_0$
 at every instant of time. 
 This means the nuclei move on a single potential energy surface:
 
-$$ V_e^E = \int d\bm{r} \Phi_0^* \hat{H} \Phi_0 
-    = E_0 \left(\left\{ R_I \right\}\right) , $$
+\begin{equation}
+ V_e^E = \int d\bm{r} \Phi_0^* \hat{H} \Phi_0 
+    = E_0 \left(\left\{ R_I \right\}\right) , 
+\end{equation}
 
 that is obtained by solving the Schrodinger equation
 for the ground state electron wave function:
 
-$$ \hat{H} \Phi_0 = E_0 \Phi_0 . $$
+\begin{equation}
+ \hat{H} \Phi_0 = E_0 \Phi_0 . 
+\end{equation}
 
 Since we are now dealing with a single potential
 energy surface, the problem of computing the energy surface
@@ -195,15 +224,19 @@ as the number of nuclei in the system increases,
 the global potential energy surface
 is approximated as an expansion of manybody contributions:
 
-$$ V_e^E \approx V_e^{\text{approx}} =
+\begin{equation}
+ V_e^E \approx V_e^{\text{approx}} =
     \sum_a v_1(R_a) + \sum_{a < b} v_2(R_a, R_b)
-    + \sum_{a < b < c} v_3(R_a, R_b, R_c) , $$
+    + \sum_{a < b < c} v_3(R_a, R_b, R_c) , 
+\end{equation}
 
 and is typically truncated at 2, 3 or 4-body interactions
 depending on the complexity of the atoms and molecules in the system.
 This renders the problem of computing dynamics purely classical:
 
-$$ M_a \frac{d^2 R_I}{dt^2} = -\nabla_a V_e^{\text{approx}} . $$
+\begin{equation}
+ M_a \frac{d^2 R_I}{dt^2} = -\nabla_a V_e^{\text{approx}} . 
+\end{equation}
 
 This reduction in the number of degrees of freedom is a huge simplification
 which allows us to study much larger and more complex systems
@@ -239,7 +272,9 @@ and velocities of the constituent nuclei.
 For instance the temperature can be related
 to the average kinetic energy of the system:
 
-$$ \langle \frac{1}{2} m v^2 \rangle = \frac{N_f}{2} k_B T , $$
+\begin{equation}
+ \langle \frac{1}{2} m v^2 \rangle = \frac{N_f}{2} k_B T , 
+\end{equation}
 
 where $N_f$ is the number of degrees of freedom in our system.
 At every instant of time the total kinetic energy
@@ -289,9 +324,11 @@ As we mentioned before, the global energy surface
 as a function of nuclear coordinates $\left\{ \bm{r} \right\}$
 is approximated as an expansion of manybody contributions:
 
-$$ V_e^E \left(\left\{ \bm{r} \right\}\right) =
+\begin{equation}
+ V_e^E \left(\left\{ \bm{r} \right\}\right) =
     \sum_i v_1(r_i) + \sum_{i < j} v_2(r_i, r_j)
-    + \sum_{i < j < k} v_3(r_i, r_j, r_k) , $$
+    + \sum_{i < j < k} v_3(r_i, r_j, r_k) , 
+\end{equation}
 
 wherein each n-body term is an analytical function
 of $n$ coordinates.
@@ -299,8 +336,10 @@ As an atom moves on the energy surface
 it feels a force which is the gradient of the potential energy surface.
 This means atom $i$ feels an acceleration:
 
-$$ \bm{F}_i = m_i \frac{d^2 \bm{r}_i}{dt^2} =
-    -\nabla_i V_e^E \left( \left\{ \bm{r} \right\}\right) . $$
+\begin{equation}
+ \bm{F}_i = m_i \frac{d^2 \bm{r}_i}{dt^2} =
+    -\nabla_i V_e^E \left( \left\{ \bm{r} \right\}\right) . 
+\end{equation}
 
 For a system of $N$ atoms with only pairwise interactions
 this means the forces must be calculated $N(N-1)/2$ times
@@ -417,7 +456,9 @@ Simulations in the canonical ensemble can be achieved by modifying the verlet
 integration algorithm. The simplest thermostat possible
 follows from the equipartion theorem:
 
-$$ T \propto \langle mv^2 \rangle , $$
+\begin{equation}
+ T \propto \langle mv^2 \rangle , 
+\end{equation}
 
 meaning some amount of kinetic energy i.e. velocity
 can be added or subtracted to every atom in order to maintain
@@ -445,8 +486,10 @@ In addition it introduces an effective mass $Q$ such that $p_s = Q\frac{ds}{dt}$
 \par
 Hoover modified Nosé's approach by introducing the Hamiltonian:
 
-$$ H = \frac{1}{2} \sum m_i \left| \bm{p}_i \right|^2 + U(\bm{r}) + \frac{\xi Q}{2}
-    + 3Nk_B T \ln{s} , $$
+\begin{equation}
+ H = \frac{1}{2} \sum m_i \left| \bm{p}_i \right|^2 + U(\bm{r}) + \frac{\xi Q}{2}
+    + 3Nk_B T \ln{s} , 
+\end{equation}
 
 where $\xi$ is a friction coefficient and $\bm{p}_i = m_i\bm{v}_i \times s$
 are the particle momenta. This leads to a new set of Newtonian equations of motions
@@ -473,7 +516,9 @@ of the particles, i.e. only conservative forces act on the atoms.
 This means that the force on atom $i$ is fully described
 by a potential energy $U$:
 
-$$ \bm{F}_i = -\nabla_i U \left(\left\{ \bm{r} \right\} \right) , $$
+\begin{equation}
+ \bm{F}_i = -\nabla_i U \left(\left\{ \bm{r} \right\} \right) , 
+\end{equation}
 
 which in principle depends on the position of atom $i$
 and all other atoms in the system. Finding an appropriate potential
@@ -495,8 +540,10 @@ interacting with a surface of carbon atoms.
 One of the simplest potentials meant to simulate a realistic system
 is the Lennard-Jones potential:
 
-$$ U(r_{ij}) = 4\epsilon \left(\left(\frac{\sigma}{r_{ij}}\right)^{12}
-    - \left(\frac{\sigma}{r_{ij}}\right)^{6}\right) , $$
+\begin{equation}
+ U(r_{ij}) = 4\epsilon \left(\left(\frac{\sigma}{r_{ij}}\right)^{12}
+    - \left(\frac{\sigma}{r_{ij}}\right)^{6}\right) , 
+\end{equation}
 
 with $r_{ij} = \left| \bm{r}_j - \bm{r}_i \right|$.
 For the Lennard-Jones potential there are only two parameters to be decided,
