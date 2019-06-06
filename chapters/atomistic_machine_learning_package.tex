@@ -185,14 +185,11 @@ Zernike descriptors represent a tensor product between spherical
 harmonics and Zernike polynomials. The local atomic environment
 of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
 
-
-
 \begin{equation}
  \rho_i(\bm{r}_i) = \sum_{j\neq i}^{\text{local}}
     \eta_j \delta \left( \bm{r}_i - \bm{r}_{ij} \right)
     f_c \left( \lvert \lvert \bm{r}_{ij} \rvert \rvert \right) , 
 \end{equation}
-
 
 with $f_c(r)$ a cutoff function as described in chapter 6.
 The 3-D Zernike basis set $Z$ is formed by a tensor product between
@@ -200,23 +197,19 @@ the Zernike polynomials basis set $R$ and the spherical harmonics
 $Y$. The Zernike basis set is defined inside and on the surface
 of the $S^2$ unit sphere as:
 
-
 \begin{equation}
  Z_{nl}^m (r, \theta, \phi) = R_n^l(r) Y_l^m(\theta, \phi) , 
 \end{equation}
-
 
 where $n \geq 0$ is an integer, $l$ is restricted to even $n - l \geq 0$
 and $m$ is an integer such that $\left| m \right| \leq l$.
 Functions defined inside and on the $S^2$ sphere
 can be represented by the 3-D Zernike basis as:
 
-
 \begin{equation}
  f(r, \theta, \phi) = \sum_{n=0}^{\infty} \sum_l \sum_{m=-l}^l
     c_{nl}^m Z_{nl}^m (r, \theta, \phi) , 
 \end{equation}
-
 
 with coefficients $c_{nl}^m = \langle Z_{nl}^m, f \rangle$
 computed as projections of $f$ onto the Zernike basis.

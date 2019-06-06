@@ -79,20 +79,20 @@ all of these properties.
 The idea is to approximate the potential energy with a regression model:
 
 \begin{equation}
-\set{\bm{R}} \overset{\text{regression}}{\longrightarrow} 
-E = E\left( \set{\bm{R}} \right) ,
+\left\{\bm{R\right\}} \overset{\text{regression}}{\longrightarrow} 
+E = E\left( \left\{\bm{R\right\}} \right) ,
 \end{equation}
 
-where $\set{\bm{R}}$ represents the cartesian coordinates of our system.
+where $\left\{\bm{R\right\}}$ represents the cartesian coordinates of our system.
 A mapping that satisfies the constraints of translation, rotation
 and permutation invariance we will refer to as a \textit{descriptor}.
 The descriptor is a multidimensional function $\bm{G}$
 that serves as input to the regression method:
 
 \begin{equation}
-\set{\bm{R}} \rightarrow \bm{G} \left(\set{\bm{R}} \right)
+\left\{\bm{R\right\}} \rightarrow \bm{G} \left(\left\{\bm{R\right\}} \right)
 \overset{\text{regression}}{\longrightarrow}
-E = E \left(\bm{G}\left(\set{\bm{R}}\right)\right)
+E = E \left(\bm{G}\left(\left\{\bm{R\right\}}\right)\right)
 \end{equation}
 
 Once we have a descriptor and a regression model the dynamics
@@ -102,7 +102,7 @@ can be readily obtained by taking derivatives:
 \begin{split}
     \bm{F}_i &= -\nabla_i E \\
     &= -\nabla_i
-    E(\bm{G}(\set{\bm{R}})) \\
+    E(\bm{G}(\left\{\bm{R\right\}})) \\
     &= -\sum_j \frac{\partial E}
     {\partial G_j} \frac{\partial G_j}{\partial \bm{R}_i} ,
 \end{split}
@@ -116,7 +116,7 @@ The potential energy is typically also broken into
 atomic contributions:
 
 \begin{equation}
-E = \sum_{i=1}^N E_{\text{atom}}\left(\bm{R}_i, \set{\bm{R}} \right) ,
+E = \sum_{i=1}^N E_{\text{atom}}\left(\bm{R}_i, \left\{\bm{R\right\}} \right) ,
 \end{equation}
 
 where each atomic contribution is determined by the atom's
