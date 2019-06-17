@@ -1,34 +1,134 @@
-In this chapter we train and validate the Behler-Parrinello
-and DPMD on data obtained from molecular dynamics simulations
-with classical potentials. We will focus on the Lennard-Jones
-and Stillinger-Weber potentials, as these are likely the most
-well-known and widely used potentials out there,
-and are good candidates for benchmarking and testing
-novel simulations. We will examine and compare the different
-methods, and evaluate them relative to the empirical potentials
-and each other. The methods will be evaluated on the metrics
-of training and test error for both the energy and the forces,
-the radial distribution function and some important mechanical properties.
+In order to test the validity of the Behler-Parrinello method
+and AMP, we train and test neural network potentials on the
+Lennard-Jones and Stillinger-Weber potentials. These are some of
+the simplest realistic potentials, which are widely applied
+in the molecular dynamics literature, and fitting to these potentials
+will provide much insight into the speed and accuracy of
+fitting machine-learned potentials.
 
-\subsection{Input data}
-The input data is a list of ASE Atoms objects or \textit{images},
-which represent the state of the atoms at a given time.
-The Lennard-Jones data is computed using the ASE "lj" calculator,
-which is pure Python (e.g. slow) implementation of the Lennard-Jones potential.
-The potential energy and forces is computed every timestep using this
-calculator and the system is integrated forward in time using
-the Velocity-Verlet algorithm. The simulation is performed in the NVE
-ensemble with an initial velocity according to the Maxwell-Boltzmann
-distribution with a temperature of 300K.
-The initial state of the system is $2\times 2\times 2$
-unit cells of the face-centered cubic crystal containing
-4 atoms for a total of $4\times 2^3 = 32$ Argon atoms.
-The system is integrated for a total of 1000 timesteps,
-with the trajectory written to file every 10 timesteps.
+\subsection{Lennard-Jones}
+The AMP calculator is trained on a Lennard-Jones trajectory
+starting in a face-centered-cubic (FCC) crystal
+with a lattice spacing of 5.26 Å. We use $2\times2\times2$ unit
+cells for a total of $4\cdot2^3 = 64$ atoms, and velocities
+are initialized from the Maxwell-Boltzmann distribution
+with a temperature of 750 Kelvin.
+The atoms are propagated forward using the Verlet integrator
+in the microcanonical (NVE) ensemble for $10^4$ steps
+with a timestep of $\Delta t = 5$fs, and the trajectory
+is written to file every 25 steps.
+The potential energy and forces is computed using the Lennard-Jones
+potential with the characteristic energy $\epsilon = 1.0318\cdot
+10^{-2}$eV and characteristic length $\sigma = 3.405$Å
+and a radial cutoff $r_c = 3\sigma$.
+\par
+Since the Lennard-Jones system is not a very complicated one,
+with interactions only reliant on distance we use the AMP
+defaults for the symmetry functions.
+The AMP defaults for Argon are 4 $G_2$ radial functions
+with $\eta = 0.05, 0.23, 1.07, 5.00$ and 4 $G_4$ angular
+functions with $\eta = 0.05$, $\gamma = 1.0, -1.0, 1.0, -1.0$
+and $\zeta = 1.0, 1.0, 4.0, 4.0$ respectively.
+The smooth cutoff function is the cosine function
+with a cutoff $r_c = 6.5$Å, which is the default in AMP.
+\newline Plot symmetry functions?
+\par
+The fitting of the neural network requires the selection
+of a large number of parameters in order to get an appropriate
+convergence. In table \ref{tab:hyperparam} all relevant parameters
+are listed.
+We have not performed a systematic search over
+hyperparameters in this section, so the choice of these is somewhat
+arbitrary and based on intuition and rules of thumb.
+The network was found to converge on an energy RMSE of approximately
+$10^{-3}$eV and a force RMSE of approximately $7.5\cdot10^{-2}$ eV/Å
+after a number of trial runs, and these were therefore chosen
+as convergence criteria.
+The loss function has weightings for both the energy
+and the forces, and adding force terms to the loss function
+is thought to improve the dynamics of the trained calculator.
+However, this requires us to store a very large amount of forces
+for each image, and may introduce problems with available memory.
+
+\begin{table}[h]
+\label{tab:hyperparam}
+\caption{Hyperparameters used in fitting.}
+\begin{center}
+\begin{tabular}{|c c|}
+\hline
+Hyperparameter & Value \\
+\hline \hline
+Features & 8 \\
+Hidden layers & $(10, 10, 10)$ \\
+Activation & Hyperbolic tangent \\
+Timesteps & $10^4$ \\
+Max epochs & 10000 \\
+Optimizer & Adam \\
+Initial learning rate & $10^{-3}$ \\
+Energy RMSE & $10^{-3}$eV \\
+Energy coefficient & 1.0 \\
+Force RMSE & $7.5\cdot10^{-2}$eV/Å \\
+Force coefficient & 0.04 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+In figure \ref{fig:convergence} you can see the convergence of the total
+loss, and the energy and force RMSEs. The loss has converged
+with minor improvements after approximately 200-300 steps,
+and then slowly moves toward the criteria until approximately 450 steps.
+The loss function is often
+quite noisy at the start of the training, but then converges much more
+smoothly towards an asymptote. The force RMSE is typically much
+larger than the energy RMSE, this is likely because the force RMSE
+is averaged over a much larger set of components, which introduces
+a lot of noise into the loss.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{convergence.png}
+    \caption{Convergence}
+    \label{fig:convergence}
+\end{figure}
+
+After the AMP calculator is trained we use it to generated a 
+test trajectory for $10^3$ steps, which is compared to a Lennard-Jones
+trajectory of the same size and initial conditions.
+In figure \ref{fig:energy} we have plotted a comparison of the
+potential energy of the system over time. Typical of any NVE simulation
+starting in an equilibrium crystal structure is that some amount of
+the initial kinetic energy will be converted to potential energy,
+and thereafter the potential energy will stabilize around some value.
+We see that the potential energies agree initially, but then the AMP
+energy diverges. This is likely a numerical artifact caused by
+a poor force fit allowing the atoms to move too closely, and
+this will increase the total energy of the system.
+This may be improved by further training, a larger dataset or a larger force
+coefficient.
+\par
+
+Energy difference, radial distribution function, mean squared displacement.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{energy.png}
+    \caption{Energy difference}
+    \label{fig:energy}
+\end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{loss.png}
-    \label{fig:}
-    \caption{Text}
+    \includegraphics[width=\textwidth]{rdf.png}
+    \caption{Radial distribution function}
+    \label{fig:rdf}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{msd.png}
+    \caption{Mean Squared Displacement}
+    \label{fig:msd}
+\end{figure}
+
+\subsection{Stillinger-Weber}

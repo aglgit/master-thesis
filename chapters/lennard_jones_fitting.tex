@@ -1,0 +1,14 @@
+In order to demonstrate the construction of a neural network
+potential, we use Tensorflow to reconstruct the Lennard-Jones
+potential. The Lennard-Jones potential is the simplest
+realistic molecular dynamics potential, and since it is a function
+of only radial distance, symmetry functions are not required.
+We can thus use neural networks to perform a simple regression
+on a function accepting one input and producing one output.
+This serves to illustrate some of the intuitions and problems
+one runs into when using more complex methods such as 
+atom-centered descriptors and gives a nice introduction into
+modern Tensorflow. We will be using the Tensorflow 2.0
+beta version recently released, since it introduces a wide array
+of changes which will likely prove influential to the long-term
+direction of the Tensorflow project.
