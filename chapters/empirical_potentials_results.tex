@@ -47,7 +47,7 @@ as convergence criteria.
 The loss function has weightings for both the energy
 and the forces, and adding force terms to the loss function
 is thought to improve the dynamics of the trained calculator.
-However, this requires us to store a very large amount of forces
+However, this requires us to store the force on all atoms
 for each image, and may introduce problems with available memory.
 
 \begin{table}[h]
@@ -87,7 +87,7 @@ a lot of noise into the loss.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{convergence.png}
+    \includegraphics[width=\linewidth]{convergence.png}
     \caption{Convergence}
     \label{fig:convergence}
 \end{figure}
@@ -108,27 +108,54 @@ This may be improved by further training, a larger dataset or a larger force
 coefficient.
 \par
 
-Energy difference, radial distribution function, mean squared displacement.
-
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{energy.png}
+    \includegraphics[width=\linewidth]{energy.png}
     \caption{Energy difference}
     \label{fig:energy}
 \end{figure}
 
-\begin{figure}
+In figure \ref{fig:rdf} we have plotted the radial distribution function,
+which is a good measure of the structural composition of a system.
+The radial distribution function measures the density of atoms
+at a radial distance from an arbitrarily chosen reference atom.
+Any two atoms should not be too close as this implies an enormous
+amount of potential energy, and it typically exhibits several
+peaks where the atoms prefer to reside. In a homogenous infinite
+structure the function approaches unity as the radial distance increases.
+If the neural network is to reproduce the correct ensemble averages
+we would expect it to exhibit the same structural details.
+From the figure we can see the the RDFs mostly exhibit the same
+structure and details, which is a good sign. The RDFs do not
+overlap completely, which may be improved by further training and 
+more data.
+
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{rdf.png}
+    \includegraphics[width=\linewidth]{rdf.png}
     \caption{Radial distribution function}
     \label{fig:rdf}
 \end{figure}
 
-\begin{figure}
+In figure \ref{fig:msd} we have plotted the mean squared displacement.
+The mean squared displacement measures how an (average) atom
+moves with respect to an initial position over time,
+and is related to the fraction of the system explored by a random walker.
+The mean squared displacement should be linear for a liquid
+unaffected by an external force, and can be used to compute
+the diffusion constant of the system. If the AMP calculator is accurate
+we would expect the diffusion constants to reasonably agree.
+We see that the AMP MSD diverges from the Lennard-Jones one
+and seems to be increasing sharply over time. This is likely
+due to numerical error, with the energy of the system increasing
+as the atoms are appearing too close. This should be rectified.
+
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{msd.png}
+    \includegraphics[width=\linewidth]{msd.png}
     \caption{Mean Squared Displacement}
     \label{fig:msd}
 \end{figure}
 
 \subsection{Stillinger-Weber}
+Text.
