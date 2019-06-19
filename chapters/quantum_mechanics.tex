@@ -268,44 +268,34 @@ as a postulate, but is usually derived from more fundamental
 principles.
 By exploiting the composition property of the time-evolution
 operator we find that:
-
 \begin{equation}
  \mathcal{U}(t + dt, t_0) = \mathcal{U}(t + dt, t)
     \mathcal{U}(t, t_0) = (1 - \frac{i H dt}{\hbar})
     \mathcal{U}(t, t_0) ,
 \end{equation}
-
 where the time difference $t - t_0$ is not required to be infinitesimal.
 Subtracting from both sides of this equation:
-
 \begin{equation}
  \mathcal{U}(t + dt, t_0) - \mathcal{U}(t, t_0) =
     -\frac{iHdt}{\hbar} \mathcal{U}(t, t_0) .
 \end{equation}
-
 Rearranging this equation and taking the limit $dt \rightarrow 0$
 leads to the equation:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t} \mathcal{U}(t, t_0)
     = H \mathcal{U}(t, t_0) .
 \end{equation}
-
 This is known as the Schr\"{o}dinger equation for the time-evolution operator.
 We multiply both sides by a ket $\ket{\alpha, t_0}$:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t} \mathcal{U}(t, t_0)
     \ket{\alpha, t_0} = H \mathcal{U}(t, t_0) \ket{\alpha, t_0} .
 \end{equation}
-
 This ket does not depend on $t$, leading us to the famous equation:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t}
     \ket{\alpha, t; t_0} = H \ket{\alpha, t; t_0} .
 \end{equation}
-
 This is known as the time-dependent Schr\"{o}dinger equation,
 and gives the description for how a quantum system evolves with time.
 It is possible to show that in the classical limit
