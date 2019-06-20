@@ -2,19 +2,19 @@ In order to proceed to electronic structure calculations
 we require a solid foundation in the principles of quantum mechanics.
 This chapter will give a brief overview of the basic tenets
 of quantum mechanics and describe briefly how these rules lead
-to the Schr\"{o}dinger equation, which is the equation governning
+to the Schr\"{o}dinger equation, which is the equation governing
 all non-relativistic quantum mechanics.
 We will assume an undergraduate understanding of calculus and linear algebra,
 and some knowledge of mechanics is also helpful.
 The discussion in this chapter follows closely the discussion in
 \parencite[Sakurai][pages 10-76]{sakurai1995modern},
-and the reader is referred here for more details.
+and the reader is referred there for more details.
 
 \subsection{Kets and bras}
-In quantum mechanics, the state of a quantum system 
+In quantum mechanics, the state of a quantum system
 is represented by a \textit{state vector}
 in a complex vector space. Such a vector is called a \textit{ket}, denoted
-by $\ket{\alpha}$, following the notation of Paul Dirac. 
+by $\ket{\alpha}$, following the notation of Paul Dirac.
 The state ket is postulated to contain all information
 about the state of the quantum system, such as energy, angular momentum,
 mass and so on. Two kets can be added to produce a new ket:
@@ -22,32 +22,25 @@ mass and so on. Two kets can be added to produce a new ket:
 \begin{equation}
 \ket{\alpha} + \ket{\beta} = \ket{\gamma} .
 \end{equation}
-
 They can also be multiplied by a complex number:
-
 \begin{equation}
 c\ket{\alpha} = \ket{\alpha}c = \ket{\delta} .
 \end{equation}
-
 If $c$ is zero the resulting ket is called a \textit{null ket}.
 If $c$ is non-zero it is postulated that the resulting ket contains
-the same information as the initial ket.
+the same information as the initial ket. {\color{red} Is this true if $|c|\not = 1$?}
 \newline
 Observables such as momentum and spin are represented by operators
 acting on the vector space in question. Operators
 act on a ket from the left to produce a new ket:
-
 \begin{equation}
 A \ket{\alpha} = \ket{\delta} .
 \end{equation}
-
 Of particular importance is when the action of an operator
 on a ket is the same as multiplication:
-
 \begin{equation}
 A \ket{\alpha} = c\ket{\alpha} = \ket{\delta} .
 \end{equation}
-
 These kets are known as \textit{eigenkets} and the corresponding
 complex numbers are known as \textit{eigenvalues}.
 The physical state represented by an eigenket is known
@@ -62,11 +55,9 @@ operators such as energy and spin have a discrete or
 The eigenkets of a physical observable form
 a complete orthogonal set, meaning any ket
 can be written as an expansion of eigenkets $\ket{a'}$:
-
 \begin{equation}
 \ket{\alpha} = \sum_{a'} c_{a'} \ket{a'} ,
 \end{equation}
-
 where $c_{a'}$ is a complex coefficient.
 In principle there are infinitely many linearly indepedent eigenkets,
 depending on the dimensionality of the vector space.
@@ -76,131 +67,95 @@ We postulate that for every ket $\ket{\alpha}$ there exists a bra
 $\bra{\alpha}$. The bra space is spanned by eigenbras $\bra{a'}$
 corresponding to the eigenkets $\ket{a'}$. The ket and bra spaces
 have a dual correspondence:
-
 \begin{equation}
 \begin{split}
 \ket{\alpha} &\leftrightarrow \bra{\alpha} \\
-\ket{\alpha '}, \ket{\alpha ''},\dots &\leftrightarrow \bra{\alpha '}, 
+\ket{\alpha '}, \ket{\alpha ''},\dots &\leftrightarrow \bra{\alpha '},
     \bra{\alpha ''},\dots \\
 \ket{\alpha} + \ket{\beta} &\leftrightarrow \bra{\alpha} + \bra{\beta} .
 \end{split}
 \end{equation}
-
 The bra dual to $c \ket{\alpha}$ is postulated to be $c^* \ket{\alpha}$,
 and more generally:
-
 \begin{equation}
 c_{\alpha} \ket{\alpha} + c_{\beta} \ket{\beta} \leftrightarrow
 c_{\alpha}^* \bra{\alpha} + c_{\beta}^* \bra{\beta} .
 \end{equation}
-
 The \textit{inner product} of a bra and a ket is a complex number
 written as a bra on the left and a ket on the right.
 It has the fundamental property:
-
 \begin{equation}
 \braket{\alpha | \beta} = \braket{\beta | \alpha}^* ,
 \end{equation}
-
 meaning they are complex conjugates.
 For this to satisfy the requirements of an inner product we must have
-
 \begin{equation}
 \braket{\alpha | \alpha} \geq 0 ,
 \end{equation}
-
 with equality if and only if $\ket{\alpha}$ is a null ket.
 We define the \textit{norm} of a ket as
-
 \begin{equation}
 \sqrt{\braket{\alpha | \alpha}} ,
 \end{equation}
-
 which can be used to form normalized kets
-
 \begin{equation}
 \ket{\overset{\sim}{\alpha}} =
 \frac{1}{\sqrt{\braket{\alpha | \alpha}}} \ket{\alpha} ,
 \end{equation}
-
 with the property
-
 \begin{equation}
 \braket{\overset{\sim}{\alpha} | \overset{\sim}{\alpha}} = 1 .
 \end{equation}
-
 Two kets are said to be \textit{orthogonal} if
-
 \begin{equation}
  \braket{\alpha | \beta} = 0 .
 \end{equation}
 
 \subsection{Operators}
 As we mentioned briefly above, operators act on kets from the left
-to produce a new ket. Two operators $A$ and $B$ are equal
-
-\begin{equation}
- A = B ,
-\end{equation}
-
-if
-
+to produce a new ket. Two operators $A$ and $B$ are equal $A=B$ if
 \begin{equation}
  A \ket{\alpha} = B \ket{\alpha} ,
 \end{equation}
-
 for an arbitrary ket in the relevant ket space. An operator $A$
 is said to be the \textit{null operator} if
-
 \begin{equation}
  A \ket{\alpha} = 0 .
 \end{equation}
-
 Operators can be added, and addition operations are commutative and associative.
-
 \begin{equation}
  X + Y = Y + X ,
 \end{equation}
-
 \begin{equation}
  (X + Y) + Z = X + (Y + Z) .
 \end{equation}
 
 \par
 Operators act on bras from the right to produce a new bra
-
 \begin{equation}
  \bra{\alpha} A = \bra{\beta} .
 \end{equation}
-
 The ket $A \ket{\alpha}$ and the bra $\bra{\alpha} A$ are in general
 not dual to each other. We define the \textit{hermitian adjoint} $A^{\dagger}$
 through the dual correspondence:
-
 \begin{equation}
  A \ket{\alpha} \leftrightarrow \bra{\alpha} A^{\dagger} .
 \end{equation}
-
 An operator is said to be \textit{hermitian} if
-
 \begin{equation}
  A = A^{\dagger} .
 \end{equation}
-
 Hermitian operators have real eigenvalues, and since the result
 of any measurement must be a real number any operator that
 represents a physical observable must be Hermitian.
 \newline
 Operators can be multiplied. Multiplication is associative, but non-commutative:
-
 \begin{equation}
  XY \neq YX ,
 \end{equation}
-
 \begin{equation}
  X(YZ) = (XY)Z .
 \end{equation}
-
 The left product of a ket and a bra is known as the \textit{outer product}:
 
 \begin{equation}
@@ -215,18 +170,14 @@ not defined within the ruleset of quantum mechanics.
 The associative properties of operators are postulated to hold true
 as long as we are dealing with legal multiplications among kets, bras
 and operators. As an example, the outer product acting on a ket:
-
 \begin{equation}
  (\ket{\alpha} \bra{\beta}) \ket{\gamma} ,
 \end{equation}
-
 can be equivalently regarded as scalar multiplication
-
 \begin{equation}
  \ket{\alpha} (\braket{\alpha | \gamma})
     = \ket{\alpha} c = c \ket{\alpha} ,
 \end{equation}
-
 where $c = \braket{\alpha | \gamma}$ is just a complex number.
 
 \subsection{Time evolution}
@@ -241,95 +192,72 @@ at a time $t_0$. Denote the ket at a later time $t > t_0$ by
 \begin{equation}
  \ket{\alpha, t; t_0} .
 \end{equation}
-
 Time evolution is assumed to be continuous and symmetric,
 meaning that if we evolve the system backwards in time
 we should arrive at the initial state:
-
 \begin{equation}
  \lim_{t \rightarrow t_0} \ket{\alpha, t; t_0}
 = \ket{\alpha} .
 \end{equation}
-
 The kets separated by a time $\Delta t = t - t_0$
 are related by the \textit{time-evolution operator} $\mathcal{U}$:
-
 \begin{equation}
  \ket{\alpha, t; t_0} = \mathcal{U}(t, t_0) \ket{\alpha, t_0} .
 \end{equation}
-
 If the state ket is normalized to unity at a time $t_0$,
 it must remain normalized at a later time:
-
 \begin{equation}
  \braket{\alpha, t_0 | \alpha, t_0} = \braket{\alpha, t; t_0
     | \alpha, t; t_0} = 1 .
 \end{equation}
-
-This is guaranteed if the time evolution operator 
+This is guaranteed if the time evolution operator
 $\mathcal{U}$ is a \textit{unitary} operator:
-
 \begin{equation}
  \mathcal{U}^{\dagger} \mathcal{U} = 1 .
 \end{equation}
-
 We also require that the time evolution operator
 exhibits a composition property:
-
 \begin{equation}
  \mathcal{U}(t_2, t_0) = \mathcal{U}(t_2, t_1)
-    \mathcal{U}(t_1, t_0), \quad (t_2 > t_1 > t_0) , 
+    \mathcal{U}(t_1, t_0), \quad (t_2 > t_1 > t_0) ,
 \end{equation}
-
 meaning that the time evolution between two points
 $t_0$ and $t_2$ remains the same if we first evolve the system
 to an intermediate time $t_1$.
 \par
 If we consider an infinitesimal time-evolution operator
-
 \begin{equation}
  \ket{\alpha, t_0 + dt; t_0} = \mathcal{U}(t_0 + dt, t_0)
 \ket{\alpha, t_0} ,
 \end{equation}
-
 it must reduce to the identity operator as the infinitesimal
 time interval $dt$ goes to zero:
-
 \begin{equation}
- \lim_{dt \rightarrow 0} \mathcal{U}(t_0 + dt, t_0) = 1, 
+ \lim_{dt \rightarrow 0} \mathcal{U}(t_0 + dt, t_0) = 1,
 \end{equation}
-
 and we expect the difference between the operators
 to be of first order in $dt$.
 \newline
 These requirements are all satisfied by the operator
-
 \begin{equation}
  \mathcal{U}(t_0 + dt, t_0) = 1 - i\Omega dt ,
 \end{equation}
-
 where $\Omega$ is a Hermitian operator:
-
 \begin{equation}
  \Omega^{\dagger} = \Omega .
 \end{equation}
-
 The operator $\Omega$ has the dimension inverse time.
 Frequency or inverse time is related to energy
 through the Planck-Einstein relation:
-
 \begin{equation}
  E = \hbar \omega .
 \end{equation}
-
 In classical mechanics the Hamiltonian is the generator of time evolution,
 so we postulate that $\Omega$ is related to the Hamiltonian operator
 $H$:
-
 \begin{equation}
  \Omega = \frac{H}{\hbar} .
 \end{equation}
-
 The Hamiltonian operator represents the energy of our system,
 which is a physical observable and must therefore be Hermitian.
 
@@ -340,44 +268,34 @@ as a postulate, but is usually derived from more fundamental
 principles.
 By exploiting the composition property of the time-evolution
 operator we find that:
-
 \begin{equation}
  \mathcal{U}(t + dt, t_0) = \mathcal{U}(t + dt, t)
     \mathcal{U}(t, t_0) = (1 - \frac{i H dt}{\hbar})
     \mathcal{U}(t, t_0) ,
 \end{equation}
-
 where the time difference $t - t_0$ is not required to be infinitesimal.
 Subtracting from both sides of this equation:
-
 \begin{equation}
  \mathcal{U}(t + dt, t_0) - \mathcal{U}(t, t_0) =
     -\frac{iHdt}{\hbar} \mathcal{U}(t, t_0) .
 \end{equation}
-
 Rearranging this equation and taking the limit $dt \rightarrow 0$
 leads to the equation:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t} \mathcal{U}(t, t_0)
     = H \mathcal{U}(t, t_0) .
 \end{equation}
-
 This is known as the Schr\"{o}dinger equation for the time-evolution operator.
 We multiply both sides by a ket $\ket{\alpha, t_0}$:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t} \mathcal{U}(t, t_0)
     \ket{\alpha, t_0} = H \mathcal{U}(t, t_0) \ket{\alpha, t_0} .
 \end{equation}
-
 This ket does not depend on $t$, leading us to the famous equation:
-
 \begin{equation}
  i \hbar \frac{\partial}{\partial t}
     \ket{\alpha, t; t_0} = H \ket{\alpha, t; t_0} .
 \end{equation}
-
 This is known as the time-dependent Schr\"{o}dinger equation,
 and gives the description for how a quantum system evolves with time.
 It is possible to show that in the classical limit
