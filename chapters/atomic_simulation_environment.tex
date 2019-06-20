@@ -54,7 +54,7 @@ set the velocities and integrate the system using
 the Velocity Verlet equations.
 First we import some prerequisites and define the system:
 
-\begin{lstlisting}[language=python,basicstyle=\small]
+\begin{minted}{python}
 from ase.lattice.cubic import FaceCenteredCubic
 from ase import units
 from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
@@ -64,7 +64,7 @@ symbol = "Ar"
 size = (3, 3, 3)
 atoms = FaceCenteredCubic(symbol=symbol, size=size, pbc=True)
 MaxwellBoltzmannDistribution(atoms, 300 * units.kB)
-\end{lstlisting}
+\end{minted}
 
 This defines a face-centered-cubic (FCC) crystal unit cell
 with 4 atoms, and a system size of $3\times3\times3$ unit cells
@@ -78,11 +78,11 @@ for calculating dynamics and create a Velocity Verlet \textit{integrator}
 for operating on the atoms according to their forces.
 Calculators will be discussed in the next section.
 
-\begin{lstlisting}
+\begin{minted}{python}
 calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
 dyn = VelocityVerlet(atoms, 5 * units.fs)
-\end{lstlisting}
+\end{minted}
 
 The parameters $\sigma$ and $\epsilon$ define the well known
 length and energy scales for the Lennard-Jones potential.
@@ -91,10 +91,10 @@ of 5 femtoseconds, which strikes a balance between accuracy
 and the timescale of the simulation.
 Finally we run the system for 1000 steps:
 
-\begin{lstlisting}
+\begin{minted}{python}
 for i in range(100):
     dyn.run(10)
-\end{lstlisting}
+\end{minted}
 
 Every 10 timesteps the system can be printed, written to file
 or some other form of analysis and processing.
@@ -108,7 +108,7 @@ numbers and so on and outputs energies, forces, stresses;
 all that is required to perform atomistic simulations.
 The basic interface is defined in the ASE source code as:
 
-\begin{lstlisting}[language=python,basicstyle=\small]
+\begin{minted}{python}
 import numpy as np
 
 
@@ -125,7 +125,7 @@ class Calculator:
 
     def calculation_required(self, atoms, quantities):
         return False
-\end{lstlisting}
+\end{minted}
 
 There is also an interface for DFT calculators, which also
 requires the implementation of spins, occupation numbers,

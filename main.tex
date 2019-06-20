@@ -11,6 +11,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{braket}
+\usepackage{minted}
+\usepackage{subfig}
 \usepackage{algorithm,algpseudocode}
 \usepackage[backend=bibtex]{biblatex}
 \usepackage[% Interactive references and links, colored.
@@ -50,6 +52,15 @@
     framerule=0pt,
     frame=single,
     breaklines=true,
+}
+
+\setminted[python]{
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=light-gray,
+    fontsize=\footnotesize,
+    linenos
 }
 
 \begin{document}

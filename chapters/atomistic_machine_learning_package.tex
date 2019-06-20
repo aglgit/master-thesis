@@ -95,7 +95,7 @@ modifications to the code.
 \par
 First we import the prerequisites and define the system:
 
-\begin{lstlisting}[language=python,basicstyle=\small]
+\begin{minted}{python}
 import ase.io
 from ase.lattice.cubic import FaceCenteredCubic
 from ase import units
@@ -111,7 +111,7 @@ symbol = "Ar"
 size = (3, 3, 3)
 atoms = FaceCenteredCubic(symbol=symbol, size=size, pbc=True)
 MaxwellBoltzmannDistribution(atoms, 300 * units.kB)
-\end{lstlisting}
+\end{minted}
 
 The class AMP is the primary object of the AMP package,
 and is implemented through the ASE interface.
@@ -124,7 +124,7 @@ ASE \textit{Trajectory}, which is an object
 storing the time-evolution of a simulation and usually interpreted
 as a time series of atoms.
 
-\begin{lstlisting}
+\begin{minted}{python}
 traj = ase.io.Trajectory("training.traj", "w")
 calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
@@ -132,7 +132,7 @@ atoms.get_potential_energy()
 atoms.get_forces()
 dyn = VelocityVerlet(atoms, 5 * units.fs)
 traj.write(atoms)
-\end{lstlisting}
+\end{minted}
 
 In order to write the potential energy and forces to file
 they must first be calculated using the ASE Atoms methods,
@@ -140,33 +140,33 @@ which require a calculator and otherwise raise an error.
 We can then evolve the system forward in time
 and save the atomic configuration every 10 time steps:
 
-\begin{lstlisting}
+\begin{minted}{python}
 for i in range(100):
     dyn.run(10)
     atoms.get_potential_energy()
     atoms.get_forces()
     traj.write(atoms)
-\end{lstlisting}
+\end{minted}
 
 After the data has been generated we can train the AMP calculator
 using the Lennard-Jones calculations as input:
 
-\begin{lstlisting}
+\begin{minted}{python}
 calc = Amp(descriptor=Gaussian(),
            model=NeuralNetwork(hiddenlayers=(10, 10, 10)))
 calc.model.lossfunction = LossFunction(
            convergence={"energy_rmse": 1E-2,
                         "force_rmse": 1E-2})
 calc.train(images="training.traj")
-\end{lstlisting}
+\end{minted}
 
 Once the calculator has been trained, the parameters
 are stored in a file called "amp.amp",
 and can be loaded using the command:
 
-\begin{lstlisting}
+\begin{minted}{python}
 calc = Amp.load("amp.amp")
-\end{lstlisting}
+\end{minted}
 
 From there the calculator can be used as any other ASE calculator,
 in electronic structure calculations on Atoms objects.
