@@ -103,7 +103,8 @@ In order for the mapping to be applicable to systems of varying size,
 a decomposition into atomic energy contributions is performed:
 
 \begin{equation}
- E(\left\{\bm{R\right\}}) = \sum_{i=1}^N E_{\text{atom}}(\left\{\bm{R\right\}}) . 
+ E(\left\{\bm{R}\right\}) = \sum_{i=1}^N E_{\text{atom}}
+ (\left\{\bm{R}\right\}) . 
 \end{equation}
 
 The individual energy contributions $E_{\text{atom}}$
@@ -112,9 +113,10 @@ The atomic energy contributions are usually limited to its
 local environment through the introduction of a cutoff radius $R_c$:
 
 \begin{equation}
- E_{\text{atom}} (\left\{\bm{R\right\}}) \approx
-    E_{\text{atom}} (\bm{R}_i, \left\{\bm{R\right\}_j | \left| \bm{R}_{ij} \right|
-    < R_c}) 
+ E_{\text{atom}} (\left\{\bm{R}\right\}) \approx
+    E_{\text{atom}} (\bm{R}_i, \left\{\bm{R}\right\}_j 
+    | \left| \bm{R}_{ij} \right|
+    < R_c) 
 \end{equation}
 
 meaning that interactions are only treated if the interatomic distance
@@ -128,10 +130,10 @@ A mapping that satisfies the above constraints we will refer to
 as a \textit{descriptor}, and is used as input to the regression method:
 
 \begin{equation}
-    \left\{\bm{R\right\}} \rightarrow \bm{G}(\left\{\bm{R\right\}}) 
+    \left\{\bm{R}\right\} \rightarrow \bm{G}(\left\{\bm{R}\right\}) 
     \overset{\text{regression}}
     {\longrightarrow} E_{\text{atom}} =
-    E_{\text{atom}}(\bm{G}(\left\{\bm{R\right\}})). 
+    E_{\text{atom}}(\bm{G}(\left\{\bm{R}\right\})). 
 \end{equation}
 
 Once we have a descriptor and a regression model the dynamics
@@ -141,7 +143,7 @@ can be readily obtained by taking derivatives:
 \begin{split}
     \bm{F}_i &= -\nabla_i E \\
     &= -\nabla_i \sum_i^{\text{local}}
-    E_{\text{atom}}(\bm{G}(\left\{\bm{R\right\}})) \\
+    E_{\text{atom}}(\bm{G}(\left\{\bm{R}\right\})) \\
     &= -\sum_i^{\text{local}} \sum_j \frac{\partial E_{\text{atom}}}
     {\partial G_j} \frac{\partial G_j}{\partial \bm{R}_i} ,
 \end{split}
@@ -151,8 +153,8 @@ where we have applied the chain rule to break the gradient
 into derivatives with respect to the network inputs (obtained through
 backpropagation) and derivatives of the network inputs with
 respect to the coordinates of atom $i$.
-Once we have the forces the system can be propagated through time
-using the Velocity-Verlet equations.
+Once we have obtained the forces the system can be propagated through time
+classically using for example the Velocity-Verlet equations.
 
 \subsection{Gaussian descriptors}
 In their paper on neural-network representations of
@@ -186,7 +188,7 @@ the following cutoff:
 
 however other functional forms are possible. For the angular part
 such terms are multiplied, which means the function decays much more
-rapidly as we approach the cutoff. The only requirement we pose
+rapidly as we approach the cutoff. The only requirements we pose
 is that the function be continuous with a continuous first derivative
 in $r \in [0, \infty)$,
 approach one as $R \rightarrow 0$
@@ -217,7 +219,61 @@ models are not interchangeable, as each neural network
 is trained for a specific set of input vectors, and must
 be retrained if the way inputs are composed changes.
 
-% Zernike? Bispectrum?
+\subsection{Zernike and bispectrum descriptors}
+Another example of an atom-centered descriptor
+is the \textit{bispectrum of the neighbor density},
+discussed by \parencite[Behler, J\"{o}rg]{behler2016perspective}
+in his perspective on machine learning potentials.
+Bispectrum features are generated from a set of neighbor
+densities $\rho_i(\bm{R}_i)$ centered at atom $i$
+with coordinates $\bm{R}_i$.
+
+Zernike descriptors represent a tensor product between spherical
+harmonics and Zernike polynomials. The local atomic environment
+of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
+
+\begin{equation}
+ \rho_i(\bm{r}_i) = \sum_{j\neq i}^{\text{local}}
+    \eta_j \delta \left( \bm{r}_i - \bm{r}_{ij} \right)
+    f_c \left( \lvert \lvert \bm{r}_{ij} \rvert \rvert \right) , 
+\end{equation}
+
+with $f_c(r)$ a cutoff function as described in chapter 6.
+The 3-D Zernike basis set $Z$ is formed by a tensor product between
+the Zernike polynomials basis set $R$ and the spherical harmonics
+$Y$. The Zernike basis set is defined inside and on the surface
+of the $S^2$ unit sphere as:
+
+\begin{equation}
+ Z_{nl}^m (r, \theta, \phi) = R_n^l(r) Y_l^m(\theta, \phi) , 
+\end{equation}
+
+where $n \geq 0$ is an integer, $l$ is restricted to even $n - l \geq 0$
+and $m$ is an integer such that $\left| m \right| \leq l$.
+Functions defined inside and on the $S^2$ sphere
+can be represented by the 3-D Zernike basis as:
+
+\begin{equation}
+ f(r, \theta, \phi) = \sum_{n=0}^{\infty} \sum_l \sum_{m=-l}^l
+    c_{nl}^m Z_{nl}^m (r, \theta, \phi) , 
+\end{equation}
+
+with coefficients $c_{nl}^m = \langle Z_{nl}^m, f \rangle$
+computed as projections of $f$ onto the Zernike basis.
+These projections form the basis of the Zernike fingerprint,
+$\bm{G}_i$. Centering the atomic density preserves translation
+invariance of the atomic environment, while the projections
+onto the Zernike basis set preserves rotational invariance.
+Permutation invariance is maintained by keeping the constant values
+$\eta_j$ the same within each chemical species.
+\par
+Bispectrum descriptors are computed much in the same way
+as the Zernike descriptors. The 4-D spherical harmonics
+form a complete, orthogonal basis set for the $S^3$ 4-D unit
+sphere, and the components of the Bispectrum fingerprints
+$\bm{G}_i$ can be computed by projecting the atomic
+density function onto them. For more information
+the reader is encouraged to check out the AMP paper [ref here].
 
 \subsection{Deep Potential Molecular Dynamics}
 Deep Potential Molecular Dynamics (DPMD) is a method
