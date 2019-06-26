@@ -7,8 +7,7 @@ structure calculations today occupy a large portion of resources
 on modern scientific supercomputer facilities.
 \par
 For small-scale systems, we have discussed the Hartree-Fock
-and Density Functional Theory methods as the primary workhorses
-of ab-initio
+and Density Functional Theory methods as the primary workhorses of ab-initio
 electronic structure calculations. However, these methods suffer
 from very poor scaling as the system size increases, with Hartree-Fock
 naively scaling as $\mathcal{O}(N^4)$ with $N$ the number of electrons
@@ -220,17 +219,17 @@ is trained for a specific set of input vectors, and must
 be retrained if the way inputs are composed changes.
 
 \subsection{Zernike and bispectrum descriptors}
-Another example of an atom-centered descriptor
-is the \textit{bispectrum of the neighbor density},
-discussed by \parencite[Behler, J\"{o}rg]{behler2016perspective}
+Two closely related examples of atom-centered descriptors
+are the Zernike and Bispectrum descriptors.
+They are described by \parencite[Khorshidi, Alireza and Peterson,
+Andrew A.]{khorshidi2016amp} in their paper
+on the Atomistic Machine-learning Package (AMP).
+Bispectrum descriptors are also discussed by
+\parencite[Behler, J\"{o}rg]{behler2016perspective}
 in his perspective on machine learning potentials.
-Bispectrum features are generated from a set of neighbor
-densities $\rho_i(\bm{R}_i)$ centered at atom $i$
-with coordinates $\bm{R}_i$.
-
 Zernike descriptors represent a tensor product between spherical
 harmonics and Zernike polynomials. The local atomic environment
-of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
+of atom $i$ is represented by an atomic density function $\rho_i(\bm{r}_i)$:
 
 \begin{equation}
  \rho_i(\bm{r}_i) = \sum_{j\neq i}^{\text{local}}
@@ -238,7 +237,7 @@ of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
     f_c \left( \lvert \lvert \bm{r}_{ij} \rvert \rvert \right) , 
 \end{equation}
 
-with $f_c(r)$ a cutoff function as described in chapter 6.
+with $f_c(r)$ a cutoff function as described in the previous section.
 The 3-D Zernike basis set $Z$ is formed by a tensor product between
 the Zernike polynomials basis set $R$ and the spherical harmonics
 $Y$. The Zernike basis set is defined inside and on the surface
@@ -266,6 +265,12 @@ invariance of the atomic environment, while the projections
 onto the Zernike basis set preserves rotational invariance.
 Permutation invariance is maintained by keeping the constant values
 $\eta_j$ the same within each chemical species.
+The Zernike descriptors are able to incorporate quadruple
+atomic interactions involving for example dihedral angles,
+while the gaussian descriptors are truncated at threebody
+interactions. The Zernike coefficients can also often be represented
+in terms of monomials, making them computionally cheaper
+than the bispectrum descriptors.
 \par
 Bispectrum descriptors are computed much in the same way
 as the Zernike descriptors. The 4-D spherical harmonics
@@ -273,7 +278,8 @@ form a complete, orthogonal basis set for the $S^3$ 4-D unit
 sphere, and the components of the Bispectrum fingerprints
 $\bm{G}_i$ can be computed by projecting the atomic
 density function onto them. For more information
-the reader is encouraged to check out the AMP paper [ref here].
+the reader is encouraged to check out the \parencite[AMP paper]
+{khorshidi2016amp}.
 
 \subsection{Deep Potential Molecular Dynamics}
 Deep Potential Molecular Dynamics (DPMD) is a method
@@ -283,26 +289,27 @@ Gaussian Approximation Potentials (GAP)
 and Gradient-Domain Machine Learning (GDML).
 These methods all involve some amount of handcrafting the inputs,
 and building these inputs for larger, more complex systems is not
-straightforward.
+always straightforward.
 The Deep Potential method assigns a local environment and reference
 frame to each atom. The total potential energy is a sum
 of atomic contributions as before:
 
 \begin{equation}
- E = \sum_i E_i , 
+ E = \sum_i E_{\text{atom}}\left( \left\{ \bm{R} \right\} \right),
 \end{equation}
 
-with the atomic energy determined by its nearest neighbors:
+with the atomic energy determined by its nearest neighbors
+within a cutoff radius $R_c$:
 
 \begin{equation}
- E_i = E(\bm{R}_i, \left\{\bm{R\right\}_j : \left| \bm{R}_{ij}
-    \right| < R_c}) . 
+ E_{\text{atom},i} = E\left(\bm{R}_i, 
+    \left\{ \bm{R} \right\}_j : \left| \bm{R}_{ij}
+    \right| < R_c \right) . 
 \end{equation}
 
 The position of each neighbor of atom $i$ is described
-by the relative positions $\bm{R}_{ij} = \bm{R}_j - \bm{R}_i$,
+by the relative position $\bm{R}_{ij} = \bm{R}_j - \bm{R}_i$,
 which preserves translational symmetry.
-\par
 Rotational symmetry is conserved by constructing a local frame
 for each atom. Two neighboring atoms $a$ and $b$ are picked by a
 user-specified rule (default: two closest).
@@ -330,13 +337,12 @@ through the transformation:
 
 where $\mathcal{R} = [\bm{e}_{i1} \ \bm{e}_{i2} \ \bm{e}_{i3}]$
 is a rotation matrix with columns given by the local basis vectors.
-\par
 The neural network input vector for every atom-to-atom interaction
 $\bm{D}_{ij}$ can be given with radial-only or full radial-angular
 information:
 
 \begin{equation}
-    D_{ij}^{\alpha} =
+    \bm{D}_{ij}^{\alpha} =
 \begin{cases}
     \displaystyle\left( \frac{1}{R_{ij}}, \frac{\bm{R}_{ij}}{\left| \bm{R}_{ij} \right|}
     \right) & \text{full information}, \\[10pt]
@@ -358,7 +364,7 @@ each chemical species according to their inverse distance $1 / R_{ij}$.
 The vector of subvectors $\bm{D}_i$ is then fed through a neural
 network to produce the atomic energy contribution.
 The network input size is fixed according to the maximum number of neighbors
-in the system which is being studied, with $\bm{D}_{ij} = \bm{0}$
+in the system which is being studied, with some entries $\bm{D}_{ij} = \bm{0}$
 if there are fewer neighbors within the radial cutoff.
 \par
 The authors also propose a scheme of force learning, wherein
@@ -372,7 +378,7 @@ the force Root Mean Square Error (RMSE) is incorporated into the Loss Function:
 
 with $p_{\epsilon}$ and $p_{f}$ energy and force pre-factors which are
 adjusted throughout the learning process. The term $\Delta E_i$
-denotes the error between the sum of network outputs
+denotes the error between the network outputs
 and the correct potential energy, while the term $\Delta \bm{F}_i$
 denotes the error in the force output.
 The pre-factors are adjusted based on the learning rate:
@@ -386,7 +392,7 @@ with $r_l(t)$ and $r_l^0$ the learning rate at time step $t$ and time step
 $0$ respectively. The learning rate decays exponentially as:
 
 \begin{equation}
- r_l(t) = r_l^0 \cdot d_r^{t / d_s} , 
+ r_l(t) = r_l^0 \cdot d_{r}^{\left(t / d_s\right)} , 
 \end{equation}
 
 with $d_r$ the decay rate and $d_s$ the decay steps. The decay
@@ -395,4 +401,4 @@ larger than the energy error, and it is believed that incorporating
 the force into the loss should improve the learning rate for
 physics-based applications which incorporate forces.
 The virial information can also be treated in this manner,
-but this will not be discussed here.
+but we will not discuss this here.

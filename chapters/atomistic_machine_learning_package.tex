@@ -12,7 +12,8 @@ extended, and this makes the package ideal for prototyping
 and testing both newer and more established machine learning
 methods.
 \par
-A suggested workflow is as follows:
+A suggested workflow is as follows \footnote{\url
+{https://bitbucket.org/andrewpeterson/amp/issues/79/parallelize-fingerprint-derivatives}}:
 
 \begin{itemize}
     \item Use AMP for training, testing and validation
@@ -21,12 +22,12 @@ A suggested workflow is as follows:
         simulation in the ASE environment
     \item Export the network compliant with the OpenKIM
         API for usage in more mature, large-scale
-        electronic structure calculations such as LAMMPS
+        electronic structure calculation software such as LAMMPS
 \end{itemize}
 
 Unfortunately, the software is not currently fully compliant
 with the latest version of the OpenKIM API,
-which introduces artifacts in the simulation.
+which introduces artifacts in the simulation involving periodic images.
 However, the authors have recently received a large grant
 from the U.S. Department of Energy\footnote{\url{
 https://www.brown.edu/news/2018-09-20/simulations}}, 
@@ -43,7 +44,7 @@ and ASE calculators such as the Lennard-Jones calculator
 is the train method, which takes a set of \textit{images}, i.e.
 a set of snapshots of atomic configurations labeled
 with the potential energy and forces.
-The calculator is fitted to the images and can subsequently
+The calculator is fitted to the images and can subsequently be
 used to predict atomic energies and forces from never before seen
 atomic configurations.
 
@@ -51,7 +52,7 @@ atomic configurations.
 \centering
 \includegraphics[width=\linewidth]{scheme.png}
 \caption{Schematics of how AMP works in atom-centered mode.
-    Reprinted from {article}.}
+    Reprinted from \parencite[AMP paper]{khorshidi2016amp}.}
 \label{fig:scheme}
 \end{figure}
 
@@ -130,8 +131,8 @@ calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
 atoms.get_potential_energy()
 atoms.get_forces()
-dyn = VelocityVerlet(atoms, 5 * units.fs)
 traj.write(atoms)
+dyn = VelocityVerlet(atoms, 2 * units.fs)
 \end{minted}
 
 In order to write the potential energy and forces to file
@@ -149,7 +150,12 @@ for i in range(100):
 \end{minted}
 
 After the data has been generated we can train the AMP calculator
-using the Lennard-Jones calculations as input:
+using the Lennard-Jones calculations as input. 
+We use a neural network model with three hidden layers,
+each containing 10 neurons.
+The training
+will be satisfied once the energy and force root mean squared errors (RMSE)
+has reached values of $10^{-2}$ or less:
 
 \begin{minted}{python}
 calc = Amp(descriptor=Gaussian(),
@@ -171,7 +177,7 @@ calc = Amp.load("amp.amp")
 From there the calculator can be used as any other ASE calculator,
 in electronic structure calculations on Atoms objects.
 
-\subsection{Descriptors}
+\subsection{Descriptors and models}
 Currently AMP provides support for three different descriptors.
 Gaussian descriptors implement the Behler-Parrinello method
 of radial and angular symmetry functions. For this descriptor
@@ -180,50 +186,11 @@ for computing dynamics. Some physical intuition and chemical knowledge
 is necessary to choose various parameters for the symmetry functions -
 unless you wish to do it by trial and error - but AMP provides
 defaults for multiple chemical species.
-\par
-Zernike descriptors represent a tensor product between spherical
-harmonics and Zernike polynomials. The local atomic environment
-of atom $i$is represented by an atomic density function $\rho_i(\bm{r}_i)$:
-
-\begin{equation}
- \rho_i(\bm{r}_i) = \sum_{j\neq i}^{\text{local}}
-    \eta_j \delta \left( \bm{r}_i - \bm{r}_{ij} \right)
-    f_c \left( \lvert \lvert \bm{r}_{ij} \rvert \rvert \right) , 
-\end{equation}
-
-with $f_c(r)$ a cutoff function as described in chapter 6.
-The 3-D Zernike basis set $Z$ is formed by a tensor product between
-the Zernike polynomials basis set $R$ and the spherical harmonics
-$Y$. The Zernike basis set is defined inside and on the surface
-of the $S^2$ unit sphere as:
-
-\begin{equation}
- Z_{nl}^m (r, \theta, \phi) = R_n^l(r) Y_l^m(\theta, \phi) , 
-\end{equation}
-
-where $n \geq 0$ is an integer, $l$ is restricted to even $n - l \geq 0$
-and $m$ is an integer such that $\left| m \right| \leq l$.
-Functions defined inside and on the $S^2$ sphere
-can be represented by the 3-D Zernike basis as:
-
-\begin{equation}
- f(r, \theta, \phi) = \sum_{n=0}^{\infty} \sum_l \sum_{m=-l}^l
-    c_{nl}^m Z_{nl}^m (r, \theta, \phi) , 
-\end{equation}
-
-with coefficients $c_{nl}^m = \langle Z_{nl}^m, f \rangle$
-computed as projections of $f$ onto the Zernike basis.
-These projections form the basis of the Zernike fingerprint,
-$\bm{G}_i$. Centering the atomic density preserves translation
-invariance of the atomic environment, while the projections
-onto the Zernike basis set preserves rotational invariance.
-Permutation invariance is maintained by keeping the constant values
-$\eta_j$ the same within each chemical species.
-\par
-Bispectrum descriptors are computed much in the same way
-as the Zernike descriptors. The 4-D spherical harmonics
-form a complete, orthogonal basis set for the $S^3$ 4-D unit
-sphere, and the components of the Bispectrum fingerprints
-$\bm{G}_i$ can be computed by projecting the atomic
-density function onto them. For more information
-the reader is encouraged to check out the AMP paper [ref here].
+The Zernike and Bispectrum descriptors are also implemented,
+but without derivatives, which means the trained calculator
+cannot be used for example performing molecular dynamics simulations.
+Currently the neural network model is the only model implemented,
+and is supported through Tensorflow's interface.
+However, the modular nature of AMP should enable more additions
+in time, such as derivatives for the Zernike and Bispectrum descriptors
+or other regression models which have derivatives available.

@@ -8,10 +8,10 @@ with a powerful, consise syntax which allows one to perform
 very complex tasks with few lines of code. Python can also
 easily be extended and interfaced with fast and mature
 libraries. The modular interface of Python makes ASE
-easily extensible: in particular the calculator interface
+easily extensible; in particular the calculator interface
 for evaluating energies, forces and much more has been
-implemented for software packages such as LAMMPS, VASP,
-Quantum Espresso and many more.
+implemented for open- and closed-source software packages 
+such as LAMMPS, VASP, Quantum Espresso and many more.
 The Atomic Simulation Environment is intended to be:
 
 \begin{itemize}
@@ -75,19 +75,19 @@ is approximately 300 Kelvin.
 \par
 Next we give the atoms a Lennard-Jones \textit{calculator}
 for calculating dynamics and create a Velocity Verlet \textit{integrator}
-for operating on the atoms according to their forces.
+for evolving the atoms according to their forces.
 Calculators will be discussed in the next section.
 
 \begin{minted}{python}
 calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
-dyn = VelocityVerlet(atoms, 5 * units.fs)
+dyn = VelocityVerlet(atoms, 2 * units.fs)
 \end{minted}
 
 The parameters $\sigma$ and $\epsilon$ define the well known
 length and energy scales for the Lennard-Jones potential.
 The Velocity Verlet integrator is initialized with a timestep
-of 5 femtoseconds, which strikes a balance between accuracy
+of 2 femtoseconds, which strikes a balance between accuracy
 and the timescale of the simulation.
 Finally we run the system for 1000 steps:
 
@@ -96,8 +96,8 @@ for i in range(100):
     dyn.run(10)
 \end{minted}
 
-Every 10 timesteps the system can be printed, written to file
-or some other form of analysis and processing.
+Every 10 timesteps the system quantities can be printed, written to file
+or put through some other form of analysis or post-processing.
 
 \subsection{Calculators}
 The calculator interface gives ASE an easy to use,
@@ -110,7 +110,6 @@ The basic interface is defined in the ASE source code as:
 
 \begin{minted}{python}
 import numpy as np
-
 
 class Calculator:
     def get_potential_energy(self, atoms=None, 
@@ -133,16 +132,16 @@ the fermi level and so on.
 \newline
 \newline
 In the previous section we used the Lennard-Jones calculator
-as an example, however this is generally not advised.
+as an example, however this calculator is not suited for general use.
 Apart from the Lennard-Jones being a toy potential unsuited
 for real systems, the ASE implementation is also written in pure
 Python, which makes it very, very slow.
 Usually the calculator interface is used as a wrapper for much faster
 compiled code or software packages; for example the
 Asap calculator is a Python wrapper for the Effective Medium Theory
-potential which is implemented in Fortran, and is orders of magnitudes
+potential, which is implemented in Fortran and is orders of magnitudes
 faster. A Python molecular dynamics code is justified
-since the bulk of computation code is spent on computing forces,
+since the bulk of computation time is spent on computing forces,
 however for large scale molecular dynamics simulations
 one would be advised to use fast compiled code such as LAMMPS\footnote{
 \url{https://lammps.sandia.gov/}} or GROMACS\footnote{
