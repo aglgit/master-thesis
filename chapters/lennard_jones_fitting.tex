@@ -88,7 +88,9 @@ def lennard_jones_data():
     x = np.linspace(0.90, 3.0, 10000).reshape(-1, 1)
     y = lj(x)
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=0.2
+    )
 
     return (x_train, y_train), (x_test, y_test)
 \end{minted}
@@ -96,7 +98,7 @@ def lennard_jones_data():
 The data which is in the form of numpy arrays can easily
 be converted into tensors which can then be processed
 by Tensorflow. In order to perform regression
-we will need to use the mean squared error for evaluating
+we will use the mean squared error for evaluating
 the loss. We will use the Adam optimizer, which is currently
 the most popular optimizer for training neural networks,
 and generally outperforms the other less popular optimizers.
@@ -104,10 +106,12 @@ and generally outperforms the other less popular optimizers.
 \begin{minted}{python}
 (x_train, y_train), (x_test, y_test) = lennard_jones_data()
 
-train_ds = (
-    tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(1000).batch(32)
-)
-test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
+train_ds = tf.data.Dataset.from_tensor_slices(
+        (x_train, y_train)
+).shuffle(1000).batch(32)
+test_ds = tf.data.Dataset.from_tensor_slices(
+        (x_test, y_test)
+).batch(32)
 
 model = MyModel()
 loss_object = tf.keras.losses.MeanSquaredError()
@@ -117,11 +121,11 @@ train_loss = tf.keras.metrics.Mean(name="train_loss")
 test_loss = tf.keras.metrics.Mean(name="test_loss")
 \end{minted}
 
-The train and test steps are wrapped as a Tensorflow function
+The train and test steps are wrapped as  Tensorflow functions
 so that they can be efficiently called and applied to tensors.
 For every train step the loss is computed and then backpropagated
 so that the optimizer can apply updates to the weights and biases.
-We subsequently train the neural network for 50 epochs, computing
+We subsequently train the neural network for 100 epochs, computing
 the train and test loss for every epoch.
 
 \begin{minted}{python}
@@ -142,7 +146,7 @@ def test_step(images, labels):
 
     test_loss(t_loss)
 
-epochs = 50
+epochs = 100
 
 for epoch in range(epochs):
     for images, labels in train_ds:
@@ -152,7 +156,10 @@ for epoch in range(epochs):
         test_step(test_images, test_labels)
 
     template = "Epoch {}, Loss: {}, Test Loss: {}"
-    print(template.format(epoch + 1, train_loss.result(), test_loss.result()))
+    print(template.format(
+            epoch + 1, train_loss.result(), test_loss.result()
+        )
+    )
 \end{minted}
 
 \subsection{Comparison and relative error}
@@ -172,7 +179,10 @@ for epoch in range(epochs):
 \end{figure}
 
 After training the network we can evaluate its performance
-on test data. The mean squared error does not tell the complete story,
+on test data. 
+For the potential energy we obtain a root mean squared error of
+$0.37$ (energy units).
+However, the root mean squared error does not tell the complete story,
 and the simplest way to evaluate the fit is to plot the potential.
 In figure \ref{fig:potential-comparison} the neural network potential
 is plotted with the Lennard-Jones potential.
@@ -183,7 +193,11 @@ The potentials agree very well on most of the input space, and we can
 only spot a small divergence as the potential rises sharply
 around a radial distance of one.
 
-The difference in derivatives is a bit more pronounced, as the
+For the error in the derivative we obtain a force root mean squared error
+of $61.7$ (energy units per length units), which is approximately two orders
+of magnitude larger. The derivatives are plotted in figure
+\ref{fig:force-comparison}.
+The difference in derivatives is more pronounced, as the
 difference is much larger as the radial distance decreases from
 around one, and we can see that the neural network does not
 have the same asymptotic behaviour. This poses a potential problem
@@ -194,9 +208,7 @@ This implies that we should train the potential on a representative
 set of points in order to reproduce the correct asymptotic behaviour,
 especially at the edges of configuration space.
 It may also be beneficial to include force terms in the loss function,
-as this will improve the accuracy of the derivatives
-which can be potentially orders of magnitudes larger than the
-error in the potential energy.
+as this is expected to decrease the error in the derivatives.
 
 \begin{figure}[h]
     \centering
@@ -224,15 +236,12 @@ The neural network is able to reproduce small values
 at larger distances, but not the asymptotic behaviour
 as the interatomic distance approaches zero.
 Additionally, we can observe that the absolute error in the derivative
-is an order of magnitude larger than the error in the potential energy fit.
-This is expected behaviour when we do not incorporate the error
-in the derivative in the loss function. However, since
+is two orders of magnitude larger than the error in the potential energy fit.
+However, since
 this behaviour occurs only at the edge of the input space,
-dynamics can also be preserved by training on a representative set
+dynamics could be preserved by training on a representative set
 of input data. This may also not be a big problem, as
 with appropriate timesteps some configurations of interatomic distances
 should never be observed in molecular dynamics simulations,
-and will cause problems regardless of the accuracy of the
+and would cause problems regardless of the accuracy of the
 interatomic potential.
-
-Write something about the root mean squared errors...
