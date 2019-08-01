@@ -628,3 +628,119 @@ Stoltze, P. and Nørskov, J.K.]{jacobsen1996semi}.
 These potentials are based on the effective medium theory concept
 of an electron density with a volume-dependent contribution to
 the total energy.
+Effective Medium Theory computes the energy of an atom in an
+arbitrary environment by computing it first in a reference system
+and then estimating the energy difference between the real system
+and the reference system.
+The total energy is written as:
+
+\begin{equation}
+    E = \sum_i E_{c,i} + \left( E - \sum_i E_{c,i} \right) ,
+\end{equation}
+
+where $E_{c,i}$ is the energy of atom $i$ in the reference system.
+The correction $E - \sum_i E_{c,i}$ is made small enough so that
+it can be estimated using approximate methods such as perturbation theory.
+From Density Functional Theory the total energy can be written as:
+
+\begin{equation}
+    E = \sum_i E_{c,i}(n_i) + \Delta E_{AS} + \Delta E_{\text{1el}} ,
+\end{equation}
+
+where $E_c$, $\Delta E_{AS}$ and $\Delta E_{\text{1el}}$ are known as
+the cohesive function, atomic-sphere correction and one-electron correction
+respectively. The density argument $n_i$ is known as the embedding density,
+which connects the surroundings of atom $i$ to the reference system 
+of atom $i$. The atomic-sphere correction is the difference in
+electrostatic and exchange-correlation energy for the atoms in the system
+of interest and the reference system.
+The one-electron correction is the sum of one-electron energies in the two
+systems. If the one-electron correction is small and can be neglected
+a pair-potential approximation leads to the expression:
+
+\begin{equation}
+    \begin{split}
+    E   &=\sum_i \left[ E_{c,i}(n_i) + \Delta E_{AS} \right] \\
+        &= \sum_i \left\{E_{c,i}(n_i) + \frac{1}{2} \left[
+        \sum_{j \neq i} V_{ij}(r_{ij}) - \sum_{j \neq i}^{\text{ref}}
+        V_{ij}(r_{ij}) \right] \right\}
+    \end{split}
+\end{equation}
+
+The one-electron correction is often not small, so this is usually
+referred to as just the atomic-sphere correction.
+The embedding density $n_i$ is computed by superimposing
+density contributions from the neighboring atoms:
+
+\begin{equation}
+    n_i = \sum_{j \neq i} \Delta n_j(s_i, r_{ij}) ,
+\end{equation}
+
+where the density tail $\Delta n (s, r)$ from a neighboring
+atom a distance $r$ averaged over a sphere of radius $s$
+has an exponential form:
+
+\begin{equation}
+    \Delta n(s,r) = \Delta n_0 \exp \left[ \eta_1 (s - s_0)
+    - \eta_2 (r - \beta s_0) \right] .
+\end{equation}
+
+The size of the sphere $s$ is chosen so that the total charge
+within in zero. 
+The geometric factor $\beta = \left(16\pi / 3\right)^{1/3} / \sqrt{2}$
+is related to the nearest-neighbor distance $d_{nn} = \beta s$.
+For this set of electron densities
+there is a one-to-one correspondence between the average electron
+density and its neutral-sphere radius.
+This relationship has been shown to be approximately exponential:
+
+\begin{equation}
+    \bar{n}(s) = n_0 \exp \left[ - \eta(s - s_0) \right] .
+\end{equation}
+
+For an FCC crystal of varying nearest-neighbor distance
+$r = \beta s$ the neutral-sphere radius can be expressed as:
+
+\begin{equation}
+    s_i = s_0 - \frac{1}{\beta \eta_2} \log \left(
+    \frac{\sigma_{1,i}}{12} \right) ,
+\end{equation}
+
+where
+
+\begin{equation}
+    \sigma_{1, i} = \sum_{j \neq i} \exp \left[ - \eta_2
+    \left( r_{ij} - \beta s_0 \right) \right] .
+\end{equation}
+
+The cohesive function is parameterized as a function
+of the neutral-sphere radius using the functional form:
+
+\begin{equation}
+    \begin{split}
+        E_c (s) &= E_0 f\left[ \lambda \left( s - s_0 \right) \right], \\
+        f\left( x \right) &= \left( 1 + x \right) \exp \left( - x \right)
+    \end{split}
+\end{equation}
+
+where $s_0$ is the equilibrium (zero pressure) neutral-sphere radius.
+Finally the atomic sphere correction is written as:
+
+\begin{equation}
+    \Delta E_{AS}(i) = \frac{1}{2} \left[ \sum_{j \neq i} V(r_{ij})
+    - 12 V(\beta s_i) \right],
+\end{equation}
+
+where the factor 12 comes from the 12 nearest neighbors at
+a distance $r = \beta s_i$ in the FCC reference system.
+The pair potential is parameterized as:
+
+\begin{equation}
+    V(r) = - V_0 \exp \left[ - \kappa \left( r/\beta - s_0 \right) \right] .
+\end{equation}
+
+This has been found to give reasonable descriptions
+of the six fcc metals Cu, Ag, Au, Ni, Pd, Pt and their alloys.
+Further description and parameters can be found in the article
+\parencite[Jacobsen, K.W.;
+Stoltze, P. and Nørskov, J.K.]{jacobsen1996semi}.
