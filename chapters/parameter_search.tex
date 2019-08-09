@@ -23,15 +23,26 @@ of search space larger than 3 or 4. However, since we have tested
 a small number of parameters (since training and testing is costly)
 and we have a general idea of what parameters are appropriate, we
 have chosen to employ Grid Search.
+AMP has a built in simulated annealing module, which performs
+simulated annealing on the weights and biases of the network,
+in order to find values for which the loss is lowest.
+The annealing is run for every trained neural network
+for 2000 steps at the beginning of the training procedure,
+with temperatures starting $T_{max} = 20$ and ending $T_{min} = 1$.
+Simulated annealing is a suitable algorithm for finding minima
+in a complicated energy landscape, and it reduces somewhat
+the randomness of initialization so that the results are comparable
+without having to perform many runs.
 
 \begin{table}[h]
 \begin{tabular}{@{}lll@{}}
 \toprule
 \multicolumn{3}{l}{Hyperparameters}                                    \\ \midrule
-Architecture & Symmetry functions & 4 radial, 8 angular                \\
+Architecture & Symmetry functions & 12 radial, 20 angular               \\
              & Hidden layers      & (10, 10)                           \\
              & Activation         & Hyperbolic tangent                 \\
-             & Cutoff function    & Polynomial, $R_c = 5.0$            \\
+             & Cutoff function    & Polynomial, $R_c = 6.0, \gamma = 5.0$
+             \\
 Training     & Epochs             & 2000                               \\
              & Energy coefficient & 1.0                                \\
              & Force coefficient  & None                                \\
@@ -41,28 +52,62 @@ Training     & Epochs             & 2000                               \\
 \label{table:defaults}
 \end{table}
 
-For the symmetry functions we have chosen a set of 4 radial and 8 angular (G5)
-symmetry functions. The radial functions are centered evenly from
-0.5 to $R_c + 0.5$ with $\eta = 10$ and the angular functions
-are centered at 0 with $\eta s$ logarithmically spaced from 0.1 to 1.0,
-$\gamma = \pm 1$ and $\zeta = 1$.
+The AMP package provides a set of defaults for most elements,
+and these symmetry functions are plotted in figure \ref{fig:default}.
+However, we did not feel that these covered the radial and angular space
+sufficiently so we constructed our own instead which is what we will
+use for training. AMP only provides centered radial functions,
+while we use a mix of centered and shifted radial functions
+since these have demonstrated higher performance, as is discussed
+in the section on symmetry functions.
+For the symmetry functions we have chosen a set of 8 uncentered radial,
+8 centered radial and 20 angular (G4)
+symmetry functions. 
+The uncentered radial functions have $\eta$s spaced evenly
+from 1 to 20 and are centered at 0. The centered radial functions
+are centered evenly from 0.5 to $R_c - 0.5$ with $\eta = 5.0$.
+The angular functions have $\eta$s spaced evenly from
+0.01 to 3 with $\zeta = 1$ and $\gamma = \pm 1$.
+These symmetry functions are displayed in figure \ref{fig:selected}.
+We also choose to employ the polynomial cutoff introduced in AMP,
+since this has a wider range of values inside the cutoff boundary.
 
 \begin{figure}[!tbp]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{radial_centered.png}
+      \includegraphics[width=\textwidth]{Default-rad.png}
     \caption{Flower one.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{angular_centered.png}
+      \includegraphics[width=\textwidth]{Default-ang.png}
     \caption{Flower two.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
+    \label{fig:default}
+\end{figure}
+
+\begin{figure}[!tbp]
+\begin{adjustbox}{max width=1.2\linewidth,center}
+\centering
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{Selected-rad.png}
+    \caption{Flower one.}
+    \label{fig:f1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{Selected-ang.png}
+    \caption{Flower two.}
+    \label{fig:f2}
+  \end{subfigure}
+\end{adjustbox}
+\caption{My flowers.}
+    \label{fig:selected}
 \end{figure}
 
 \subsection{Force training}
@@ -85,8 +130,8 @@ The real drawback is the calculation of the derivatives in the input layer,
 aka the fingerprintprimes, of which there are a lot for every coordinate
 and input symmetry function, and they consume a lot of disk space and memory.
 \par
-In order to test these hypotheses we test the performance of neural networks
-trained with and without forces on a set of test images.
+In order to test the performance of neural networks
+we trained with and without forces on a set of test images.
 A system of copper atoms is generated in the face-centered cubic (FCC)
 configuration with 4 atoms in the unit cell and $3 \times 3 \times 3$
 unit cells for a total of $4 \cdot 3^3 = 108$ atoms. The
@@ -95,13 +140,10 @@ corresponding to a temperature of 500 Kelvin. The potential we will
 be using is the Effective Medium Theory (EMT), which has a very
 fast Fortran implementation in the ASE software package\footnote{
 \url{https://wiki.fysik.dtu.dk/asap/asap}}.
-The training trajectory is ran for $2 \cdot 10^4$ steps with
+The training trajectory is ran for $5 \cdot 10^4$ steps with
 a timestep of $\Delta t = 1$fs and written to file every 100 steps
-for a total of 200 atomic configurations. The test trajectory is
-integrated for $7.5 \cdot 10^3$ steps for a total of 75 atomic configurations.
-In table \ref{table:defaults} we have listed the default parameters
-used in the training and testing of the neural network:
-
+for a total of 500 atomic configurations. The test trajectory is
+integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
 
 \begin{figure}[!tbp]
 \begin{adjustbox}{max width=1.2\linewidth,center}
@@ -119,6 +161,7 @@ used in the training and testing of the neural network:
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
+    \label{fig:noforcetrain}
 \end{figure}
 
 \begin{figure}[!tbp]
@@ -137,36 +180,138 @@ used in the training and testing of the neural network:
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
+    \label{fig:forcetrain}
 \end{figure}
 
+In figure \ref{fig:noforcetrain} we have created a scatterplot
+of the energies and forces vs the absolute error, and labeled
+the plots with the energy and force RMSEes.
+We observe that the potential energies can achieve fairly
+low error values of approximately 0.02 to 0.10 eV, and the
+result does not depend very much on the value of the exact potential
+energy.
+The force error however is approximately three orders of magnitude
+larger, which echoes some of the concerns raised in the previous
+chapter with fitting derivatives. The forces produced by the neural
+network are still not dependent on the exact value of the force.
+\par
+In figure \ref{fig:forcetrain} we have a scatterplot of energies
+and forces generated from a force-trained neural network.
+While the error in the potential energy is now an order of magnitude higher,
+the error in the forces is now two orders of magnitude smaller.
+This is arguably a very good tradeoff, since the force error matters
+much more for long molecular dynamics trajectories, and will make
+any simulation requiring large amounts of data much more stable.
+However, force training is as mentioned much costlier in terms
+of memory and CPU hours. Instead of training with forces on the full
+set of images, we instead suggest training on a large amount of configurations
+with only the energies (and arguably a small amount of atoms, since
+the ratio of fingerprints to labels is higher), and subsequently training
+with forces on a smaller set of images in order to improve the force fit,
+at some cost to the energy fit.
 
 \subsection{Activation, hidden layers}
+In order to test different network architectures
+we test different values of the activation functions, and the number
+of hidden layers and nodes. 
+At this range of values, we do not expect a large variation in the performance,
+while larger neural networks with a large amount of hidden layers
+would be expected to overfit the training data and perform
+poorly on unseen data.
+In the paper Efficient Backprop by \parencite[Lecun et al.]{
+lecun2012efficient} the authors suggest that the hyperbolic
+tangent outperforms the sigmoid, since the derivatives
+are larger, which provides more efficient training.
+The hyperbolic tangent is somewhat more computationally costly,
+however this is not a big consideration for our neural networks
+overall, since they are quite small and can be evaluated
+relatively fast.
+To test different architecturesj a copper system of $4 \cdot 2^3 = 32$
+atoms is generated and integrated for $8 \cdot 10^4$ steps
+with a timestep of $\Delta t = 1.0$fs
+and written to file every 100 steps for a total of 800 training images.
+By the same procedure we also obtain 100 test images.
+The velocities are generated
+according to a Maxwell-Boltzmann distribution with a temperature
+of 500 Kelvin. The results are shown in table \ref{table:act-hidden}.
+The network is trained only on energies, while for the test set
+we calculate the energy and force Root Mean Squared Errors (RMSEs).
 
+\begin{table}
 \begin{tabular}{lrr}
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 \midrule
-               tanh-[10] &     1.65E-02 &    1.32E+01 \\
-               tanh-[20] &     7.48E-03 &    2.73E+01 \\
-               tanh-[30] &     2.00E-02 &    8.33E+00 \\
-               tanh-[40] &     7.18E-03 &    2.73E+01 \\
-           tanh-[10, 10] &     7.45E-03 &    2.71E+01 \\
-           tanh-[20, 10] &     2.48E-02 &    1.71E+00 \\
-           tanh-[30, 10] &     2.03E-02 &    9.32E+00 \\
-           tanh-[40, 40] &     1.88E-02 &    1.12E+01 \\
-            sigmoid-[10] &     1.37E-02 &    1.56E+01 \\
-            sigmoid-[20] &     6.90E-03 &    2.77E+01 \\
-            sigmoid-[30] &     6.87E-03 &    2.78E+01 \\
-            sigmoid-[40] &     1.25E-02 &    1.84E+01 \\
-        sigmoid-[10, 10] &     7.40E-03 &    2.66E+01 \\
-        sigmoid-[20, 10] &     6.76E-03 &    2.79E+01 \\
-        sigmoid-[30, 10] &     6.72E-03 &    2.49E+01 \\
-        sigmoid-[40, 40] &     7.27E-03 &    2.67E+01 \\
+               tanh-[10] &     4.88E-02 &    4.27E+00 \\
+               tanh-[20] &     2.10E-02 &    1.25E+01 \\
+               tanh-[30] &     1.67E-02 &    1.46E+01 \\
+               tanh-[40] &     2.31E-02 &    1.45E+01 \\
+           tanh-[10, 10] &     1.74E-01 &    2.84E+00 \\
+           tanh-[20, 10] &     1.36E-02 &    1.36E+01 \\
+           tanh-[30, 10] &     1.39E-02 &    1.92E+01 \\
+           tanh-[40, 40] &     1.30E-02 &    2.05E+01 \\
+            sigmoid-[10] &     1.57E-02 &    8.67E+00 \\
+            sigmoid-[20] &     4.05E-02 &    9.46E+00 \\
+            sigmoid-[30] &     1.51E-02 &    2.06E+01 \\
+            sigmoid-[40] &     2.35E-02 &    9.98E+00 \\
+        sigmoid-[10, 10] &     1.55E-02 &    1.01E+01 \\
+        sigmoid-[20, 10] &     1.49E-02 &    9.87E+00 \\
+        sigmoid-[30, 10] &     1.73E-02 &    9.20E+00 \\
+        sigmoid-[40, 40] &     1.41E-02 &    1.20E+01 \\
 \bottomrule
 \end{tabular}
+\caption{Training defaults}
+\label{table:act-hidden}
+\end{table}
+
+From the results we can see that the results do not
+differ significantly. The larger networks may perform somewhat
+better, but this is also somewhat influenced by the stochasticity
+of random initialization. For the hyperbolic tangent using
+two hidden layers of (10, 10) nodes we also achieve a fairly
+low value on the force RMSE, though the network has not been trained
+on forces, but this also matches our intuition that the network
+should not be very large, with the hyperbolic tangent outperforming
+the sigmoid. For the remainder of this thesis we have settled
+on these values for the neural network, though it remains
+to be seen if a larger network trained for larger could outperform
+the smaller models.
 
 \subsection{Cutoff radius}
+The cutoff radius defines the boundary outside of which no interactions
+between atoms take place, and the magnitude of the interactions
+which take place within. We therefore expect it to have a reasonable
+effect on the final result. Ideally we might like all atoms to interact,
+as they plausibly do in the real world. However there is a tradeoff
+between the accuracy and speed when calculating fingerprints and
+fingerprint derivatives, with substantial CPU and memory cost the
+larger the cutoff radius, and accuracy can also be impacted if any
+atom interacts with an atom which in actuality does not have a substantial
+energy and force contribution.
+In their original paper on AMP by \parencite[Khorshidi and Peterson]{
+khorshidi2016amp}, the authors suggest an alternative cutoff
+function to the cosine suggested by Behler and Parrinello
+which covers a wider range of values within the cutoff boundary
+and can reproduce the cosine at certain values of $\gamma$.
 
+\begin{equation}
+    f_c(r) =
+    \begin{cases}
+        1 + \gamma (r / R_c)^{\gamma + 1} - (\gamma + 1)
+        (r / R_c)^{\gamma} & r \leq R_c \\
+        0 & r > R_c
+    \end{cases}
+\end{equation}
+
+We choose a value of $\gamma = 5.0$ since it has a substantially wider
+range than the cosine, and compare the two for different cutoff radii.
+As in the previous section we produce a system with 32 atoms, with
+800 training configurations and 200 test configurations. The network
+is only trained on the energy, since this is substantially cheaper,
+and then the network is evaluated on the energy and force RMSE
+on the test set. The results are presented in \ref{table:cutoffs}.
+
+\begin{table}
 \begin{tabular}{lrr}
 \toprule
          Cutoff &  Energy RMSE &  Force RMSE \\
@@ -183,6 +328,9 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
  Polynomial-7.0 &     6.73E+01 &    4.22E-01 \\
 \bottomrule
 \end{tabular}
+\caption{Cutoffs}
+\label{table:cutoffs}
+\end{table}
 
 \begin{figure}
     \centering
@@ -192,18 +340,50 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 \end{figure}
 
 \subsection{Symmetry functions}
+The symmetry functions determine the local environment of every atom,
+which is then fed through and backpropagated through a neural network,
+and should in theory have substantial impact on the final results.
+The authors of AMP suggest through experience that the most important
+factors are the quality of data, the cutoff radius and the symmetry functions
+\footnote{\url{
+https://listserv.brown.edu/cgi-bin/wa?A2=ind1809&L=AMP-USERS&D=0&P=35451}}.
+The symmetry functions should cover both the radial and angular
+environment of the atoms in the system we are trying to learn from.
+They should also be distinguishable in order for the neural network
+to be able to separate different chemical environment.
+For the angular symmetry functions we can easily cover a wide range
+of angles by varying $eta$ evenly from 0.05 to 1.0 and using two sets
+with values of $\lambda = \pm 1$.
+In their article on Weighted Atom-Centered Symmetry Functions
+\parencite[Gastegger et al.]{gastegger2018wacsf} suggest that uncentered
+aka shifted radial symmetry functions perform better than symmetry functions
+centered at 0, since these offer better coverage of the radial space.
+They also suggest that this is not the case for angular symmetry functions,
+since they are products of multiple gaussians which narrows their range
+of values. They also suggest that for angular symmetry functions
+the parameter $\zeta$ should be limited to values of 1 or 2,
+and they demonstrate that increasing this parameter narrows
+the function on a smaller range of angles close to the maxima
+(i.e. 0 or 90 degrees).
+We follow some of their suggestions and use a combined set of
+centered and uncentered radial functions. To find the optimal set
+we perform tests of the energy and force RMSE while varying the
+number of radial and angular symmetry functions, and testing
+whether the G4 or G5 type of angular functions performs noticeably
+better than the other type.
+The results are presented in table \ref{table:symmetry}.
 
 \begin{figure}[!tbp]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{radial_uncentered.png}
+      \includegraphics[width=\textwidth]{Default-rad.png}
     \caption{Flower one.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{angular_uncentered.png}
+      \includegraphics[width=\textwidth]{Default-ang.png}
     \caption{Flower two.}
     \label{fig:f2}
   \end{subfigure}
@@ -211,6 +391,7 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 \caption{My flowers.}
 \end{figure}
 
+\begin{table}
 \begin{tabular}{lrr}
 \toprule
     Symmetry function &  Energy RMSE &  Force RMSE \\
@@ -238,21 +419,85 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
    Gs-8-2-G5-centered &     8.75E-03 &    2.48E+01 \\
 \bottomrule
 \end{tabular}
+\caption{Symmetry functions}
+\label{table:symmetry}
+\end{table}
 
 \subsection{Sampling and scaling}
+In order for the neural network to learn patterns from data
+the data needs to be of high quality, and atomic configurations
+should be sufficiently distinguishable while being representative
+of the underlying distribution. Neural networks typically perform
+poorly or unexpectedly on unseen data, in addition to being data-hungry
+requiring fairly large amounts of data in order to train well
+over many epochs.
+One approach to learning atomic configurations might be to generate
+random configurations (not too closely spaced) and calculate energy
+and forces from these using a suitable calculator. However, this
+phase space of configurations would be enormous using only a few particles,
+and we would encounter many unlikely configurations.
+Since we want to train the neural network to perform molecular dynamics,
+the obvious solution is to sample configurations from molecular dynamics
+trajectories. However, these configurations are in equilibrium, with
+relatively small forces, and thus the network might struggle if
+it encounters smaller distances between atoms.
+In their paper on fitting potential energy surfaces using neural networks,
+\parencite[Pukrittayakamee et al.]{pukrittayakamee2009simultaneous}
+suggest using a variable time interval dependent on the maximum acceleration:
 
+\begin{equation}
+    \tau = 
+    \begin{cases}
+        \text{trunc}[\alpha / a_{max}]\Delta t & \text{trunc}
+        [\alpha / a_{max}] > 0 \\
+        \Delta t & \text{trunc}
+        [\alpha / a_{max}] = 0
+    \end{cases}
+\end{equation},
+
+where $\Delta t$ is a minimum time interval and $\alpha$ is a parameter
+which must be determined empirically.
+The rationale behind this is that we will sample more from
+areas where the forces are large, while skipping areas
+where the forces are small.
+In our experiments using this algorithm (slightly modified)
+we find that appropriate choices of $\Delta t$ and $\alpha$
+can broaden the distribution of force somewhat, however
+it does not add a substantial amount of larger forces, since
+these are simply not present in equilibrium.
+\par
+Neural networks are known as data-hungry, and typically require
+a large amount of data to perform well and also scale well
+with the number of data points. In order to test this we train a neural
+network on progressively larger sets of images generated from molecular dynamics,
+and evaluate them on a test set.
+The results are shown in table \ref{table:images}.
+
+\begin{table}
 \begin{tabular}{lrr}
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\
 \midrule
-             n10 &     1.16E-01 &    5.94E-01 \\
-             n20 &     7.16E-02 &    3.83E-01 \\
-             n50 &     3.02E-02 &    5.03E-01 \\
-            n100 &     2.55E-02 &    2.61E-01 \\
-            n200 &     7.53E-03 &    1.60E-01 \\
-            n500 &     9.26E-03 &    3.02E-01 \\
-           n1000 &     7.57E-03 &    1.34E-01 \\
-           n2000 &     8.22E-03 &    1.33E-01 \\
-           n5000 &     7.41E-03 &    4.17E-01 \\
+             n10 &     2.66E-02 &    2.60E-01 \\
+             n20 &     3.11E-02 &    2.39E-01 \\
+             n50 &     9.71E-03 &    1.74E-01 \\
+            n100 &     4.48E-03 &    2.75E-01 \\
+            n200 &     1.38E-02 &    2.53E-01 \\
+            n500 &     3.20E-03 &    7.42E-01 \\
+           n1000 &     3.29E-03 &    7.05E-01 \\
+           n2000 &     2.83E-03 &    1.13E-01 \\
+           n5000 &     2.23E-03 &    1.70E-01 \\
 \bottomrule
 \end{tabular}
+    \caption{Number of images}
+    \label{table:images}
+\end{table}
+
+Other sampling algorithms have been suggested, for example iteratively
+pruning a large data set of images where the energy or force 
+difference is not very large, and then retraining until
+we are satisfied with the result.
+One can also check for images where new values of the fingerprints
+are encountered and add these to the training set, or checking
+images for large overall values of the feature vector. However
+these sampling methods have not been tested in this thesis.
