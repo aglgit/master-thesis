@@ -242,22 +242,22 @@ we calculate the energy and force Root Mean Squared Errors (RMSEs).
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 \midrule
-               tanh-[10] &     4.88E-02 &    4.27E+00 \\
-               tanh-[20] &     2.10E-02 &    1.25E+01 \\
-               tanh-[30] &     1.67E-02 &    1.46E+01 \\
-               tanh-[40] &     2.31E-02 &    1.45E+01 \\
-           tanh-[10, 10] &     1.74E-01 &    2.84E+00 \\
-           tanh-[20, 10] &     1.36E-02 &    1.36E+01 \\
-           tanh-[30, 10] &     1.39E-02 &    1.92E+01 \\
-           tanh-[40, 40] &     1.30E-02 &    2.05E+01 \\
-            sigmoid-[10] &     1.57E-02 &    8.67E+00 \\
-            sigmoid-[20] &     4.05E-02 &    9.46E+00 \\
-            sigmoid-[30] &     1.51E-02 &    2.06E+01 \\
-            sigmoid-[40] &     2.35E-02 &    9.98E+00 \\
-        sigmoid-[10, 10] &     1.55E-02 &    1.01E+01 \\
-        sigmoid-[20, 10] &     1.49E-02 &    9.87E+00 \\
-        sigmoid-[30, 10] &     1.73E-02 &    9.20E+00 \\
-        sigmoid-[40, 40] &     1.41E-02 &    1.20E+01 \\
+               tanh-[10] &     3.54E-03 &    5.84E-02 \\
+               tanh-[20] &     2.01E-03 &    1.47E-01 \\
+               tanh-[30] &     1.46E-03 &    9.91E-01 \\
+               tanh-[40] &     1.70E-03 &    9.35E-01 \\
+           tanh-[10, 10] &     1.84E-03 &    1.97E-01 \\
+           tanh-[20, 10] &     2.91E-03 &    9.66E-02 \\
+           tanh-[30, 10] &     3.51E-03 &    8.29E-02 \\
+           tanh-[40, 40] &     1.80E-03 &    1.86E-01 \\
+            sigmoid-[10] &     1.85E-03 &    9.44E-01 \\
+            sigmoid-[20] &     3.73E-03 &    3.25E-01 \\
+            sigmoid-[30] &     1.79E-03 &    1.01E+00 \\
+            sigmoid-[40] &     2.09E-03 &    2.54E-01 \\
+        sigmoid-[10, 10] &     1.93E-03 &    5.98E-01 \\
+        sigmoid-[20, 10] &     1.83E-03 &    2.26E-01 \\
+        sigmoid-[30, 10] &     1.52E-03 &    1.99E+00 \\
+        sigmoid-[40, 40] &     1.94E-03 &    3.36E-01 \\
 \bottomrule
 \end{tabular}
 \caption{Training defaults}
@@ -266,15 +266,15 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 
 From the results we can see that the results do not
 differ significantly. The larger networks may perform somewhat
-better, but this is also somewhat influenced by the stochasticity
+better on the energy, but this is also somewhat influenced by the stochasticity
 of random initialization. For the hyperbolic tangent using
-two hidden layers of (10, 10) nodes we also achieve a fairly
+a single hidden layer of 10 nodes we also achieve a fairly
 low value on the force RMSE, though the network has not been trained
 on forces, but this also matches our intuition that the network
 should not be very large, with the hyperbolic tangent outperforming
 the sigmoid. For the remainder of this thesis we have settled
 on these values for the neural network, though it remains
-to be seen if a larger network trained for larger could outperform
+to be seen if a larger network trained for longer could outperform
 the smaller models.
 
 \subsection{Cutoff radius}
@@ -305,6 +305,13 @@ and can reproduce the cosine at certain values of $\gamma$.
 
 We choose a value of $\gamma = 5.0$ since it has a substantially wider
 range than the cosine, and compare the two for different cutoff radii.
+In figure \ref{fig:copper_rdf} we have plotted the radial distribution
+function of the copper atoms governed by the EMT potential.
+We see that the system is strongly peaked at distances of approximately
+2 and 4 Ångstrøm, with smaller peaks in between and beyond.
+It is therefore reasonable to assume that a cutoff between 4
+and 8 Ångstrøm would perform well, without sacrificing too much
+accuracy.
 As in the previous section we produce a system with 32 atoms, with
 800 training configurations and 200 test configurations. The network
 is only trained on the energy, since this is substantially cheaper,
@@ -316,16 +323,20 @@ on the test set. The results are presented in \ref{table:cutoffs}.
 \toprule
          Cutoff &  Energy RMSE &  Force RMSE \\
 \midrule
-     Cosine-3.0 &     2.00E-03 &    3.89E-01 \\
- Polynomial-3.0 &     1.34E+01 &    3.46E-01 \\
-     Cosine-4.0 &     4.49E+01 &    4.21E-01 \\
- Polynomial-4.0 &     6.47E+01 &    4.22E-01 \\
-     Cosine-5.0 &     1.81E+02 &    4.22E-01 \\
- Polynomial-5.0 &     1.09E+02 &    4.22E-01 \\
-     Cosine-6.0 &     5.65E+01 &    4.22E-01 \\
- Polynomial-6.0 &     1.58E+01 &    4.22E-01 \\
-     Cosine-7.0 &     8.15E+01 &    4.22E-01 \\
- Polynomial-7.0 &     6.73E+01 &    4.22E-01 \\
+     Cosine-2.0 &     2.22E-01 &    4.00E-01 \\
+ Polynomial-2.0 &     2.22E-01 &    4.00E-01 \\
+     Cosine-3.0 &     4.31E-03 &    3.42E-01 \\
+ Polynomial-3.0 &     4.22E-03 &    3.54E-01 \\
+     Cosine-4.0 &     8.41E-04 &    1.41E-01 \\
+ Polynomial-4.0 &     7.92E-04 &    1.74E-01 \\
+     Cosine-5.0 &     3.74E-04 &    1.19E-01 \\
+ Polynomial-5.0 &     4.94E-04 &    1.40E-01 \\
+     Cosine-6.0 &     2.01E-03 &    8.19E-02 \\
+ Polynomial-6.0 &     2.48E-03 &    6.93E-02 \\
+     Cosine-7.0 &     3.21E-03 &    1.50E-01 \\
+ Polynomial-7.0 &     7.16E-03 &    4.66E-02 \\
+     Cosine-8.0 &     3.14E-03 &    2.70E-01 \\
+ Polynomial-8.0 &     5.95E-03 &    8.90E-01 \\
 \bottomrule
 \end{tabular}
 \caption{Cutoffs}
@@ -339,6 +350,24 @@ on the test set. The results are presented in \ref{table:cutoffs}.
     \label{fig:copper_rdf}
 \end{figure}
 
+From the energy RMSEs we can see that the middle values of the
+cutoff produce the lowest values. This is likely due to some kind
+of overfitting, such that better values are obtained by considering
+fewer atoms more strongly. The intermediate values also
+seem to produce somewhat lower values of the force RMSE,
+of which the lowest is the polynomial with a cutoff of 7 Ångstrøm.
+The differences between the cosine and the polynomial do not
+appear very large, though the polynomial may obtain marginally
+lower values of the force RMSE. We do not that there is a substantial
+stochastic element in these tests, and also that longer training
+periods may have produced more substantial differences, however
+training is costly in terms of CPU time. For the remainder
+of this thesis we settled on the polynomial with a cutoff of 6 Ångstrøm,
+while the cosine may have performed just as well.
+We also note that since the cutoff radius defines a sphere
+with a volume $V \propto R_c^3$, the average number of neighbors and therefore
+calculations increases substantially with the cutoff radius.
+
 \subsection{Symmetry functions}
 The symmetry functions determine the local environment of every atom,
 which is then fed through and backpropagated through a neural network,
@@ -351,9 +380,6 @@ The symmetry functions should cover both the radial and angular
 environment of the atoms in the system we are trying to learn from.
 They should also be distinguishable in order for the neural network
 to be able to separate different chemical environment.
-For the angular symmetry functions we can easily cover a wide range
-of angles by varying $eta$ evenly from 0.05 to 1.0 and using two sets
-with values of $\lambda = \pm 1$.
 In their article on Weighted Atom-Centered Symmetry Functions
 \parencite[Gastegger et al.]{gastegger2018wacsf} suggest that uncentered
 aka shifted radial symmetry functions perform better than symmetry functions
@@ -366,7 +392,12 @@ and they demonstrate that increasing this parameter narrows
 the function on a smaller range of angles close to the maxima
 (i.e. 0 or 90 degrees).
 We follow some of their suggestions and use a combined set of
-centered and uncentered radial functions. To find the optimal set
+centered and uncentered radial functions. 
+In the introduction to this chapter we define a method
+for constructing the set of symmetry functions, with the parameters
+being the number of radial functions, angular functions, zetas
+and the type of angular function.
+To find the optimal set
 we perform tests of the energy and force RMSE while varying the
 number of radial and angular symmetry functions, and testing
 whether the G4 or G5 type of angular functions performs noticeably
@@ -394,34 +425,45 @@ The results are presented in table \ref{table:symmetry}.
 \begin{table}
 \begin{tabular}{lrr}
 \toprule
-    Symmetry function &  Energy RMSE &  Force RMSE \\
+Symmetry function &  Energy RMSE &  Force RMSE \\
 \midrule
-              Default &     8.08E-03 &    2.75E+01 \\
- Gs-4-1-G4-uncentered &     2.25E-02 &    1.32E+00 \\
- Gs-4-1-G5-uncentered &     2.40E-02 &    1.46E+00 \\
-   Gs-4-1-G4-centered &     1.24E-02 &    2.07E+01 \\
-   Gs-4-1-G5-centered &     8.95E-03 &    2.36E+01 \\
- Gs-5-1-G4-uncentered &     2.41E-02 &    1.82E+00 \\
- Gs-5-1-G5-uncentered &     2.44E-02 &    3.24E-01 \\
-   Gs-5-1-G4-centered &     2.35E-02 &    3.57E+00 \\
-   Gs-5-1-G5-centered &     8.96E-03 &    2.76E+01 \\
- Gs-6-1-G4-uncentered &     9.13E-03 &    2.68E+01 \\
- Gs-6-1-G5-uncentered &     1.13E-02 &    1.95E+01 \\
-   Gs-6-1-G4-centered &     2.05E-02 &    7.47E+00 \\
-   Gs-6-1-G5-centered &     1.02E-02 &    2.59E+01 \\
- Gs-7-1-G4-uncentered &     1.63E-02 &    2.05E+01 \\
- Gs-7-1-G5-uncentered &     8.54E-03 &    2.61E+01 \\
-   Gs-7-1-G4-centered &     9.91E-03 &    2.29E+01 \\
-   Gs-7-1-G5-centered &     9.17E-03 &    2.75E+01 \\
- Gs-8-2-G4-uncentered &     2.36E-02 &    9.57E+00 \\
- Gs-8-2-G5-uncentered &     1.50E-02 &    1.71E+01 \\
-   Gs-8-2-G4-centered &     2.30E-02 &    1.79E+00 \\
-   Gs-8-2-G5-centered &     8.75E-03 &    2.48E+01 \\
+          Default &     1.99E-02 &    8.97E+00 \\
+      Gs-4-8-1-G4 &     2.26E-03 &    8.65E-02 \\
+      Gs-4-8-1-G5 &     2.44E-03 &    1.91E-01 \\
+      Gs-5-9-1-G4 &     2.07E-03 &    3.01E-01 \\
+      Gs-5-9-1-G5 &     2.59E-03 &    8.02E-02 \\
+     Gs-6-10-1-G4 &     1.88E-03 &    1.35E-01 \\
+     Gs-6-10-1-G5 &     2.45E-03 &    1.50E-01 \\
+     Gs-7-11-1-G4 &     1.78E-03 &    4.13E-02 \\
+     Gs-7-11-1-G5 &     2.34E-03 &    1.85E-01 \\
+     Gs-8-12-1-G4 &     1.76E-03 &    6.01E-02 \\
+     Gs-8-12-1-G5 &     2.51E-03 &    8.92E-02 \\
+     Gs-9-13-1-G4 &     2.07E-03 &    6.72E-02 \\
+     Gs-9-13-1-G5 &     2.36E-03 &    1.44E-01 \\
+    Gs-10-14-1-G4 &     3.80E-03 &    1.27E-01 \\
+    Gs-10-14-1-G5 &     2.48E-03 &    4.61E-02 \\
+    Gs-10-14-2-G4 &     2.99E-03 &    8.19E-02 \\
+    Gs-10-14-2-G5 &     2.31E-03 &    4.98E-02 \\
 \bottomrule
 \end{tabular}
 \caption{Symmetry functions}
 \label{table:symmetry}
 \end{table}
+
+From these results we observe that not much is gained with respect
+to the energy when increasing the number of symmetry functions,
+as this space tends be covered reasonably well.
+However, we may be able to achieve a lower force RMSE
+with adding more symmetry functions, since the forces generally
+represent a small perturbation in the position of a single atom,
+and this may be better represented by having a larger amount
+of functions sensitive to this change. The G4 functions generally
+outperform marginally on the force RMSE, and a little poorer
+on the energy RMSE.
+As for the number of zetas, we only test two values with
+$\zeta = 1, 2$, thus doubling the number of angular symmetry functions,
+and this seems to make the performance somewhat worse, as we 
+might have predicted.
 
 \subsection{Sampling and scaling}
 In order for the neural network to learn patterns from data
@@ -435,10 +477,10 @@ One approach to learning atomic configurations might be to generate
 random configurations (not too closely spaced) and calculate energy
 and forces from these using a suitable calculator. However, this
 phase space of configurations would be enormous using only a few particles,
-and we would encounter many unlikely configurations.
+and we would encounter many highly unlikely configurations.
 Since we want to train the neural network to perform molecular dynamics,
 the obvious solution is to sample configurations from molecular dynamics
-trajectories. However, these configurations are in equilibrium, with
+trajectories. However, these configurations are (mostly) in equilibrium, with
 relatively small forces, and thus the network might struggle if
 it encounters smaller distances between atoms.
 In their paper on fitting potential energy surfaces using neural networks,
@@ -465,6 +507,22 @@ we find that appropriate choices of $\Delta t$ and $\alpha$
 can broaden the distribution of force somewhat, however
 it does not add a substantial amount of larger forces, since
 these are simply not present in equilibrium.
+Other sampling algorithms have been suggested, for example iteratively
+pruning a large data set of images where the energy or force 
+difference is not very large, and then retraining until
+we are satisfied with the result.
+One can also check for images where new values of the fingerprints
+are encountered and add these to the training set, or checking
+images for large overall values of the feature vector. However
+these sampling methods have not been tested in this thesis.
+Other methods such as metadynamics \footnote{
+\url{https://parrinello.ethz.ch/research/metadynamics.html}}
+have seen increasing application and there are now numerous implementations
+available such as PLUMED \footnote{\url{https://www.plumed.org/}}.
+In general, though sampling has not been studied closely in this thesis,
+an increase in high quality data is an obvious increase in neural network
+performance, both for electronic structure calculations
+and for other similar applications.
 \par
 Neural networks are known as data-hungry, and typically require
 a large amount of data to perform well and also scale well
@@ -478,26 +536,27 @@ The results are shown in table \ref{table:images}.
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\
 \midrule
-             n10 &     2.66E-02 &    2.60E-01 \\
-             n20 &     3.11E-02 &    2.39E-01 \\
-             n50 &     9.71E-03 &    1.74E-01 \\
-            n100 &     4.48E-03 &    2.75E-01 \\
-            n200 &     1.38E-02 &    2.53E-01 \\
-            n500 &     3.20E-03 &    7.42E-01 \\
-           n1000 &     3.29E-03 &    7.05E-01 \\
-           n2000 &     2.83E-03 &    1.13E-01 \\
-           n5000 &     2.23E-03 &    1.70E-01 \\
+             n10 &     8.83E-02 &    7.88E-01 \\
+             n20 &     9.40E-02 &    3.79E-01 \\
+             n50 &     1.51E-02 &    1.51E-01 \\
+            n100 &     6.05E-03 &    4.91E-01 \\
+            n200 &     1.96E-03 &    6.95E-02 \\
+            n500 &     1.40E-03 &    1.15E-01 \\
+           n1000 &     1.41E-03 &    1.60E-01 \\
+           n2000 &     1.31E-03 &    1.04E-01 \\
+           n5000 &     1.23E-03 &    9.65E-02 \\
 \bottomrule
 \end{tabular}
     \caption{Number of images}
     \label{table:images}
 \end{table}
 
-Other sampling algorithms have been suggested, for example iteratively
-pruning a large data set of images where the energy or force 
-difference is not very large, and then retraining until
-we are satisfied with the result.
-One can also check for images where new values of the fingerprints
-are encountered and add these to the training set, or checking
-images for large overall values of the feature vector. However
-these sampling methods have not been tested in this thesis.
+From these results we see that the energy RMSE scales favorably as
+the number of images available increase, and the force RMSE decreases
+as well, though not as systematically, due to stochasticity and
+the fact that the networks have not been trained on force.
+Since these images are sampled directly from molecular dynamics
+at constant intervals, this suggests that we can in fact increase
+the performance of the neural networks by simply increasing the simulation
+length, though obviously more efficient sampling algorithms
+should be considered eventually.
