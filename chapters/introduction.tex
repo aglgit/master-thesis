@@ -165,15 +165,16 @@ for generating Behler-Parrinello "fingerprints" of atomic environments
 and training them using neural networks (and potentially other machine-learning)
 models. This allowed us to focus on the accuracy, speed and scaling
 when training neural networks on empirical potentials and ab-initio
-data in molecular dynamics, and how well equilibrium properties
+data in molecular dynamics, and how accurately equilibrium properties
 can be replicated using trained neural networks.
 
 \subsection{Contributions}
-Ideally we might have liked to make our own implementation,
+Ideally we might have liked to make our own implementation
+of the Behler-Parrinello method,
 and I would have especially liked to build a neural network interface
 through the recently released Tensorflow 2.0 (beta). Unfortunately there
 was no time for this, and we settled for working through the AMP interface
-and making modifications as necessary. 
+and making modifications as necessary.
 Developing code from scratch could have given insights into the structure
 and process of calculating fingerprints and feeding them through neural
 networks to produce energies and forces. However, the nature of AMP
@@ -186,15 +187,16 @@ is included in our final conclusion.
 In this thesis we have:
 
 \begin{itemize}
-    \item Produced and sampled from atomistic data obtained from ab-initio
-        molecular dynamics and empirical potential energy surfaces
-    \item Trained neural networks on atomistic data sampled from
-        molecular dynamics and evaluated the accuracy of the energies
-        and forces
-    \item Evaluated the ability of trained neural networks to reproduce
-        equilibrium properties of molecular dynamics trajectories
-    \item Analysis and processing scripts, and minor modifications
-        to the AMP code
+    \item Generated and sampled from classical and ab-initio
+        molecular dynamics trajectories
+    \item Trained and tested neural network potentials
+        on data generated from molecular dynamics
+    \item Evaluated the ability of neural network potentials
+        to reproduce equilibrium properties of classical
+        and ab-initio molecular simulations
+    \item Written a set of analysis and post-processing scripts
+    \item Minor extensions and modifications to the AMP library
+        for personal use
 \end{itemize}
 
 \subsection{Structure}

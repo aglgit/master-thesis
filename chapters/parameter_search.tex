@@ -380,6 +380,10 @@ The symmetry functions should cover both the radial and angular
 environment of the atoms in the system we are trying to learn from.
 They should also be distinguishable in order for the neural network
 to be able to separate different chemical environment.
+J{\"o}rg Behler writes in his article on neural network potential
+energy surfaces \parencite[Behler]{behler2011neural}
+that the symmetry functions should describe the structures uniquely,
+and not be too highly correlated.
 In their article on Weighted Atom-Centered Symmetry Functions
 \parencite[Gastegger et al.]{gastegger2018wacsf} suggest that uncentered
 aka shifted radial symmetry functions perform better than symmetry functions
@@ -403,24 +407,6 @@ number of radial and angular symmetry functions, and testing
 whether the G4 or G5 type of angular functions performs noticeably
 better than the other type.
 The results are presented in table \ref{table:symmetry}.
-
-\begin{figure}[!tbp]
-\begin{adjustbox}{max width=1.2\linewidth,center}
-\centering
-  \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Default-rad.png}
-    \caption{Flower one.}
-    \label{fig:f1}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Default-ang.png}
-    \caption{Flower two.}
-    \label{fig:f2}
-  \end{subfigure}
-\end{adjustbox}
-\caption{My flowers.}
-\end{figure}
 
 \begin{table}
 \begin{tabular}{lrr}
