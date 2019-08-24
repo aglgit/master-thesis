@@ -34,7 +34,7 @@ in a complicated energy landscape, and it reduces somewhat
 the randomness of initialization so that the results are comparable
 without having to perform many runs.
 
-\begin{table}[h]
+\begin{table}[H]
 \begin{tabular}{@{}lll@{}}
 \toprule
 \multicolumn{3}{l}{Hyperparameters}                                    \\ \midrule
@@ -72,41 +72,41 @@ These symmetry functions are displayed in figure \ref{fig:selected}.
 We also choose to employ the polynomial cutoff introduced in AMP,
 since this has a wider range of values inside the cutoff boundary.
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{Default-rad.png}
-    \caption{Flower one.}
+      \caption{AMP default radial symmetry functions.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{Default-ang.png}
-    \caption{Flower two.}
+      \caption{AMP default angular symmetry functions.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+    \caption{AMP default symmetry function set.}
     \label{fig:default}
 \end{figure}
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{Selected-rad.png}
-    \caption{Flower one.}
+      \caption{Radial symmetry functions used for parameter search.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{Selected-ang.png}
-    \caption{Flower two.}
+      \caption{Angular symmetry function used for parameter search.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+    \caption{Selected symmetry function set used for parameter search.}
     \label{fig:selected}
 \end{figure}
 
@@ -145,41 +145,43 @@ a timestep of $\Delta t = 1$fs and written to file every 100 steps
 for a total of 500 atomic configurations. The test trajectory is
 integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{energy_noforcetrain.png}
-    \caption{Flower one.}
+      \caption{Energy error.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{force_noforcetrain.png}
-    \caption{Flower two.}
+      \caption{Force component error.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+\caption{Energy and force component absolute errors and root mean
+    squared errors without force training.}
     \label{fig:noforcetrain}
 \end{figure}
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{energy_forcetrain.png}
-    \caption{Flower one.}
+      \caption{Energy error.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{force_forcetrain.png}
-    \caption{Flower two.}
+      \caption{Force error.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+\caption{Energy and force component absolute errors and root mean squred
+    errors without force training.}
     \label{fig:forcetrain}
 \end{figure}
 
@@ -237,7 +239,7 @@ of 500 Kelvin. The results are shown in table \ref{table:act-hidden}.
 The network is trained only on energies, while for the test set
 we calculate the energy and force Root Mean Squared Errors (RMSEs).
 
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{lrr}
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
@@ -318,7 +320,7 @@ is only trained on the energy, since this is substantially cheaper,
 and then the network is evaluated on the energy and force RMSE
 on the test set. The results are presented in \ref{table:cutoffs}.
 
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{lrr}
 \toprule
          Cutoff &  Energy RMSE &  Force RMSE \\
@@ -342,13 +344,6 @@ on the test set. The results are presented in \ref{table:cutoffs}.
 \caption{Cutoffs}
 \label{table:cutoffs}
 \end{table}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{copper_rdf.png}
-    \caption{Copper RDF}
-    \label{fig:copper_rdf}
-\end{figure}
 
 From the energy RMSEs we can see that the middle values of the
 cutoff produce the lowest values. This is likely due to some kind
@@ -408,7 +403,7 @@ whether the G4 or G5 type of angular functions performs noticeably
 better than the other type.
 The results are presented in table \ref{table:symmetry}.
 
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{lrr}
 \toprule
 Symmetry function &  Energy RMSE &  Force RMSE \\
@@ -517,7 +512,7 @@ network on progressively larger sets of images generated from molecular dynamics
 and evaluate them on a test set.
 The results are shown in table \ref{table:images}.
 
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{lrr}
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\

@@ -12,10 +12,43 @@ At temperatures which are not too large these potentials describe
 atoms in a crystalline structure in equilibrium,
 and we test whether the neural network can reproduce the correct potential
 energy, forces, radial distribution and mean squared displacement.
+In table \ref{tab:hyperparam} we have listed the parameters we have
+used in the training process. While we have used a large amount
+of training images for the energy training, since this is relatively
+inexpensive, 20000 training images was a noticeable over approximately
+5000-10000 images, and only seemed to affect the speed of convergence.
+In table \ref{tab:hyperparam-test} we have listed the parameters
+used for testing the neural network. For sampling data we used a larger
+timestep and sampling interval
+than for applying the neural network, in order to obtain
+a larger diversity of configurations, though this did not seem to
+matter much for the final result.
 
-\begin{table}[h]
+\begin{table}[H]
 \label{tab:hyperparam}
 \caption{Hyperparameters used in fitting.}
+\begin{center}
+\begin{tabular}{|c c|}
+\hline
+Hyperparameter & Value \\
+\hline \hline
+Symmetry functions & 16 radial, 24 angular \\
+    Hidden layers & $(10, 10)$ \\
+Activation & Hyperbolic tangent \\
+    Timesteps (fs) & $8 \cdot 10^5$ \\
+    Sampling intervall (fs) & 100 \\
+Max epochs & 4000 \\
+Optimizer & BFGS \\
+Energy coefficient & 1.0 \\
+Force coefficient & 0.1 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\label{tab:hyperparam-test}
+\caption{Hyperparameters used in testing.}
 \begin{center}
 \begin{tabular}{|c c|}
 \hline
@@ -53,51 +86,99 @@ After the calculator is trained we compare the performance
 of the neural network with the EMT potential on a system
 of 32 atoms with a temperature of 300 Kelvin for 5000 steps.
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{copper_energy_log.png}
-    \caption{Flower one.}
+      \caption{Training loss and energy RMSE.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{copper_force_log.png}
-    \caption{Flower two.}
+      \caption{Training loss and energy and force RMSE.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
-    \label{fig:default}
+    \label{fig:copper_log}
 \end{figure}
 
-\begin{figure}
+In figure \ref{fig:copper_log} we have plotted the loss and root mean
+squared errors for the training process.
+We see that the training process for the energy training
+continues to decrease after about 1000 steps, though
+the updates are smaller than before.
+For the force training we have converged after
+approximately 200-400 steps, after which the energy RMSE
+stabilizes.
+
+\begin{figure}[H]
+\begin{adjustbox}{max width=1.2\linewidth,center}
+\centering
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{copper_energy_error.png}
+      \caption{Energy error.}
+    \label{fig:f1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{copper_force_error.png}
+      \caption{Force component error.}
+    \label{fig:f2}
+  \end{subfigure}
+\end{adjustbox}
+    \caption{Energy and force component errors on test trajectory.}
+    \label{fig:copper_error}
+\end{figure}
+
+In figure \ref{fig:copper_error} we have plotted the energy and force
+absolute errors on the test images. We obtain an energy error
+of approximately 0.1 eV, with a max value of approximately 0.16 eV.
+For the force errors we obtain an force RMSE of 0.05 eV/Å,
+but some of the force errors considerably higher, which poses
+a problem for the long term stability of the system.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_rdf.png}
-    \caption{Caption}
-    \label{fig:silicon-rdf}
+    \caption{AMP radial distribution function plotted against
+        EMT RDF.}
+    \label{fig:copper-rdf}
 \end{figure}
 
-\begin{figure}
+In figure \ref{fig:copper-rdf} we have plotted the AMP neural network
+radial distribution function compared to the EMT RDF.
+We see that the AMP potential can reproduce the copper crystal
+structure fairly well, though with smaller peaks.
+The disparity is caused by an increase in kinetic energy over time
+which makes the atoms more dispersed.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_pot.png}
-    \caption{Caption}
-    \label{fig:silicon-energy}
+    \caption{AMP and EMT potential energy as a function of time.}
+    \label{fig:copper-pot}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_energy.png}
-    \caption{Caption}
-    \label{fig:silicon-energy}
+    \caption{AMP and EMT total energy as a function of time.}
+    \label{fig:copper-energy}
 \end{figure}
 
-\begin{figure}
+In figure \ref{fig:copper-pot} we have plotted the potential energy
+over time compared to the EMT potential. We see that the AMP potential
+can reproduce EMT energies reasonably well at the beginning, though
+a seemingly linear increase in potential energy.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_msd.png}
-    \caption{Caption}
-    \label{fig:silicon-energy}
+    \caption{AMP and EMT mean squared displacements as a function of time.}
+    \label{fig:copper-msd}
 \end{figure}
 
 \subsection{Stillinger-Weber}
@@ -118,7 +199,7 @@ using the Stillinger-Weber potential and assess whether the neural network
 can accurately reproduce the potential energy, radial distribution function
 and more.
 
-\begin{figure}[!tbp]
+\begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
@@ -137,31 +218,49 @@ and more.
     \label{fig:default}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
+\begin{adjustbox}{max width=1.2\linewidth,center}
+\centering
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{silicon_energy_error.png}
+    \caption{Flower one.}
+    \label{fig:f1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{silicon_force_error.png}
+    \caption{Flower two.}
+    \label{fig:f2}
+  \end{subfigure}
+\end{adjustbox}
+\caption{My flowers.}
+    \label{fig:default}
+\end{figure}
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_rdf.png}
     \caption{Caption}
     \label{fig:silicon-rdf}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_pot.png}
     \caption{Caption}
     \label{fig:silicon-energy}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_energy.png}
     \caption{Caption}
     \label{fig:silicon-energy}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_msd.png}
     \caption{Caption}
     \label{fig:silicon-energy}
 \end{figure}
-
