@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[toc,page]{appendix}
+\usepackage[backend=bibtex]{biblatex}
 \usepackage{microtype}
 \usepackage{listings}
 \usepackage{blindtext}
@@ -17,8 +18,8 @@
 \usepackage{subcaption}
 \usepackage{adjustbox}
 \usepackage{float}
+\usepackage{pdfpages}
 \usepackage{algorithm,algpseudocode}
-\usepackage[backend=bibtex]{biblatex}
 \usepackage[% Interactive references and links, colored.
   colorlinks  = true,
   linkcolor   = black,
@@ -26,20 +27,10 @@
   citecolor   = black,
   linktocpage = true,
 ]{hyperref}
-
 \graphicspath{ {images/} }
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
-
-\title{
-{Classical molecular dynamics using neural network
-representations of atomic potential energy surfaces}\\
-{\Large University of Oslo}\\
-{\includegraphics{uio.pdf}}
-}
-\author{Andreas Godø Lefdalsnes}
-\date{\today}
 
 \addbibresource{references.bib}
 
@@ -72,10 +63,10 @@ representations of atomic potential energy surfaces}\\
 
 \begin{document}
 
-\maketitle
+\includepdf{front_page.pdf}
 
 \chapter*{Abstract}
-Abstract goes here \parencite[e.g.][page 300]{einstein}.
+\input{chapters/abstract}
 
 \tableofcontents
 

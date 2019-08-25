@@ -35,6 +35,7 @@ the randomness of initialization so that the results are comparable
 without having to perform many runs.
 
 \begin{table}[H]
+\centering
 \begin{tabular}{@{}lll@{}}
 \toprule
 \multicolumn{3}{l}{Hyperparameters}                                    \\ \midrule
@@ -76,13 +77,13 @@ since this has a wider range of values inside the cutoff boundary.
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Default-rad.png}
+      \includegraphics[width=\textwidth]{default_rad.png}
       \caption{AMP default radial symmetry functions.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Default-ang.png}
+      \includegraphics[width=\textwidth]{default_ang.png}
       \caption{AMP default angular symmetry functions.}
     \label{fig:f2}
   \end{subfigure}
@@ -95,13 +96,13 @@ since this has a wider range of values inside the cutoff boundary.
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Selected-rad.png}
+      \includegraphics[width=\textwidth]{selected_rad.png}
       \caption{Radial symmetry functions used for parameter search.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
-      \includegraphics[width=\textwidth]{Selected-ang.png}
+      \includegraphics[width=\textwidth]{selected_ang.png}
       \caption{Angular symmetry function used for parameter search.}
     \label{fig:f2}
   \end{subfigure}
@@ -240,6 +241,7 @@ The network is trained only on energies, while for the test set
 we calculate the energy and force Root Mean Squared Errors (RMSEs).
 
 \begin{table}[H]
+\centering
 \begin{tabular}{lrr}
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
@@ -321,6 +323,7 @@ and then the network is evaluated on the energy and force RMSE
 on the test set. The results are presented in \ref{table:cutoffs}.
 
 \begin{table}[H]
+\centering
 \begin{tabular}{lrr}
 \toprule
          Cutoff &  Energy RMSE &  Force RMSE \\
@@ -404,6 +407,7 @@ better than the other type.
 The results are presented in table \ref{table:symmetry}.
 
 \begin{table}[H]
+\centering
 \begin{tabular}{lrr}
 \toprule
 Symmetry function &  Energy RMSE &  Force RMSE \\
@@ -513,6 +517,7 @@ and evaluate them on a test set.
 The results are shown in table \ref{table:images}.
 
 \begin{table}[H]
+\centering
 \begin{tabular}{lrr}
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\

@@ -48,7 +48,6 @@ Density Functional Theory can treat both exchange and correlation
 interactions, but this must be done approximately,
 and developing accurate and numerically stable approximations
 remains an active area of research.
-{\color{red} Rewrite section.}
 \par
 Molecular Dynamics (MD) freezes out the degrees of freedom of the
 electrons, and treats the atoms as point particles centered on
@@ -75,7 +74,6 @@ any continuous functions on compact subsets of $\mathbb{R}^N$.
 This offers the potential of developing potential energy surfaces
 directly from ab-initio data or from well-developed and tested
 empirical potentials.
-{\color{red} Minor rewrite.}
 
 \subsection{Atom-centered descriptors}
 For electronic structure calculations the potential energy,
@@ -84,7 +82,7 @@ the cartesian coordinates. However, it is not sufficient
 to feed neural networks cartesian coordinates labeled with
 the energy. From physical theory we know that any molecular dynamics potential
 must be invariant w.r.t.\ translation, rotationa, and permutation
-of like atoms. {\color{red} Slight re-phrasing.}
+of like atoms.
 In order to apply machine learning methods we require a mapping from
 the cartesian coordinates to a 1D feature vector which conserves
 all of these properties.
@@ -92,16 +90,15 @@ all of these properties.
 The idea is to approximate the potential energy with a regression model:
 \begin{equation}
 \left\{\bm{R\right\}} \overset{\text{regression}}{\longrightarrow}
-E = E\left( \left\{\bm{R\right\}} \right) ,
+    E = E\left( \left\{\bm{R}\right\} \right) ,
 \end{equation}
 where $\left\{\bm{R\right\}}$ represents the cartesian coordinates of our system.
 We will refer to a mapping which satisfies the constraints of 
 translation, rotation and permutation invariance as a \textit{descriptor}. 
-{\color{red} Slight re-phrasing.}
 The descriptor is a multidimensional function $\bm{G}$ that serves as input to
 the regression method:
 \begin{equation}
-\left\{\bm{R\right\}} \rightarrow \bm{G} \left(\left\{\bm{R\right\}} \right)
+    \left\{\bm{R\right\}} \rightarrow \bm{G} \left(\left\{\bm{R}\right\} \right)
 \overset{\text{regression}}{\longrightarrow}
 E = E \left(\bm{G}\left(\left\{\bm{R\right\}}\right)\right)
 \end{equation}
@@ -167,6 +164,15 @@ models. This allowed us to focus on the accuracy, speed and scaling
 when training neural networks on empirical potentials and ab-initio
 data in molecular dynamics, and how accurately equilibrium properties
 can be replicated using trained neural networks.
+Unfortunately, we did not have time to generate ab-initio trajectories,
+as there are many details which have to be considered when performing
+density functional theory calculations, and the calculations are very
+time-consuming. Further work in this area could focus on generating
+and reproducing trajectories using either Velocity-Verlet dynamics
+and ground state DFT calculations or time-dependent density functional
+theory molecular dynamics as described in the GPAW calculator documentation
+\footnote{\href{https://wiki.fysik.dtu.dk/gpaw/documentation/ehrenfest/ehrenfest_theory
+.html}{Ehrenfest theory}}.
 
 \subsection{Contributions}
 Ideally we might have liked to make our own implementation
@@ -187,13 +193,13 @@ is included in our final conclusion.
 In this thesis we have:
 
 \begin{itemize}
-    \item Generated and sampled from classical and ab-initio
+    \item Generated and sampled from classical
         molecular dynamics trajectories
     \item Trained and tested neural network potentials
         on data generated from molecular dynamics
     \item Evaluated the ability of neural network potentials
         to reproduce equilibrium properties of classical
-        and ab-initio molecular simulations
+        molecular simulations
     \item Written a set of analysis and post-processing scripts
     \item Minor extensions and modifications to the AMP library
         for personal use

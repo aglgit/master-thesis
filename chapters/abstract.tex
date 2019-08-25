@@ -1,0 +1,25 @@
+Artificial neural networks are fitted to molecular dynamics trajectories
+using the Behler-Parrinello method of atom-centered symmetry functions
+in order to obtain analytical interatomic potentials.
+Molecular dynamics trajectories are generated using the Atomic Simulation
+Environment (ASE) and the neural networks are initialized and trained
+using the Atomistic Machine-Learning Package (AMP). AMP is interfaced
+with ASE through the Calculator interface, which is a black box
+that accepts atomic numbers and atomic positions and calculate
+the energy and, if implemented, forces and stresses.
+\par
+Neural network potentials are constructed for Copper and Silicon
+in equilibrium crystal structures, and are evaluated on the potential energy,
+energy conservation, radial distribution function and mean
+squared displacement, as well as the absolute errors of the
+potential energies and force components on the test trajectories.
+We find the neural networks are able to reproduce the crystal structures,
+but obtain negative results for the ability to conserve energy,
+leading to an increase in kinetic energy and translational momentum
+over time, with negative implications for long-term numerical stability.
+Recommendations for future work include better sampling
+algorithms for sampling likely configurations out of equilibrium,
+testing different numerical optimization algorithms
+and a more efficient implementation of the Behler-Parrinello
+symmetry functions for facilitating faster training and deployment
+of new architectures and on new training data.

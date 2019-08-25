@@ -25,9 +25,7 @@ a larger diversity of configurations, though this did not seem to
 matter much for the final result.
 
 \begin{table}[H]
-\label{tab:hyperparam}
-\caption{Hyperparameters used in fitting.}
-\begin{center}
+\centering
 \begin{tabular}{|c c|}
 \hline
 Hyperparameter & Value \\
@@ -35,7 +33,8 @@ Hyperparameter & Value \\
 Symmetry functions & 16 radial, 24 angular \\
     Hidden layers & $(10, 10)$ \\
 Activation & Hyperbolic tangent \\
-    Timesteps (fs) & $8 \cdot 10^5$ \\
+    Time (fs) & $2 \cdot 10^6$ \\
+    Timestep (fs) & 5 \\
     Sampling intervall (fs) & 100 \\
 Max epochs & 4000 \\
 Optimizer & BFGS \\
@@ -43,13 +42,12 @@ Energy coefficient & 1.0 \\
 Force coefficient & 0.1 \\
 \hline
 \end{tabular}
-\end{center}
+\caption{Hyperparameters used in fitting.}
+\label{tab:hyperparam}
 \end{table}
 
 \begin{table}[H]
-\label{tab:hyperparam-test}
-\caption{Hyperparameters used in testing.}
-\begin{center}
+\centering
 \begin{tabular}{|c c|}
 \hline
 Hyperparameter & Value \\
@@ -57,15 +55,13 @@ Hyperparameter & Value \\
 Symmetry functions & 16 radial, 24 angular \\
     Hidden layers & $(10, 10)$ \\
 Activation & Hyperbolic tangent \\
-    Timesteps (fs) & $8 \cdot 10^5$ \\
-    Sampling intervall (fs) & 100 \\
-Max epochs & 4000 \\
-Optimizer & BFGS \\
-Energy coefficient & 1.0 \\
-Force coefficient & 0.1 \\
+    Time (fs) & $5 \cdot 10^3$ \\
+    Timestep (fs) & 1 \\
+    Sampling intervall (fs) & 10 \\
 \hline
 \end{tabular}
-\end{center}
+\caption{Hyperparameters used in testing.}
+\label{tab:hyperparam-test}
 \end{table}
 
 \subsection{Effective Medium Theory}
@@ -162,6 +158,22 @@ which makes the atoms more dispersed.
     \label{fig:copper-pot}
 \end{figure}
 
+If we examine the potential energy as a function of time
+in figure \ref{fig:copper-pot} we see that the neural network
+follows the EMT potential energy fairly well for approximately
+1500 steps, but then starts to significantly increase.
+As the atoms are moved away from the potential
+energy minimum the potential energy also starts to increase.
+This is noticeable in figure \ref{fig:copper-energy},
+where we have plotted the total energy as a function of time.
+While the EMT energy is flat or oscillating around a mean value,
+the neural network potential leads to increasing energy over time.
+At the beginning the increase in energy appears to be attributable
+to an increase in kinetic energy, which may be caused by errors
+in the interpolated forces from the neural network.
+This increase in kinetic energy also appears to lead to an increase
+in translational momentum.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_energy.png}
@@ -169,17 +181,24 @@ which makes the atoms more dispersed.
     \label{fig:copper-energy}
 \end{figure}
 
-In figure \ref{fig:copper-pot} we have plotted the potential energy
-over time compared to the EMT potential. We see that the AMP potential
-can reproduce EMT energies reasonably well at the beginning, though
-a seemingly linear increase in potential energy.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_msd.png}
     \caption{AMP and EMT mean squared displacements as a function of time.}
     \label{fig:copper-msd}
 \end{figure}
+
+In figure \ref{fig:copper-msd} we have plotted the mean squared
+displacement, which is mean distance travelled averaged over all
+atoms in the system.
+We see that the MSD for the neural network is significantly larger
+than for the EMT potential. In equilibrium we expect for a crystal lattice
+that the mean squared displacement be linear, as the atoms
+mostly oscillate in stable energy minimums and the motion can be
+described by diffusion processes.
+For the neural network potential the motion in the system appears
+to be accelerating, as the kinetic and total energy is increased
+over time.
 
 \subsection{Stillinger-Weber}
 The Stillinger-Weber is a potential which describes accurately
