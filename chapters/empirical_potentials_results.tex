@@ -200,6 +200,82 @@ For the neural network potential the motion in the system appears
 to be accelerating, as the kinetic and total energy is increased
 over time.
 
+\begin{figure}[H]
+\begin{adjustbox}{max width=1.2\linewidth,center}
+\centering
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{copper_t0.png}
+      \caption{Copper atoms after 10 steps.}
+    \label{fig:f1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{copper_tn.png}
+      \caption{Copper atoms after 5000 steps.}
+    \label{fig:f2}
+  \end{subfigure}
+\end{adjustbox}
+    \caption{The system of copper atoms after 10 and 5000 steps.}
+    \label{fig:copper_sw}
+\end{figure}
+
+If we examine the system trajectory in a program such as Ovito
+\footnote{\href{Open VIsualization TOol}{https://www.ovito.org/}}
+we find that the crystal structure has mostly remained intact, while the
+system has picked up a certain amount of translational momentum.
+In figure \ref{fig:copper_sw} we see that the system has moved as a whole,
+although this is easier to see if you open up the trajectory file in Ovito
+yourself.
+This is in contrast to the EMT potential, in which the atoms vibrate in place
+at this temperature, and the system remains more or less in place.
+Altogether, this suggest that while the neural network potential
+is able to reproduce the crystal structure, numerical errors propagate
+to an increase in energy over time, which threatens the long-term numerical
+stability of the trajectory. In order to obtain better results we would likely
+require datasets containing more unlikely configurations and forces
+(i.e. slightly out of equilibrium). We also generally find that the performance
+improves as you add more symmetry functions, particularly radial functions
+would improve the accuracy with this potential, as they are not explicitly
+contained in the EMT potential. However, more symmetry functions
+add significant CPU-time cost, and the set of symmetry functions would have to be pruned
+to remove significant correlations.
+Finally, we tested the time-scaling of the neural network as the number of atoms
+increased. To test this we simply made a forces call on lattices of different
+sizes which returns the force on every atom in the system.
+Ideally we would have taken averages over multiple force calls, however
+at this time scale we did not think it would significantly impact the results.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{copper_scaling.png}
+\caption{Time scaling of the neural network as size increases}
+\label{fig:copper-scaling}
+\end{figure}
+
+In figure \ref{fig:copper-scaling} we see as expected that the trained neural network
+scales linearly with the number of atoms, though with a significant pre-factor.
+We see that it takes approximately 1 minute to evaluate all the forces
+for a system of 60 atoms, while it takes 4 minutes for a system of 250 atoms.
+This pre-factor is dependent on the average number of neighbors
+of each atom, which is again dependent on the cutoff radius.
+Since the neural network has been trained with a set cutoff radius,
+this radius should deployed be considered a part of the neural network architecture
+and cannot be significantly changed without impacting accuracy.
+This pre-factor is of course also dependent on the time it takes to evaluate
+the symmetry functions and derivatives, which is dependent on the number
+and type of symmetry functions, as the angular function derivatives are significantly
+more expensive to evaluate than the radial angular functions.
+While linear scaling is desireable, the pre-factor is obviously too large,
+as integrating a system of 250 atoms for 5000 steps would take almost 14 days!
+However, this is only on a single core, and parallelizing using neighbor list algorithms
+such as thouse found in the LAMMPS package could be a big improvement without too much overhead.
+While this would help deployment, training would still be too slow.
+As it stands now, the symmetry function derivatives have significant parts
+implemented in Python which could with some effort be moved entirely to Fortran,
+such as if-tests, dictionaries and neighbor lists.
+If these parts of the codebase were moved fully to a lower-level compiled
+language, this would help both training and deployment, and would enable
+training and testing of larger and more complex systems.
+
 \subsection{Stillinger-Weber}
 The Stillinger-Weber is a potential which describes accurately
 Silicon atoms in the diamond lattice structure, and was
@@ -234,7 +310,7 @@ and more.
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
-    \label{fig:default}
+    \label{fig:silicon-log}
 \end{figure}
 
 \begin{figure}[H]
@@ -253,8 +329,14 @@ and more.
   \end{subfigure}
 \end{adjustbox}
 \caption{My flowers.}
-    \label{fig:default}
+    \label{fig:silicon-error}
 \end{figure}
+
+For the Stillinger-Weber trained neural network, we find that
+the training errors for both the energies and forces are somewhat higher
+in figure \ref{fig:silicon-log},
+and this is also reflected in errors on the test set in figure \ref{fig:silicon-error}.
+
 
 \begin{figure}[H]
     \centering
