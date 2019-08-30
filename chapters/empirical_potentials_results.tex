@@ -336,20 +336,26 @@ For the Stillinger-Weber trained neural network, we find that
 the training errors for both the energies and forces are somewhat higher
 in figure \ref{fig:silicon-log},
 and this is also reflected in errors on the test set in figure \ref{fig:silicon-error}.
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{silicon_rdf.png}
-    \caption{Caption}
-    \label{fig:silicon-rdf}
-\end{figure}
+This may indicate that the Stillinger-Weber is more difficult for the neural network
+to reproduce, both on the training and test set, as it contains more complex interactions
+than the EMT potential.
+However, if we examine the energies interpolated over time,
+it paints a better picture than for the EMT potential
+In figure \ref{fig:silicon-pot} we can see the potential energy
+as a function of time. Though the potential energy is slightly increasing
+over time, it is not nearly to the same level as for the EMT potential.
+On the whole, it seems to be reproducing the Stillinger-Weber potential
+well, though perhaps with sligtly smaller oscillations.
+If we examine the total energy, which is plotted in figure \ref{fig:silicon-energy},
+we can see that the energy is increasing in an overall linear trend.
+Since the change in potential energy is somewhat smaller than the total change
+in energy, we think this can be largely attributed to an increase in kinetic energy.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_pot.png}
     \caption{Caption}
-    \label{fig:silicon-energy}
+    \label{fig:silicon-pot}
 \end{figure}
 
 \begin{figure}[H]
@@ -359,9 +365,70 @@ and this is also reflected in errors on the test set in figure \ref{fig:silicon-
     \label{fig:silicon-energy}
 \end{figure}
 
+This is evidenced if we study for example the mean squared displacement,
+which is shown in figure \ref{fig:silicon-msd}. We see that in contrast
+to a linear change in MSD over time for the Stillinger-Weber potential,
+there is a sharp increase in motion over time for the neural network potential.
+This extra motion is due to the fact that the neural network potential
+seems to pick up translation momentum over time, as the crystal structure
+remains intact while the system drifts.
+We can also see this in figure \ref{fig:silicon_sw},
+as we can see the system has moved over the 5000 steps,
+which is not the case for the atoms governed by the Stillinger-Weber potential.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{silicon_rdf.png}
+    \caption{Caption}
+    \label{fig:silicon-rdf}
+\end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_msd.png}
     \caption{Caption}
     \label{fig:silicon-energy}
 \end{figure}
+
+As for the radial distribution function, we see that the neural network
+potential is capable of reproducing this, though since the system
+has picked up kinetic energy the system is somewhat less peaked than
+for the Stillinger-Weber potential.
+
+\begin{figure}[H]
+\begin{adjustbox}{max width=1.2\linewidth,center}
+\centering
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{silicon_t0.png}
+      \caption{Copper atoms after 10 steps.}
+    \label{fig:f1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+      \includegraphics[width=\textwidth]{silicon_tn.png}
+      \caption{Copper atoms after 5000 steps.}
+    \label{fig:f2}
+  \end{subfigure}
+\end{adjustbox}
+    \caption{The system of copper atoms after 10 and 5000 steps.}
+    \label{fig:silicon_sw}
+\end{figure}
+
+Finally, we also examined the time scaling of the system as we did for the
+copper EMT potential.
+As before we calculated the time it took for a single forces call
+on all the atoms in the system, as this is the limiting
+factor for integrating the atoms a single timestep using the
+Verlet algorithm.
+The results are shown in figure \ref{fig:silicon-scaling}.
+Ideally we would take averages of the time this takes, but except
+for the smaller systems this does not affect the results very much,
+due to the timescales involved.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{silicon_scaling.png}
+    \caption{Time scaling of the neural network potential
+        as a function of the size of the system.}
+    \label{fig:silicon-scaling}
+\end{figure}
+
