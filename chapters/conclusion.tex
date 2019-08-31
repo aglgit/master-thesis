@@ -1,1 +1,34 @@
-\Blindtext
+In this thesis we have trained neural networks on atomic configurations
+to predict potential energy and forces. Using the Behler-Parrinello
+method to map atomic configurations to a one-dimensional feature vector,
+we preserve the required symmetries of translation, rotation and permutation
+while mapping the configurations to a form which can be efficiently
+processed by a neural network.
+Using the Atomistic Machine-learning Package in conjunction
+with the Atomic Simulation Environment we trained neural networks
+to reproduce a system of copper atoms governed by the Effective Medium
+Theory Potential and a system of silicon atoms governed
+by the Stillinger-Weber potential.
+We find large differences in mechanical properties and numerical stability
+from these potentials, these differences are likely caused
+by the difference in the average number of neighbors, the number
+of and type of symmetry functions applied and the functional form
+of the potentials.
+However, while the neural network can more accurately reproduce
+the Stillinger-Weber potential, we find in both cases that the
+energy increases over time, along with an increase in translational
+momentum.
+
+\subsection{Properties of the neural network potential}
+
+\subsection{Prospects and future work}
+
+\subsubsection{Energy conservation}
+
+\subsubsection{Improved sampling}
+
+\subsubsection{Ab-initio molecular dynamics}
+
+\subsection{Alternative fingerprinting schemes}
+
+\subsubsection{Optimization}

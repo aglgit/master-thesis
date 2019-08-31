@@ -423,6 +423,14 @@ The results are shown in figure \ref{fig:silicon-scaling}.
 Ideally we would take averages of the time this takes, but except
 for the smaller systems this does not affect the results very much,
 due to the timescales involved.
+From this plot we observe that integrating a system
+with 100 silicon atoms one step would take approximately
+25 seconds, while a system of 300 atoms would take approximately
+110 seconds. This means integrating a system of 100 atoms
+for 5000 steps would take about 35 hours, which is quite
+a large amount of time compared to typical empirical potentials.
+For the Stillinger-Weber potential this force call
+takes on the order of milliseconds.
 
 \begin{figure}
     \centering
