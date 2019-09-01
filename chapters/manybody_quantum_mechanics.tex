@@ -151,7 +151,7 @@ is satisfied by the introduction of \textit{Slater determinants}
 
 \begin{equation}
 \Psi(\bm{x}_1,\dots,\bm{x}_N)
-= \frac{1}{\sqrt{N}}
+= \frac{1}{\sqrt{N!}}
 \begin{vmatrix}
     \chi_{1}(\bm{x}_1) & \chi_{2}(\bm{x}_1)
     & \dots & \chi_{N}(\bm{x}_1) \\
@@ -326,11 +326,11 @@ since the usual method of obtaining the ground-state density
 involves constructing a single-determinant wave function
 from a set of orthonormal single-particle states,
 and expanding these single-particle states in terms
-of a known basis. However, DFT methods
-offer the benefit of dealing with a function of only
-three spatial coordinates, while Hartree-Fock methods
-require you to keep track of the spatial and spin coordinates
-of every single-particle state.
+of a known basis. 
+However, DFT methods offer the explicit treatment of both the
+electron exchange and electron correlation interactions,
+while Hartree-fock only includes
+the exchange energies.
 \par
 This section is a brief summary of the material covered
 in the \parencite[Toulouse][pages 1-12]{toulouse2017}

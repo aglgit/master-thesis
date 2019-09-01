@@ -81,7 +81,7 @@ forces and other derived properties are determined by
 the cartesian coordinates. However, it is not sufficient
 to feed neural networks cartesian coordinates labeled with
 the energy. From physical theory we know that any molecular dynamics potential
-must be invariant w.r.t.\ translation, rotationa, and permutation
+must be invariant w.r.t.\ translation, rotation, and permutation
 of like atoms.
 In order to apply machine learning methods we require a mapping from
 the cartesian coordinates to a 1D feature vector which conserves
@@ -89,18 +89,18 @@ all of these properties.
 \par
 The idea is to approximate the potential energy with a regression model:
 \begin{equation}
-\left\{\bm{R\right\}} \overset{\text{regression}}{\longrightarrow}
+\left\{\bm{R}\right\} \overset{\text{regression}}{\longrightarrow}
     E = E\left( \left\{\bm{R}\right\} \right) ,
 \end{equation}
-where $\left\{\bm{R\right\}}$ represents the cartesian coordinates of our system.
+where $\left\{\bm{R}\right\}$ represents the cartesian coordinates of our system.
 We will refer to a mapping which satisfies the constraints of 
 translation, rotation and permutation invariance as a \textit{descriptor}. 
 The descriptor is a multidimensional function $\bm{G}$ that serves as input to
 the regression method:
 \begin{equation}
-    \left\{\bm{R\right\}} \rightarrow \bm{G} \left(\left\{\bm{R}\right\} \right)
+    \left\{\bm{R}\right\} \rightarrow \bm{G} \left(\left\{\bm{R}\right\} \right)
 \overset{\text{regression}}{\longrightarrow}
-E = E \left(\bm{G}\left(\left\{\bm{R\right\}}\right)\right)
+E = E \left(\bm{G}\left(\left\{\bm{R}\right\}\right)\right)
 \end{equation}
 Once we have a descriptor and a regression model the dynamics
 can be readily obtained by taking derivatives:
@@ -108,7 +108,7 @@ can be readily obtained by taking derivatives:
 \begin{split}
     \bm{F}_i &= -\nabla_i E \\
     &= -\nabla_i
-    E(\bm{G}(\left\{\bm{R\right\}})) \\
+    E(\bm{G}(\left\{\bm{R}\right\})) \\
     &= -\sum_j \frac{\partial E}
     {\partial G_j} \frac{\partial G_j}{\partial \bm{R}_i} ,
 \end{split}
@@ -120,7 +120,7 @@ respect to the coordinates of atom $i$.
 The potential energy is typically also broken into
 atomic contributions:
 \begin{equation}
-E = \sum_{i=1}^N E_{\text{atom}}\left(\bm{R}_i, \left\{\bm{R\right\}} \right) ,
+E = \sum_{i=1}^N E_{\text{atom}}\left(\bm{R}_i, \left\{\bm{R}\right\} \right) ,
 \end{equation}
 where each atomic contribution is determined by the atom's
 local environment. This allows us to treat systems with
@@ -170,7 +170,7 @@ density functional theory calculations, and the calculations are very
 time-consuming. Further work in this area could focus on generating
 and reproducing trajectories using either Velocity-Verlet dynamics
 and ground state DFT calculations or time-dependent density functional
-theory molecular dynamics as described in the GPAW calculator documentation
+theory molecular dynamics for example as described in the GPAW calculator documentation
 \footnote{\href{https://wiki.fysik.dtu.dk/gpaw/documentation/ehrenfest/ehrenfest_theory
 .html}{Ehrenfest theory}}.
 
@@ -207,9 +207,11 @@ In this thesis we have:
 
 \subsection{Structure}
 This thesis is divided into four parts. First we build from first principles
-to connect classical molecular dynamics with the laws of quantum mechanics,
-and introduce machine learning through the concept of atom-centered descriptors.
-Thereafter we we discuss the implementation details of using
+to connect classical molecular dynamics with the laws of quantum mechanics.
+We go through the basics of machine learning
+and connect it to molecular dynamics through the concept of atom-centered descriptors.
+Then we we discuss the implementation details of using
 ASE, AMP and Tensorflow. Third we train neural networks potentials
-on empirical potentials and on data from ab-initio molecular dynamics.
+on empirical potentials and generate new molecular dynamics trajectories
+using these potentials.
 Fourth we conclude the thesis and discuss future applications and work.

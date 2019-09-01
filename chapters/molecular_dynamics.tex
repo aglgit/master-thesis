@@ -17,14 +17,16 @@ from experiments and simulations.
 In this chapter we will show how quantum mechanics
 and classical mechanics can be bridged semi-rigorously,
 and also give an introduction to central concepts of molecular dynamics,
-such as initialization, integration and construction and evaluation
-of potentials.
+such as initialization, integration of the equations of motion
+and construction and evaluation of potentials.
 
 \subsection{From quantum mechanics to molecular dynamics}
 We will follow the route described in the lecture notes
 \parencite[Marx, Dominik and Hutter, J\"{o}rg][pages 1-10]{marx2000}
 given at the Winterschool 2000 at the John von Neuman Institute
 for Computing, J\"{o}lich.
+We will be using SI units as we wish to study the equations of motion
+derived from quantum mechanics but in the classical limit.
 Our starting point is the full Hamiltonian 
 for a set of $N$ electrons and $A$ nuclei:
 
@@ -50,8 +52,8 @@ The wave function is separated in terms of the electronic and nuclear
 coordinates with the ansatz:
 
 \begin{equation}
- \Psi \left(\left\{\bm{r\right\}_i}, \left\{\bm{R\right\}_a}, t \right)
-    \approx \Phi(\left\{\bm{r\right\}_i}) \chi(\left\{\bm{R\right\}_a})
+ \Psi \left(\left\{\bm{r}\right\}_i, \left\{\bm{R}\right\}_a, t \right)
+    \approx \Phi(\left\{\bm{r}\right\}_i) \chi(\left\{\bm{R}\right\}_a)
     \exp \left[ \frac{i}{\hbar} \int_{t_0}^t
     dt' E_e(t') \right] ,
 \end{equation}
@@ -65,7 +67,7 @@ the equations look nice:
 \end{equation}
 
 where the integration occurs over all spatial coordinates
-$\left\{\bm{r\right\}_i}, \left\{\bm{R\right\}_a}$. This is a single determinant
+$\left\{\bm{r}\right\}_i, \left\{\bm{R}\right\}_a$. This is a single determinant
 ansatz which must lead to a mean-field description of the dynamics.
 Inserting this ansatz into the Schrodinger equation
 reveals the following set of equations:
@@ -160,7 +162,6 @@ mechanics in an effective potential $V_e^E$ generated
 by the electrons.
 After averaging out the electronic degress of freedom
 this potential is now only a function of the nuclear coordinates.
-the electronic degrees of freedom.
 For consistency the nuclear wave function appearing
 in the TDSCF equation for the electronic
 degrees of freedom has to be replaced by the positions
@@ -304,6 +305,22 @@ contains 4 atoms:
 
 where $b$ is known as the lattice constant and defines
 the size of the unit cells.
+In figure \ref{fig:md} we have an image of a
+box of atoms visualized using the Visual Molecular Dynamics (VMD\footnote
+{\href{https://www.ks.uiuc.edu/Research/vmd/}{Visual Molecular Dynamics (VMD)}}) software.
+In this system we have a group of water molecules over a Self-Assembled
+Monolayer (SAM) surface, consisting of C12 molecules attached to a 
+sulfhydryl group. In this case the SAM surface is placed regularly
+while the water molecules are placed randomly, ensuring no molecules are too close.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{md.png}
+    \caption{Water molecules over a SAM surface. Hydrogen atoms in white,
+        oxygen in red, carbon in blue and sulfur in yellow.}
+    \label{fig:md}
+\end{figure}
+
 \par
 The velocities are typically initialized with a random uniform
 distribution or the Maxwell-Boltzmann distribution.
@@ -448,11 +465,11 @@ and the dynamics which are being studied.
 \newline
 Thus far we have discussed molecular dynamics for a system of $N$ particles
 within a fixed volume $V$ and constant energy $E$, i.e. in the
-microcanonical ensemble $NVE$. Other ensembles are also impossible,
-such as the canonical ensemble $NVT$ and the isothermal-isobaric ensemble
-$NPT$.
+microcanonical ensemble NVE. Other ensembles are also impossible,
+such as the canonical ensemble NVT and the isothermal-isobaric ensemble
+NPT.
 \par
-Simulations in the canonical ensemble can be achieved by modifying the verlet
+Simulations in the canonical ensemble can be achieved by modifying the Verlet
 integration algorithm. The simplest thermostat possible
 follows from the equipartion theorem:
 
@@ -562,6 +579,22 @@ It can be separated into two terms:
 While the van der Waals term is justified by theory, the repulsion term
 is justified by numerical efficiency - as it contains the square of the van der Waals
 term - and because it models the Pauli repulsion accurately.
+In figure \ref{fig:lennard-jones} we have plotted the Lennard-Jones potential
+as a function of interatomic distance.
+This form of the potential, with close repulsion and distant attraction
+is very common among molecular dynamics potentials, though often with
+modifications.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{lennard_jones.png}
+    \caption{Lennard-Jones potential as a function of interatomic distance.
+        Units in Angstrom and electronvolts.
+        Reprinted from \parencite[Molecular dynamics modelling of clay-fluid interfaces]
+            {phdthesis}.}
+    \label{fig:lennard-jones}
+\end{figure}
+
 \par
 While the Lennard-Jones potential is very simple, requiring only two parameters
 to be determined, it has shown to be effective at modelling noble gas atoms
