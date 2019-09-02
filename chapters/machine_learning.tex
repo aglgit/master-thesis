@@ -62,11 +62,28 @@ $\mathcal{C}(\bm{y}, f(\bm{X} ; \bm{\theta}))
 = \sum_i^N (y_i - f(\bm{x}_i ; \bm{\theta}))^2 $
 and the best fit is chosen as the set
 of parameters which minimize this cost function: 
-$\hat{\bm{\theta}} = \underset{\bm{\theta}}
-{\text{argmin}} \ \mathcal{C}(\bm{Y}, f(\bm{X} ; \bm{\theta})) $.
+
+\begin{equation}
+\hat{\bm{\theta}} = \underset{\bm{\theta}}
+{\text{argmin}} \ \mathcal{C}(\bm{Y}, f(\bm{X} ; \bm{\theta}))
+\end{equation}
+
+In figure \ref{fig:linear-regression} we have plotted an example
+of simple linear regression, wherein a single value $x$ is mapped
+to a response $y = b_0 + b_1 \cdot x$. The term $b_0$ is known
+as the offset and $b_1$ the slope and they are parameters which
+are to be determined from the training data.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{linear_regression.png}
+    \caption{Example of simple one-dimensional linear regression.
+        Reprinted from \href{https://realpython.com/linear-regression-in-python/}
+        {Linear Regression in Python}.}
+    \label{fig:linear-regression}
+\end{figure}
 
 \subsection{Basics of statistical learning}
-% needs revision?
 Statistical learning theory is a field of statistics dealing with the problem
 of making predictions from data. We start with an unknown function \newline
 $y = f(x)$ and our goal is to develop a function $h(x)$
@@ -111,7 +128,7 @@ function on the test set the \textit{out-of-sample} error.
 Assuming the dataset is sufficiently large and representative of $f$, and the subsampling
 into train and test datasets is unbiased, the in-sample error
 can serve as an appropriate proxy for the generalization error.
-\newline
+\par
 In figure \ref{fig:in-out}
 we show the typical evolution of the errors as the number of data points increase.
 It is assumed that the function being learned is sufficiently complicated
@@ -181,7 +198,7 @@ which we take to be the sum of squared errors:
  \mathcal{C}(\bm{y}, h(\bm{x})) = \sum_i^n (y_i - h(\bm{x}_i; \bm{\theta}))^2 .
 \end{equation}
 
-Our best estimate for the model parameters:
+Our best estimate for the model parameters
 
 \begin{equation}
  \bm{\theta}_{\mathcal{D}} = \underset{\bm{\theta}}{\argmin} \
@@ -193,7 +210,7 @@ datasets $\mathcal{D}_j = (\bm{y}_j, \bm{X}_j)$, each with $n$ samples, we would
 the expectation value of the cost function over all these datasets $E_{\mathcal{D}, \epsilon}$.
 We would also like to calculate the expectation value over different instances of the noise $\epsilon$.
 The expected generalization error can be decomposed as:
-% more in depth?
+
 \begin{equation}
 \begin{split}
     E_{\mathcal{D}, \epsilon} [\mathcal{C}(\bm{y}, h(\bm{X} ; \bm{\theta}_{\mathcal{D}}))]
@@ -202,7 +219,8 @@ The expected generalization error can be decomposed as:
 \end{split}
 \end{equation}
 
-The second term can be further decomposed as
+The second term can be further decomposed as:
+
 \begin{equation}
 \begin{split}
     &E_{\mathcal{D}}[(f(\bm{x}_i) - f(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2] \\
@@ -219,20 +237,20 @@ The first term is what we have referred to as the bias:
 
 The bias measures the expectation value of the deviation of our model from the true
 function, i.e. the best we can do in the infinite data limit.
-\newline
 The second term is what we have referred to as the variance:
+
 \begin{equation}
     \text{Var} = \sum_i  E[(h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}) - E[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}])^2]
 \end{equation}
 
 The variance measures the deviation of our model due to finite-sampling effects.
 Combining these effects we can decompose the out-of-sample error into:
+
 \begin{equation}
     E_{\text{out}} = \text{Bias}^2 + \text{Var} + \text{Noise},
 \end{equation}
 
 with $\text{Noise} = \sum_i \sigma_{\epsilon}^2$.
-\newline
 In general it can be much more difficult to obtain sufficient good data
 than to train a very complex model. Therefore it is often useful in practice
 to use a less complex model with higher bias, because it is less susceptible
@@ -244,7 +262,7 @@ supervised learning models vaguely inspired by biological neural networks.
 The building blocks of neural networks are neurons that take a
 vector input of $d$ features $\bm{x} = (x_1,\dots,x_d)$
 and produce a scalar output $a(\bm{x})$.
-A neural networks consists of layers of these neurons stacked together
+A neural network consists of layers of these neurons stacked together
 with the output of one layer serving as input for another. The
 first layer is typically known as the \textit{input layer}, the
 middle layers as \textit{hidden layers} and the final layer
@@ -267,14 +285,13 @@ neuron-specific weights $\bm{w}_i$:
 \end{equation}
 
 The term $b_i$ is a neuron-specific re-centering of the input.
-\newline
 Typical choices of non-linearities/activation functions include
 the sigmoid and hyperbolic tangent functions, and Rectified Linear Units (ReLU).
 When the activation function is non-linear, the neural network with a single hidden
 layer can be proven to be a \textit{universal function approximator},
-given an arbitrarily large number of neurons. We typically also
-want functions that are monotonic and smooth with a monotonic derivative.
-\newline
+given an arbitrarily large number of neurons; meaning
+it can reproduce any continuous function on compact subsets of $\mathbb{R}^N$. We typically also
+want activation functions that are monotonic and smooth with a monotonic derivative.
 
 % own figure or cite
 \begin{figure}[h]
@@ -295,8 +312,6 @@ In the final layer the choice of activation function is dependent on the problem
 we are trying to solve. If we are performing non-linear regression the
 final activation function is often the identity $\sigma_i(z) = z$, or if
 we are doing classification the soft-max function is often employed.
-
-\newpage
 
 Let $\bm{x}$ be a vector of $d = 1,\dots,D$ inputs or 
 \textit{features}. Let $a_i^{(h)}$
@@ -342,7 +357,6 @@ the value of the cost function is entirely determined
 by the weights and biases of each neuron in the network.
 We define learning narrowly as adjusting the parameters of the network
 in order to minimize the cost function.
-\newline
 \textit{Gradient descent} is a simple, but powerful method
 of finding the minima of differentiable functions.
 Given a function $F: \mathbb{R}^d \rightarrow \mathbb{R}$, and an initial
@@ -357,24 +371,33 @@ The procedure terminates when the norm
 $ \left| \nabla F(\bm{x}_n) \right| $ or
 $ \left| x_{n+1} - x_{n} \right| $
 is appropriately small.
-\newline
 The learning rate is not necessarily fixed throughout the procedure,
 and proves crucial to the convergence of the method. If $f$
 is convex, and $\eta$ is reasonably small, convergence is guaranteed.
 Convergence may be very slow however, and if $f$ is not convex
 you are only guaranteed to find local minima, and this makes
 the method very sensitive to initial conditions.
-\par
+In figure \ref{fig:gradient-descent} we can see how gradient
+descent finds minima in a function of two variables by always walking
+in the steepest direction.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{gradient_descent.png}
+    \caption{How gradient descent discovers extrema points.
+    Reprinted from [Gradient Descent: All You Need to Know] (\href{
+        https://hackernoon.com/gradient-descent-aynk-7cbe95a778da}{Hacker Noon}).}
+    \label{fig:gradient-descent}
+\end{figure}
+
 In order to train the model, we need to calculate the derivative of the cost
 function with respect to a very large number of parameters multiple times. However,
 numerical calculation of gradients is very time consuming. The \textit{backpropagation}
 algorithm is a clever use of the chain rule that allows us to calculate gradients efficiently.
-\par
 Assume that there are $L$ layers in our network with $l = 1,2,...,L$ indexing the layers, including
 the output layer and all the hidden layers.
 Let $w_{ij}^l$ denote the weight for the connection
 from the $i$-th neuron in layer $l - 1$ to the $j$-th neuron in layer $l$. Let $b_{j}^l$ denote the bias of this $j$-th neuron.
-
 The activation $a_{j}^l$ of the $j$-th neuron in the $l$-th layer is related to the activities of the neurons in the layer $l - 1$ by:
 
 \begin{equation}
@@ -382,7 +405,6 @@ The activation $a_{j}^l$ of the $j$-th neuron in the $l$-th layer is related to 
 \end{equation}
 
 where $f$ is some activation function.
-
 The cost function $\mathcal{C}$ depends directly on the activations in the output layer, and indirectly on the activations
 in all the lower layers.
 Define the error $\Delta_j^L$ of the $j$-th neuron in the $L$-th (final) layer as the change in cost function
@@ -407,7 +429,6 @@ This can also be interpreted as the change in cost function with respect to the 
 \end{equation}
 
 since $ \partial b_l^j / \partial z_j^l = 1$.
-
 The error depends on neurons in layer $l$ only through the 
 activation of neurons in layer $l + 1$, so using the chain rule we can write:
 
@@ -422,9 +443,7 @@ activation of neurons in layer $l + 1$, so using the chain rule we can write:
 \end{equation}
 
 The sum comes from the fact that any error in neuron $j$ in the $l$-th layer propagates to all the neurons
-in the layer $l + 1$,
-so we have to sum up these errors.
-
+in the layer $l + 1$, so we have to sum up these errors.
 This gives us the equations we need to update the weights and biases of our network:
 
 \begin{equation}
@@ -459,17 +478,6 @@ outputs are backpropagated through the network to update the
 weights and biases. This is then repeated for some number
 of steps or until the network achieves acceptable accuracy.
 
-% own figure or cite properly
-\begin{figure}
-    \centering
-    \includegraphics[width=0.75\linewidth]{gradient_descent.png}
-    \caption{How gradient descent discovers extrema points.
-    Reprinted from 
-    \href{https://hackernoon.com/gradient-descent-aynk-7cbe95a778da}[
-        Gradient Descent: All You Need to Know] (Hacker Noon).}
-    \label{fig:gradient-descent}
-\end{figure}
-
 \subsection{Optimization}
 In order to begin the minimization procedure and find an optimal
 set of weights and biases for our network we first need some initial values.
@@ -477,26 +485,13 @@ Often weights are initialized with small values distributed around zero,
 drawn from a uniform or normal distribution. The bias can be initalized to zero,
 but enforcing that all biases have some small value ensures that every
 neuron has output which can be backpropagated in the first training cycle.
-In the Pytorch neural network framework - which is the one we will 
-be using - weights are initialized uniformly as
-
-\begin{equation}
-    \begin{split}
-        \sigma &= 1 / N_{in} \\
-        w &= \mathcal{U}(-\sigma, \sigma)
-    \end{split}
-\end{equation}
-
-where $N_{in}$ is the number of inputs to the weight/layer of weights
-and $\mathcal{U}$ is the uniform distribution.
 \par
 A critical choice for building neural networks is the choice of activation function.
 As we have mentioned briefly above, we have a small set of requirements in order
 for the neural network to be an universal function approximator, namely
 that the function be nonconstant, bounded, continuous and monotonically increasing.
-We also desire that the function be fast to evaluate, with a derivative that
+We also desire that the function be quick to evaluate, with a derivative that
 is simple to calculate.
-\par
 A function that fulfills all of these criteria is the sigmoid function:
 
 \begin{equation}
@@ -511,7 +506,6 @@ and outputs a number between $0$ and $1$. It also has a continuous derivative
 which is simple to calculate. The sigmoid function is well suited for binary
 classifiers, since it easily creates a decision boundary between two categories
 $0$ and $1$, and is often the first goto for AI programmers.
-\par
 Another simple and commonly used activation function is the hyperbolic tangent
 
 \begin{equation}
@@ -523,7 +517,6 @@ Another simple and commonly used activation function is the hyperbolic tangent
 
 The hyperbolic tangent is defined on the real number line and outputs
 a number between $-1$ and $1$.
-\par
 Both the sigmoid and the hyperbolic tangent functions exhibit the problem
 of vanishing gradients. In deep learning, you typically have several layers
 of neurons outputting some linear combination of the activation functions.
@@ -533,10 +526,9 @@ its weights. For the sigmoid and hyperbolic tangent activations these
 gradients will be in the range $(-1, 1)$, and therefore often
 exceedingly small. This means that many neurons may receive effectively
 no weight update in any given training epoch, which severely impedes training.
-\par
 The Rectified Linear Unit (ReLU) has gained popularity in recent years
 for its effectiveness in the field of convolutional neural networks.
-The ReLu function is defined as:
+The ReLu function and its derivative is defined as:
 
 \begin{equation}
     \begin{split}
@@ -560,10 +552,8 @@ very large. In practice the gradients are often "clipped", i.e.
 truncated above a certain upper bound.
 With the ReLU function one can also encounter "dying" neurons,
 since the input to any neuron that does not exceed zero
-is set to zero, which means that the number of neurons receiving
-an effective weight update
-\newline
-\newline
+is set to zero, which means that many neurons may receive
+no weight update.
 From the point of view of the neural network, the inputs are just
 dimensionless numbers, which are passed through layers until it spits
 out some outputs. It is therefore often useful to standardize the inputs.
@@ -580,11 +570,8 @@ by updating the weights and biases of the network.
 In practice however, as the weights often start as
 small numbers, it can take quite a few training cycles before
 the weights are of appropriate size.
-Standardizing the inputs also makes it impose to
-impose a penalty on the weights in order to reduce
-overfitting.
-\newline
-\newline
+Standardizing the inputs also imposes a penalty on the weights
+which in turn reduces overfitting.
 The most common methods for training neural networks
 are variations on the simple gradient descent scheme as mentioned
 above:
@@ -597,7 +584,6 @@ Since we are interested in training neural networks,
 $\bm{x}_{n}$ represents the weights and biases of the network
 after $n$ training cycles, $\eta$ is our learning rate
 and $\nabla F(\bm{x}_n)$ is the gradient of the loss function.
-\par
 The learning rate $\eta$ controls how fast we reach a given minimum.
 A small learning rate will require more training cycles
 and a larger learning rate will require fewer.
@@ -608,8 +594,7 @@ Gradient descent also tends to exhibit oscillating behaviour
 around the minimum. Often a schedule is imposed
 on the learning rate, such as reducing it by a fixed amount
 every few epochs or incorporating an exponentially decaying learning rate.
-[cite: Mehta et al]
-As discussed in Mehta et. al. using gradient descent to optimize
+As discussed in \parencite[Mehta et. al]{mehta2019high} using gradient descent to optimize
 our neural network imposes some limitations:
 
 \begin{itemize}
@@ -657,7 +642,6 @@ In addition, introducing stochasticity in the
 division of the dataset into minibatches introduces stochasticity
 to the weights update, which should help gradient descent
 in overcoming local minima.
-\par
 It is also common to introduce regularization to the weights
 and biases of the networks. Regularization in the context
 of neural networks means adding a term proportional
@@ -675,11 +659,10 @@ For example using the L2-norm our cost function becomes:
 i.e. we sum up all the weights squared.
 The parameter $\lambda$ is known as a regularization parameter.
 This extra term adds a penalty on the size of the weights
-dependant on the regularization parameter. This has
+dependent on the regularization parameter. This has
 been shown to reduce overfitting, as the weights
 cannot be adjusted to arbitrary size in order
 to fit the training dataset.
-\par
 Gradient descent is often paired with a momentum parameter
 that serves as a "memory" of the direction we are moving.
 This can be implemented as a modification to the
@@ -701,12 +684,11 @@ in a viscous medium. Momentum helps the gradient descent
 algorithm gain speed in directions where the curvature
 is flat while dampening speed in high curvature directions.
 \par
-First-order gradient descent methods differ from quasi-Newton methods
+So called first-order gradient descent methods differ from quasi-Newton methods
 in that they do not keep track of the curvature which is encoded
 in the so-called Hessian matrix of second order derivatives.
 Second-order methods accomplish this by calculating or approximating
 the Hessian and normalizing the learning rate by the curvature.
-\par
 The RMSprop algorithm keeps a running average of both the
 first and second moment of the gradient. If we term
 the gradient as $\bm{g} = \nabla F(\bm{x})$
@@ -730,7 +712,6 @@ to be element-wise. This results in a dampening of the learning rate
 in directions where the gradient is consistently large,
 and allows us to use a larger learning rate for areas
 of flat curvature.
-\par
 Perhaps the most commonly used optimizer today is the closely
 related ADAM optimizer. In addition to keeping a running average
 of the first and second-order moments ADAM performs
