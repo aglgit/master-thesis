@@ -12,7 +12,7 @@ extended, and this makes the package ideal for prototyping
 and testing both newer and more established machine learning
 methods.
 \par
-A suggested workflow is as follows \footnote{\url
+A suggested workflow is as follows\footnote{\url
 {https://bitbucket.org/andrewpeterson/amp/issues/79/parallelize-fingerprint-derivatives}}:
 
 \begin{itemize}
@@ -59,11 +59,14 @@ atomic configurations.
 AMP provides interfaces for both atom-centered descriptors, as we
 discussed in chapter 6, and image-centered descriptors,
 which are formed from the complete set of cartesian coordinates.
+Figure \ref{fig:scheme} shows the schematics of how the
+potential energy and forces is computed in atom-centered mode.
 A set of feature vectors are formed from an image, which are fed
 through a neural network to produce the potential energy.
-The neural network is implemented through a Tensorflow interface,
-which provides a full neural network graph with weights and
-activations. The inputs can be backpropagated through the network
+The neural network including backpropagation is written by the
+authors, though there exists a Tensorflow (0.12) interface
+only compatibable with Python 2.
+The inputs can be backpropagated through the network
 to produce both weight updates and derivatives with respect to
 the inputs.
 
@@ -93,7 +96,6 @@ In the previous chapter we showed how to run a molecular dynamics
 simulation using ASE. Here we will show how an AMP calculator
 can be fitted to molecular dynamics data with only minor
 modifications to the code.
-\par
 First we import the prerequisites and define the system:
 
 \begin{minted}{python}
@@ -189,8 +191,7 @@ defaults for multiple chemical species.
 The Zernike and Bispectrum descriptors are also implemented,
 but without derivatives, which means the trained calculator
 cannot be used for example performing molecular dynamics simulations.
-Currently the neural network model is the only model implemented,
-and is supported through Tensorflow's interface.
+Currently the neural network model is the only model implemented.
 However, the modular nature of AMP should enable more additions
 in time, such as derivatives for the Zernike and Bispectrum descriptors
 or other regression models which have derivatives available.

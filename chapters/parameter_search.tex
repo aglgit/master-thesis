@@ -1,8 +1,8 @@
-In order to obtain optimal performance from the neural networks
+In order to obtain optimal performance from the neural network
 given a set of atomistic configurations we need a careful choice of parameters
 and neural network architecture. The parameters can be classified as either
-training parameters - such as learning rate and force loss coefficient -
-or architectural parameters - such as the number of neurons and hidden layers,
+\textit{training parameters} - such as learning rate and force loss coefficient -
+or \textit{architectural parameters} - such as the number of neurons and hidden layers,
 or the choice of interaction cutoff radius. The former are important
 in the training of the neural network, i.e. adjusting weights and biases
 while the latter influence both the training process and the final
@@ -14,6 +14,7 @@ a smaller test data set. Generally we will only be training the neural networks
 on the energies, since training with forces is much more CPU- and memory-
 intensive. However, training with forces would likely affect the final
 result and improve the force RMSEs, as we will observe in the following section.
+\par
 The parameters are unless otherwise specified the defaults listed
 in table \ref{table:defaults}.
 In their paper on Random Search, \parencite[Bergstra and Bengio]{
@@ -33,6 +34,10 @@ Simulated annealing is a suitable algorithm for finding minima
 in a complicated energy landscape, and it reduces somewhat
 the randomness of initialization so that the results are comparable
 without having to perform many runs.
+We will also be using the BFGS Quasi-Newton method implemented
+through the \textit{scipy.optimize} library. This is
+the optimizer interface currently provided by AMP
+and the BFGS optimizer generally performs the best.
 
 \begin{table}[H]
 \centering
@@ -49,7 +54,7 @@ Training     & Epochs             & 2000                               \\
              & Force coefficient  & None                                \\
              & Optimizer          & BFGS                               \\ \bottomrule
 \end{tabular}
-\caption{Training defaults}
+\caption{Training default values.}
 \label{table:defaults}
 \end{table}
 
@@ -61,10 +66,10 @@ use for training. AMP only provides centered radial functions,
 while we use a mix of centered and shifted radial functions
 since these have demonstrated higher performance, as is discussed
 in the section on symmetry functions.
-For the symmetry functions we have chosen a set of 8 uncentered radial,
-8 centered radial and 20 angular (G4)
-symmetry functions. 
-The uncentered radial functions have $\eta$s spaced evenly
+For the symmetry functions we have chosen a set of 6 uncentered radial,
+6 centered radial and 20 angular (G4)
+symmetry functions.
+The uncentered radial functions have $\eta$'s spaced evenly
 from 1 to 20 and are centered at 0. The centered radial functions
 are centered evenly from 0.5 to $R_c - 0.5$ with $\eta = 5.0$.
 The angular functions have $\eta$s spaced evenly from
@@ -78,13 +83,13 @@ since this has a wider range of values inside the cutoff boundary.
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{default_rad.png}
-      \caption{AMP default radial symmetry functions.}
+      \caption{Radial symmetry functions.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{default_ang.png}
-      \caption{AMP default angular symmetry functions.}
+      \caption{Angular symmetry functions.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
@@ -97,13 +102,13 @@ since this has a wider range of values inside the cutoff boundary.
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{selected_rad.png}
-      \caption{Radial symmetry functions used for parameter search.}
+      \caption{Radial symmetry functions.}
     \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{selected_ang.png}
-      \caption{Angular symmetry function used for parameter search.}
+      \caption{Angular symmetry functions.}
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
@@ -128,11 +133,11 @@ from molecular dynamics we would expect we would expect much better
 accuracy and numerical stability if we could improve the fit of
 the derivatives.
 The real drawback is the calculation of the derivatives in the input layer,
-aka the fingerprintprimes, of which there are a lot for every coordinate
-and input symmetry function, and they consume a lot of disk space and memory.
+aka the \textit{fingerprintprimes}, of which there are a lot for every coordinate
+and input symmetry function, as they consume a lot of disk space, memory and CPU time.
 \par
 In order to test the performance of neural networks
-we trained with and without forces on a set of test images.
+we trained with and without forces on a set of training images.
 A system of copper atoms is generated in the face-centered cubic (FCC)
 configuration with 4 atoms in the unit cell and $3 \times 3 \times 3$
 unit cells for a total of $4 \cdot 3^3 = 108$ atoms. The
@@ -142,7 +147,7 @@ be using is the Effective Medium Theory (EMT), which has a very
 fast Fortran implementation in the ASE software package\footnote{
 \url{https://wiki.fysik.dtu.dk/asap/asap}}.
 The training trajectory is ran for $5 \cdot 10^4$ steps with
-a timestep of $\Delta t = 1$fs and written to file every 100 steps
+a timestep of $\Delta t = 5$ femtoseconds and written to file every 100 steps
 for a total of 500 atomic configurations. The test trajectory is
 integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
 
@@ -187,24 +192,25 @@ integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
 \end{figure}
 
 In figure \ref{fig:noforcetrain} we have created a scatterplot
-of the energies and forces vs the absolute error, and labeled
-the plots with the energy and force RMSEes.
+of the energies and forces vs the absolute error after training without
+forces, and labeled the plots with the energy and force RMSEs.
 We observe that the potential energies can achieve fairly
 low error values of approximately 0.02 to 0.10 eV, and the
 result does not depend very much on the value of the exact potential
 energy.
-The force error however is approximately three orders of magnitude
+The force error however is approximately an order of magnitude
 larger, which echoes some of the concerns raised in the previous
 chapter with fitting derivatives. The forces produced by the neural
-network are still not dependent on the exact value of the force.
+also appear to be increasing as we move away from zero.
 \par
 In figure \ref{fig:forcetrain} we have a scatterplot of energies
-and forces generated from a force-trained neural network.
-While the error in the potential energy is now an order of magnitude higher,
-the error in the forces is now two orders of magnitude smaller.
-This is arguably a very good tradeoff, since the force error matters
+and forces generated from a force-trained neural network
+with a force coefficient of $0.1$.
+While the error in the potential energy is now approximately 4 times higher,
+the error in the forces is now ca. $60 \%$ smaller.
+This is arguably a good tradeoff, since the force error matters
 much more for long molecular dynamics trajectories, and will make
-any simulation requiring large amounts of data much more stable.
+any simulation requiring large amounts of data more stable.
 However, force training is as mentioned much costlier in terms
 of memory and CPU hours. Instead of training with forces on the full
 set of images, we instead suggest training on a large amount of configurations
@@ -229,11 +235,11 @@ The hyperbolic tangent is somewhat more computationally costly,
 however this is not a big consideration for our neural networks
 overall, since they are quite small and can be evaluated
 relatively fast.
-To test different architecturesj a copper system of $4 \cdot 2^3 = 32$
+To test different architectures a copper system of $4 \cdot 2^3 = 32$
 atoms is generated and integrated for $8 \cdot 10^4$ steps
-with a timestep of $\Delta t = 1.0$fs
+with a timestep of $\Delta t = 5.0$ femtoseconds
 and written to file every 100 steps for a total of 800 training images.
-By the same procedure we also obtain 100 test images.
+By the same procedure we also obtain 200 test images.
 The velocities are generated
 according to a Maxwell-Boltzmann distribution with a temperature
 of 500 Kelvin. The results are shown in table \ref{table:act-hidden}.
@@ -277,7 +283,7 @@ low value on the force RMSE, though the network has not been trained
 on forces, but this also matches our intuition that the network
 should not be very large, with the hyperbolic tangent outperforming
 the sigmoid. For the remainder of this thesis we have settled
-on these values for the neural network, though it remains
+on the hyperbolic tangent with 10 nodes for the neural network, though it remains
 to be seen if a larger network trained for longer could outperform
 the smaller models.
 
@@ -292,23 +298,11 @@ fingerprint derivatives, with substantial CPU and memory cost the
 larger the cutoff radius, and accuracy can also be impacted if any
 atom interacts with an atom which in actuality does not have a substantial
 energy and force contribution.
-In their original paper on AMP by \parencite[Khorshidi and Peterson]{
-khorshidi2016amp}, the authors suggest an alternative cutoff
-function to the cosine suggested by Behler and Parrinello
-which covers a wider range of values within the cutoff boundary
-and can reproduce the cosine at certain values of $\gamma$.
-
-\begin{equation}
-    f_c(r) =
-    \begin{cases}
-        1 + \gamma (r / R_c)^{\gamma + 1} - (\gamma + 1)
-        (r / R_c)^{\gamma} & r \leq R_c \\
-        0 & r > R_c
-    \end{cases}
-\end{equation}
-
+\par
+We will be comparing the cosine and polynomial cutoffs at different
+cutoffs to test whether one outperforms the other.
 We choose a value of $\gamma = 5.0$ since it has a substantially wider
-range than the cosine, and compare the two for different cutoff radii.
+range than the cosine, and compute RMSEs for different cutoff radii.
 In figure \ref{fig:copper_rdf} we have plotted the radial distribution
 function of the copper atoms governed by the EMT potential.
 We see that the system is strongly peaked at distances of approximately

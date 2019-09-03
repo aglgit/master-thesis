@@ -13,7 +13,6 @@ from very poor scaling as the system size increases, with Hartree-Fock
 naively scaling as $\mathcal{O}(N^4)$ with $N$ the number of electrons
 and Density Functional Theory scaling as $\mathcal{O}(N^4)$,
 but with a larger proportionality scaling.
-\par
 In many cases the exact details of the electronic structure
 are less important than the long-time behaviour of the atoms
 and molecules involved in the simulation, and classical approximations
@@ -64,12 +63,11 @@ so-called \textit{feature vectors}, where every vector element
 represents a feature of the data set. For example the amount
 of precipation in a given area at a given time is a function
 of features such as humidity, cloud cover, air pressure etc.
-This is a vector of some length $F$, while the nuclear coordinates
+This is a vector of some length $D$, while the nuclear coordinates
 represent a point in $3N$-dimensional phase space.
 This difference in representation requires some way of mapping
 the nuclear coordinates to features which can be employed
 by a machine learning method.
-\par
 The naive approach would be to simply feed in the nuclear coordinates
 as a 1D vector, and then perform a regression on the dataset
 in order to obtain the potential energy. However, our physical intuition
@@ -124,7 +122,6 @@ choice of cutoff radius if no electrostatic interactions are involved.
 Long-range interactions can also be treated through
 the introduction of methods such as Ewald summation, but this will
 not be discussed here.
-\par
 A mapping that satisfies the above constraints we will refer to
 as a \textit{descriptor}, and is used as input to the regression method:
 
@@ -181,18 +178,53 @@ the following cutoff:
     f_c(R) =
 \begin{cases}
     \frac{1}{2}\left(1 + \cos \left(\pi R / R_c \right) \right) & R < R_c \\
-    0 & R > R_c ,
+    0 & R \geq R_c ,
 \end{cases}
 \end{equation}
 
-however other functional forms are possible. For the angular part
-such terms are multiplied, which means the function decays much more
-rapidly as we approach the cutoff. The only requirements we pose
+however other functional forms are possible.
+The only requirements we pose
 is that the function be continuous with a continuous first derivative
 in $r \in [0, \infty)$,
 approach one as $R \rightarrow 0$
 and zero as $R \rightarrow R_c$.
-\par
+The AMP authors propose an alternative polynomial cutoff function:
+
+\begin{equation}
+    f_c(R) =
+\begin{cases}
+    1 + \gamma \cdot (r / R_c)^{\gamma + 1} - (\gamma + 1)(r / R_c)^{\gamma} & R < R_c \\
+    0 & R \geq R_c ,
+\end{cases}
+\end{equation}
+
+where $\gamma$ is a user-specified parameters that controls the rate of decay.
+For values of $\gamma < 2$ this cutoff reproduces the cosine cutoff, while for higher
+values the polynomial has much larger values within the cutoff radius.
+Figure \ref{fig:cutoff} shows the cutoff functions plotted together
+for different values of $\gamma$.
+Figure \ref{fig:symmetry-functions} shows radial and angular parts of the symmetry functions
+with different parameter values, where the radial functions are centered at $R_s = 0$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{cutoff.png}
+    \caption{Cosine and polynomial cutoff functions plotted within
+        the cutoff radius. Reprinted from \parencite[
+            Khorshidi, Alireza and Peterson, Andrew A.]{khorshidi2016amp}.}
+    \label{fig:cutoff}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{symmetry_functions.png}
+    \caption{Radial and angular symmetry functions for different values
+        of $\eta, \zeta, \lambda$. The radial symmetry functions
+        are centered at $R_s = 0$. Reprinted
+        from the \parencite[AMP documentation]{ampdoc}.}
+    \label{fig:symmetry-functions}
+\end{figure}
+
 The components of the three-body subvector are defined incorporating
 the angles $\theta_{ijk}$ between every triplet of atoms:
 
@@ -200,7 +232,7 @@ the angles $\theta_{ijk}$ between every triplet of atoms:
 \begin{split}
     f_i^{II} &= 2^{1 - \zeta} \sum_{j,k \neq i}^{\text{local}}
     (1 + \lambda \cos \theta_{ijk})^{\zeta}
-    \exp \left( -\eta \left( R_{ij}^2 + R_{ik}^2 + R{jk}^2
+    \exp \left( -\eta \left( R_{ij}^2 + R_{ik}^2 + R_{jk}^2
     \right) / R_c^2 \right) \\
     & \times f_c(R_{ij}) f_c(R_{ik}) f_c(R_{jk}) .
 \end{split}
@@ -358,7 +390,7 @@ only the closest atoms. We therefore specify two separate
 cutoff shells, one for the radial information $R_c$ and one
 for treating angular interactions $R_a$.
 \par
-In order to preserve permutation symmetry the inputs vectors $\bm{D}_{ij}$
+In order to preserve permutation symmetry the input vectors $\bm{D}_{ij}$
 are sorted first according to chemical species, and then within
 each chemical species according to their inverse distance $1 / R_{ij}$.
 The vector of subvectors $\bm{D}_i$ is then fed through a neural
@@ -366,7 +398,20 @@ network to produce the atomic energy contribution.
 The network input size is fixed according to the maximum number of neighbors
 in the system which is being studied, with some entries $\bm{D}_{ij} = \bm{0}$
 if there are fewer neighbors within the radial cutoff.
-\par
+Figure \ref{fig:dpmd} shows how the neural network input vector
+is computed for the environment of a hydrogen atom.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{dpmd.png}
+    \caption{Computation of the neural network input vector for atom $i$.
+        The coordinates of atom $j$ are computed in the reference system of atom $i$.
+        The vector $\bm{e}_x$ is along the OH bond, $\bm{e}_y$ is perpendicular
+        to the plane of the water molecule and $\bm{e}_z$ is the cross product.
+        Reprinted from \parencite[Zhang et al.]{PhysRevLett.120.143001}.}
+    \label{fig:dpmd}
+\end{figure}
+
 The authors also propose a scheme of force learning, wherein
 the force Root Mean Square Error (RMSE) is incorporated into the Loss Function:
 
