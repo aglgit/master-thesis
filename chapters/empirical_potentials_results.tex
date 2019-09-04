@@ -15,14 +15,18 @@ energy, forces, radial distribution and mean squared displacement.
 In table \ref{tab:hyperparam} we have listed the parameters we have
 used in the training process. While we have used a large amount
 of training images for the energy training, since this is relatively
-inexpensive, 20000 training images was a noticeable over approximately
-5000-10000 images, and only seemed to affect the speed of convergence.
+inexpensive, 20000 training images was not a noticeable over approximately
+1000-10000 images, and only seemed to affect the speed of convergence.
+We finally used 1000 images to refine the force accuracy,
+as we discussed in the previous chapter.
 In table \ref{tab:hyperparam-test} we have listed the parameters
 used for testing the neural network. For sampling data we used a larger
 timestep and sampling interval
 than for applying the neural network, in order to obtain
-a larger diversity of configurations, though this did not seem to
-matter much for the final result.
+a larger diversity of configurations, though this did not appear to
+matter much in the final analysis.
+
+% Mention loss vs RMSE here...?
 
 \begin{table}[H]
 \centering
@@ -30,12 +34,11 @@ matter much for the final result.
 \hline
 Hyperparameter & Value \\
 \hline \hline
-Symmetry functions & 16 radial, 24 angular \\
-    Hidden layers & $(10, 10)$ \\
+    Hidden layers & $(10)$ \\
 Activation & Hyperbolic tangent \\
     Time (fs) & $2 \cdot 10^6$ \\
     Timestep (fs) & 5 \\
-    Sampling intervall (fs) & 100 \\
+    Sampling intervall (timesteps) & 100 \\
 Max epochs & 4000 \\
 Optimizer & BFGS \\
 Energy coefficient & 1.0 \\
@@ -52,12 +55,11 @@ Force coefficient & 0.1 \\
 \hline
 Hyperparameter & Value \\
 \hline \hline
-Symmetry functions & 16 radial, 24 angular \\
     Hidden layers & $(10, 10)$ \\
 Activation & Hyperbolic tangent \\
     Time (fs) & $5 \cdot 10^3$ \\
     Timestep (fs) & 1 \\
-    Sampling intervall (fs) & 10 \\
+    Sampling intervall (timesteps) & 10 \\
 \hline
 \end{tabular}
 \caption{Hyperparameters used in testing.}
@@ -69,18 +71,21 @@ The Effective Medium Theory (EMT) potential gives a good description
 of the late transition metals in a Face-Centered Cubic (FCC) crystal
 lattice, and has a very efficient implementation in ASE,
 which makes it ideal for producing large amounts of data.
-We will use a rather small system of $4 \times 2^3 = 32$ atoms
-for training, since this means a larger amount of labels available
+We will train on a rather small system of $4 \times 2^3 = 32$ atoms
+with a temperature of 500 Kelvin since this means a larger amount of labels available
 for atoms when we are only using the potential energy.
-We train with only the energy for $8 \cdot 10^5$ steps
+We train with only the energy for $2 \cdot 10^6$ steps
 with a timestep of $\Delta t = 5.0$ fs
 writing to file every 100 steps and then subsequently
-train using both energy and forces for $5 \cdot 10^4$ steps
-for a total of 500 configurations. We train on both sets of images
-for 2000 steps, where the BFGS optimizer has generally converged.
+train using both energy and forces for $1 \cdot 10^5$ steps
+for a total of 20 000 and 1000 configurations. We train on both sets of images
+for 4000 steps, where the BFGS optimizer has generally converged.
+The cutoff radius is set to 5 Angstrom, using 8 radial and
+16 angular functions of the G4 type.
 After the calculator is trained we compare the performance
 of the neural network with the EMT potential on a system
-of 32 atoms with a temperature of 300 Kelvin for 5000 steps.
+of 32 atoms with a temperature of 300 Kelvin for 5000 steps
+writing to file every 100 steps.
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
@@ -88,27 +93,30 @@ of 32 atoms with a temperature of 300 Kelvin for 5000 steps.
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{copper_energy_log.png}
       \caption{Training loss and energy RMSE.}
-    \label{fig:f1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{copper_force_log.png}
       \caption{Training loss and energy and force RMSE.}
-    \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
-    \label{fig:copper_log}
+\caption{Training loss, energy and force RMSE for the copper
+    system (using logarithmic axes).}
+    \label{fig:copper-log}
 \end{figure}
 
-In figure \ref{fig:copper_log} we have plotted the loss and root mean
+In figure \ref{fig:copper-log} we have plotted the loss and root mean
 squared errors for the training process.
-We see that the training process for the energy training
-continues to decrease after about 1000 steps, though
-the updates are smaller than before.
-For the force training we have converged after
-approximately 200-400 steps, after which the energy RMSE
-stabilizes.
+After a few large oscillations in the beginning
+the losses generally settle down and begin to decrease
+more smoothly.
+After approximately 500-1000 steps the network seems to have
+converged, and the change in loss is much smaller than before.
+Subsequently we train with forces and we observe a large increase
+in the energy RMSE in exchange for a modest decrease in force RMSE,
+as discussed in the previous chapter.
+After training for a while both errors settle down
+and converge.
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
@@ -129,27 +137,31 @@ stabilizes.
     \label{fig:copper_error}
 \end{figure}
 
-In figure \ref{fig:copper_error} we have plotted the energy and force
-absolute errors on the test images. We obtain an energy error
+In figure \ref{fig:copper_error} we have plotted the energy and force component
+(i.e. in the x,y,z direction)
+absolute errors on the EMT test trajectory. We obtain an energy error
 of approximately 0.1 eV, with a max value of approximately 0.16 eV.
 For the force errors we obtain an force RMSE of 0.05 eV/Å,
-but some of the force errors considerably higher, which poses
+but some of the force errors considerably higher, up to
+and including values of 0.3 eV/Å, which may pose
 a problem for the long term stability of the system.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_rdf.png}
     \caption{AMP radial distribution function plotted against
-        EMT RDF.}
+        EMT radial distribution.}
     \label{fig:copper-rdf}
 \end{figure}
 
 In figure \ref{fig:copper-rdf} we have plotted the AMP neural network
-radial distribution function compared to the EMT RDF.
+radial distribution function compared to the EMT radial distribution.
 We see that the AMP potential can reproduce the copper crystal
 structure fairly well, though with smaller peaks.
-The disparity is caused by an increase in kinetic energy over time
-which makes the atoms more dispersed.
+As we will soon discuss, the neural network appears
+to be able to reproduce the equilibrium crystal structure,
+though increases in kinetic energy and translational momentum over time
+makes the atoms more dispersed.
 
 \begin{figure}[H]
     \centering
@@ -164,10 +176,10 @@ follows the EMT potential energy fairly well for approximately
 1500 steps, but then starts to significantly increase.
 As the atoms are moved away from the potential
 energy minimum the potential energy also starts to increase.
-This is noticeable in figure \ref{fig:copper-energy},
+This most noticeable in figure \ref{fig:copper-energy},
 where we have plotted the total energy as a function of time.
 While the EMT energy is flat or oscillating around a mean value,
-the neural network potential leads to increasing energy over time.
+the neural network potential exhibits increasing energy over time.
 At the beginning the increase in energy appears to be attributable
 to an increase in kinetic energy, which may be caused by errors
 in the interpolated forces from the neural network.
@@ -189,13 +201,12 @@ in translational momentum.
 \end{figure}
 
 In figure \ref{fig:copper-msd} we have plotted the mean squared
-displacement, which is mean distance travelled averaged over all
+displacement, which measures mean distance travelled averaged over all
 atoms in the system.
-We see that the MSD for the neural network is significantly larger
+We observe that the MSD for the neural network is significantly larger
 than for the EMT potential. In equilibrium we expect for a crystal lattice
 that the mean squared displacement be linear, as the atoms
-mostly oscillate in stable energy minimums and the motion can be
-described by diffusion processes.
+mostly oscillate in stable energy minimums.
 For the neural network potential the motion in the system appears
 to be accelerating, as the kinetic and total energy is increased
 over time.
@@ -215,12 +226,12 @@ over time.
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-    \caption{The system of copper atoms after 10 and 5000 steps.}
+    \caption{The system of copper atoms after 10 and 5000 timesteps.}
     \label{fig:copper_sw}
 \end{figure}
 
 If we examine the system trajectory in a program such as Ovito
-\footnote{\href{Open VIsualization TOol}{https://www.ovito.org/}}
+\footnote{\href{https://www.ovito.org/}{Open VIsualization TOol (OVITO)}}
 we find that the crystal structure has mostly remained intact, while the
 system has picked up a certain amount of translational momentum.
 In figure \ref{fig:copper_sw} we see that the system has moved as a whole,
@@ -228,9 +239,9 @@ although this is easier to see if you open up the trajectory file in Ovito
 yourself.
 This is in contrast to the EMT potential, in which the atoms vibrate in place
 at this temperature, and the system remains more or less in place.
-Altogether, this suggest that while the neural network potential
+Altogether, this suggests that while the neural network potential
 is able to reproduce the crystal structure, numerical errors propagate
-to an increase in energy over time, which threatens the long-term numerical
+to a linear increase in energy over time, which threatens the long-term numerical
 stability of the trajectory. In order to obtain better results we would likely
 require datasets containing more unlikely configurations and forces
 (i.e. slightly out of equilibrium). We also generally find that the performance
@@ -239,33 +250,35 @@ would improve the accuracy with this potential, as they are not explicitly
 contained in the EMT potential. However, more symmetry functions
 add significant CPU-time cost, and the set of symmetry functions would have to be pruned
 to remove significant correlations.
+\par
 Finally, we tested the time-scaling of the neural network as the number of atoms
 increased. To test this we simply made a forces call on lattices of different
-sizes which returns the force on every atom in the system.
+sizes, which returns the force on every atom in the system.
 Ideally we would have taken averages over multiple force calls, however
 at this time scale we did not think it would significantly impact the results.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{copper_scaling.png}
-\caption{Time scaling of the neural network as size increases}
+\caption{Time scaling of the neural network as the number of atoms increases.}
 \label{fig:copper-scaling}
 \end{figure}
 
 In figure \ref{fig:copper-scaling} we see as expected that the trained neural network
 scales linearly with the number of atoms, though with a significant pre-factor.
-We see that it takes approximately 1 minute to evaluate all the forces
-for a system of 60 atoms, while it takes 4 minutes for a system of 250 atoms.
+We see that it takes approximately 1 second to evaluate all the forces
+for a system of 60 atoms, while it takes 4 seconds for a system of 250 atoms.
 This pre-factor is dependent on the average number of neighbors
 of each atom, which is again dependent on the cutoff radius.
 Since the neural network has been trained with a set cutoff radius,
-this radius should deployed be considered a part of the neural network architecture
+this radius should be considered a part of the neural network architecture
 and cannot be significantly changed without impacting accuracy.
 This pre-factor is of course also dependent on the time it takes to evaluate
 the symmetry functions and derivatives, which is dependent on the number
 and type of symmetry functions, as the angular function derivatives are significantly
 more expensive to evaluate than the radial angular functions.
-While linear scaling is desireable, the pre-factor is obviously too large,
-as integrating a system of 250 atoms for 5000 steps would take almost 14 days!
+For the system of 250 atoms the 5000 steps take approximately 6 hours
+to integrate over, which could be competitive with ab-initio methods,
+though not with other classical potentials.
 However, this is only on a single core, and parallelizing using neighbor list algorithms
 such as thouse found in the LAMMPS package could be a big improvement without too much overhead.
 While this would help deployment, training would still be too slow.
