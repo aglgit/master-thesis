@@ -292,158 +292,160 @@ training and testing of larger and more complex systems.
 \subsection{Stillinger-Weber}
 The Stillinger-Weber is a potential which describes accurately
 Silicon atoms in the diamond lattice structure, and was
-one of the first potentials used to describe a realstic atomic-scale
+one of the first potentials used to describe a realistic atomic-scale
 model of Silicon. It is also one of the most common examples
 of a potential with a threebody interaction, and its intermediate complexity
 makes it ideal for verification with for example quantum calculations
 or in our case machine learning methods.
-As in the previous section we integrate the system over $8 \cdot 10^5$
+We initialize a system of 8 unit cells with 8 atoms in each unit cell
+for a total of $8 \times 2^3 = 64$ atoms with velocities corresponding
+to a temperature of 500 Kelvin.
+As in the previous section we integrate the system over $2 \cdot 10^6$
 steps using a timestep of $\Delta t = 5.0$ fs (suitable for most metals
-in a crystalline structure) for a total of 8000 images for energy learning
-and 500 images used to train forces. We train for 4000 epochs, since
-the loss function is then usually suitably converged.
-We generate a test set with identical positions and velocities
-using the Stillinger-Weber potential and assess whether the neural network
-can accurately reproduce the potential energy, radial distribution function
-and more.
+in a crystalline structure) writing to file every 100 steps
+for a total of 20 000 images for energy learning
+and 1000 images used to train forces.
+The neural network is trained for 4000 steps after using simulated annealing
+for 2000 steps in order to search for optimal initial weights.
+We then generate test sets using the Stillinger-Weber and trained neural network
+for 5000 steps and compare the results using the potential energy,
+radial distribution function, mean squared displacement and more.
+The cutoff radius is set to $R_c = 5$ Angstrom using 14 radial and
+22 angular symmetry functions of the G2 and G4 types.
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_energy_log.png}
-    \caption{Flower one.}
-    \label{fig:f1}
+    \caption{Training loss and energy RMSE.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_force_log.png}
-    \caption{Flower two.}
-    \label{fig:f2}
+    \caption{Training loss and energy and force RMSE.}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+\caption{Training losses and energy and force root mean squared errors.}
     \label{fig:silicon-log}
 \end{figure}
+
+For both the energy training and the force training phases, the 
+losses often rise sharply at the beginning, and then decay smoothly over time,
+reaching something of a convergence after approximately 500-1000 steps.
+The losses are somewhat higher for the Stillinger-Weber than for the
+EMT potential, this may indicate more difficulty reproducing the distribution
+or overfitting for the EMT potential.
+This is also indicated in the test losses in figure \ref{fig:silicon-error},
+where both the energy and force RMSEs are slightly higher than for the
+EMT potential. This may also be an artifact of initialization, as finding
+good high-dimensional minima using gradient descent is a process which in some cases
+may require many restarts.
+However, if we examine the energies interpolated over time,
+it paints a better picture than for the EMT potential.
+In figure \ref{fig:silicon-energy} we have plotted the energy as a function
+of time. While the energy for the Stillinger-Weber potential is flat or oscillating
+around a mean value over time, the neural network exhibits as before
+a seemlingly linear increase in energy over time.
+However, if we compare with the EMT potential the change over time is now significantly
+smaller. This is also seen in the potential energy over time in figure \ref{fig:silicon-pot},
+which is as before increasing, though the increase is smaller, and in general the potential
+energy fits better than before.
+We speculate on a few reasons for this, one is that since threebody terms are a significant
+energy contribution to the potential energy the angular symmetry functions serve to
+stabilize the system. 
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_energy_error.png}
-    \caption{Flower one.}
-    \label{fig:f1}
+      \caption{Energy error.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_force_error.png}
-    \caption{Flower two.}
-    \label{fig:f2}
+      \caption{Force component error.}
   \end{subfigure}
 \end{adjustbox}
-\caption{My flowers.}
+    \caption{Energy and force component errors on test trajectory.}
     \label{fig:silicon-error}
 \end{figure}
 
-For the Stillinger-Weber trained neural network, we find that
-the training errors for both the energies and forces are somewhat higher
-in figure \ref{fig:silicon-log},
-and this is also reflected in errors on the test set in figure \ref{fig:silicon-error}.
-This may indicate that the Stillinger-Weber is more difficult for the neural network
-to reproduce, both on the training and test set, as it contains more complex interactions
-than the EMT potential.
-However, if we examine the energies interpolated over time,
-it paints a better picture than for the EMT potential
-In figure \ref{fig:silicon-pot} we can see the potential energy
-as a function of time. Though the potential energy is slightly increasing
-over time, it is not nearly to the same level as for the EMT potential.
-On the whole, it seems to be reproducing the Stillinger-Weber potential
-well, though perhaps with sligtly smaller oscillations.
-If we examine the total energy, which is plotted in figure \ref{fig:silicon-energy},
-we can see that the energy is increasing in an overall linear trend.
-Since the change in potential energy is somewhat smaller than the total change
-in energy, we think this can be largely attributed to an increase in kinetic energy.
+We expect in general that if the symmetry functions are not too correlated adding
+more symmetry functions increase fit and numerical stability.
+If we examine the radial distribution functions in figures
+\ref{fig:copper-rdf} and \ref{fig:silicon-rdf} we find that the silicon system is more
+highly peaked than the copper system, with fewer average number of neighbors.
+This may also make this distribution easier to approximate for the silicon system
+than for the copper system.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_pot.png}
-    \caption{Caption}
+    \caption{AMP and Stllinger-Weber potential energy as a function of time.}
     \label{fig:silicon-pot}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{silicon_energy.png}
-    \caption{Caption}
+    \includegraphics[width=\textwidth]{copper_energy.png}
+    \caption{AMP and Stillinger-Weber total energy as a function of time.}
     \label{fig:silicon-energy}
 \end{figure}
 
-This is evidenced if we study for example the mean squared displacement,
-which is shown in figure \ref{fig:silicon-msd}. We see that in contrast
-to a linear change in MSD over time for the Stillinger-Weber potential,
-there is a sharp increase in motion over time for the neural network potential.
-This extra motion is due to the fact that the neural network potential
-seems to pick up translation momentum over time, as the crystal structure
-remains intact while the system drifts.
-We can also see this in figure \ref{fig:silicon_sw},
-as we can see the system has moved over the 5000 steps,
-which is not the case for the atoms governed by the Stillinger-Weber potential.
+As before there are indications that the increase in energy is initially attributed
+to the kinetic energy, as we see in the radial distribution functions the neural network
+system is slightly more dispersed than the Stillinger-Weber system.
+In addition in figure \ref{fig:silicon-msd} we can see that the mean squared
+displacement is increasing in a non-linear fashion as the atoms pick up
+both kinetic energy and translational momentum.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_rdf.png}
-    \caption{Caption}
+    \caption{Radial distribution functions for the Stillinger-Weber and
+        neural network potentials.}
     \label{fig:silicon-rdf}
 \end{figure}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_msd.png}
-    \caption{Caption}
-    \label{fig:silicon-energy}
+    \caption{Mean squared displacement over time for the Stillinger-Weber
+        and neural network potentials.}
+    \label{fig:silicon-msd}
 \end{figure}
-
-As for the radial distribution function, we see that the neural network
-potential is capable of reproducing this, though since the system
-has picked up kinetic energy the system is somewhat less peaked than
-for the Stillinger-Weber potential.
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_t0.png}
-      \caption{Copper atoms after 10 steps.}
-    \label{fig:f1}
+      \caption{Silicon atoms after 10 steps.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.55\textwidth}
       \includegraphics[width=\textwidth]{silicon_tn.png}
-      \caption{Copper atoms after 5000 steps.}
-    \label{fig:f2}
+      \caption{Silicon atoms after 5000 steps.}
   \end{subfigure}
 \end{adjustbox}
-    \caption{The system of copper atoms after 10 and 5000 steps.}
-    \label{fig:silicon_sw}
+    \caption{The system of silicon atoms after 10 and 5000 steps.}
+    \label{fig:silicon-time}
 \end{figure}
 
-Finally, we also examined the time scaling of the system as we did for the
-copper EMT potential.
-As before we calculated the time it took for a single forces call
-on all the atoms in the system, as this is the limiting
-factor for integrating the atoms a single timestep using the
-Verlet algorithm.
-The results are shown in figure \ref{fig:silicon-scaling}.
-Ideally we would take averages of the time this takes, but except
-for the smaller systems this does not affect the results very much,
-due to the timescales involved.
-From this plot we observe that integrating a system
-with 100 silicon atoms one step would take approximately
-25 seconds, while a system of 300 atoms would take approximately
-110 seconds. This means integrating a system of 100 atoms
-for 5000 steps would take about 35 hours, which is quite
-a large amount of time compared to typical empirical potentials.
-For the Stillinger-Weber potential this force call
-takes on the order of milliseconds.
+The increase in kinetic energy and translational momentum is illustrated
+both in the mean squared displacement and from snapshots of the system
+as in figure \ref{fig:silicon-time}. This is even better illustrated
+in visualization software, where we can see that while the
+Stillinger-Weber system remains stationary over time, the neural network
+system picks up momentum and starts moving.
+We see that the system has moved slightly over time, while the crystal
+structure has remained mostly intact as evidenced by the radial distribution
+function.
+However, since the energy conservation is better for the neural network
+trained on the Stillinger-Weber potential, this motion is smaller
+than what we have observed for the EMT potential.
 
 \begin{figure}
     \centering
@@ -453,3 +455,29 @@ takes on the order of milliseconds.
     \label{fig:silicon-scaling}
 \end{figure}
 
+Finally, we also examined the time scaling of the system as we did for the
+neural network trained on the EMT potential.
+As before we calculated the time it took for a single forces call
+on all the atoms in the system, as this is the limiting
+factor for integrating the atoms a single timestep using the
+Verlet algorithm.
+Ideally we would take averages of the time this takes, but except
+for the smaller systems this does not affect the results very much,
+due to the timescales involved.
+The results are shown in figure \ref{fig:silicon-scaling}.
+From this plot we observe that integrating a system
+with 100 silicon atoms one step would take approximately
+25-30 seconds, while a system of 300 atoms would take approximately
+110 seconds. This means integrating a system of 100 atoms
+for 5000 steps would take about 35 hours, which is quite
+a large amount of time compared to typical empirical potentials.
+For the Stillinger-Weber potential this force call
+takes on the order of milliseconds, several orders of magnitude removed.
+However, since the neural network potential scales linearly, this may be competive
+with ab-initio methods which exhibit much poorer scaling as the system size increases.
+Since we have added more radial and angular symmetry functions
+we expect this to take much more time than for the copper system,
+as angular derivatives are very expensive to evaluate for every atom.
+Additionally, we used a slightly larger cutoff radius than for the copper system,
+though the silicon system is less dense than the copper system, which also
+affects the time to evaluate the atomic fingerprints and forces.

@@ -1,34 +1,79 @@
-In this thesis we have trained neural networks on atomic configurations
-to predict potential energy and forces. Using the Behler-Parrinello
-method to map atomic configurations to a one-dimensional feature vector,
-we preserve the required symmetries of translation, rotation and permutation
-while mapping the configurations to a form which can be efficiently
-processed by a neural network.
-Using the Atomistic Machine-learning Package in conjunction
-with the Atomic Simulation Environment we trained neural networks
-to reproduce a system of copper atoms governed by the Effective Medium
-Theory Potential and a system of silicon atoms governed
-by the Stillinger-Weber potential.
-We find large differences in mechanical properties and numerical stability
-from these potentials, these differences are likely caused
-by the difference in the average number of neighbors, the number
-of and type of symmetry functions applied and the functional form
-of the potentials.
-However, while the neural network can more accurately reproduce
-the Stillinger-Weber potential, we find in both cases that the
-energy increases over time, along with an increase in translational
-momentum.
-
-\subsection{Properties of the neural network potential}
+In this thesis we have trained neural networks to reproduce
+molecular dynamics potentials using the Behler-Parrinello method.
+These potentials are high-dimensional functions with many parameters
+to be determined, and are often developed through intimate knowledge
+of the physical and chemical properties of the systems they are designed for.
+In addition there are certain symmetries which must be respected when
+developing potentials, in particular translational, rotational and permutational
+symmetries, as well as conserving energy over time (in the NVE ensemble).
+Traditional ab-initio methods suffer from poor scaling as the size of the systems
+increases, while classical potentials derived from ab-initio calculations
+allows us to simulate realistic scales of up to millions of atoms
+depending on the computer resources and the complexity of the atoms in the system.
+Since these neural networks when trained offer linear scaling,
+they could serve both as supplements to ab-initio methods
+or be deployed for calculations using classical molecular dynamics.
+For example, one could save many CPU cycles by producing and training
+on a small trajectory calculated from DFT, and then use the neural networks
+to produce the remainder of the data, provided the neural networks
+are reasonably accurate.
+While our neural network potential scales linearly with system size,
+it has a rather large pre-factor dependent on the symmetry function set,
+cutoff radius and the average number of neighbors in the system.
+We believe this could be improved by moving more calculations to lower
+level compiled languages, such as calculations of neighbor lists,
+fingerprints and fingerprint derivatives for every step.
+Although we have only ran the neural network on a single core,
+the potential could be parallelized over the atoms
+using algorithms such as LAMMPS neighbor lists without
+too much overhead.
+\par
+Unfortunately we were not able to achieve energy conservation
+with out neural network. This a central feature of any neural network potential,
+and without energy conservation, we cannot sample properties in equilibrium,
+as for example the radial distribution function or the diffusion constant
+is increasing over time and ill defined.
+Generally we find an increase in kinetic energy over time, corresponding
+to an increase in potential energy as the atoms move apart,
+and an increase in translational momentum.
+The results are notably different for the EMT and Stillinger-Weber potential,
+this is caused by among other things the symmetry function sets and the
+average number of neigbors in the system.
+The Stillinger-Weber explicitly includes threebody interactions,
+while the EMT potential is a function of interatomic distances, and our
+results suggest that the balance between the number of radial and symmetry functions
+should be decided by more careful analysis of their relative importance.
+\par
+On the test trajectory we achieved reasonable values of the energy and force
+root mean squared errors, approximately 0.1 eV for the energy and 0.05-0.1 eV/Å
+for the force. These are mostly consistent with the results others have achieved,
+though the energy is often on the order of 1-10 meV, which is lower than
+what we have achieved. This is partly due to the fact that we have emphasized
+training with forces, which comes at the expense of the energy fit.
+Since the training RMSE is substantially lower than the test RMSE this may
+indicate overfitting, though we would not expect this to be a substantial problem
+with such a small network. We note that this has not been tested extensively,
+and more testing could produce different results.
 
 \subsection{Prospects and future work}
+In this thesis we barely scratched the surface of combining machine learning
+methods with molecular dynamics. There are therefore many, many paths
+to be explored for future theses or even articles to be published,
+which may be achieved working through ASE and/or AMP and making modifications
+or writing your own code from scratch. We will list some of the prospects
+considered while writing this thesis in semi-ordered order of importance,
+though there are likely many which have not been considered.
+TODO: Fill out list.
 
-\subsubsection{Energy conservation}
+\begin{itemize}
+    \item Numerical optimization
+    \item Determining symmetry function sets
+    \item Improved sampling methods
+    \item Finding minima
+    \item New descriptors
+    \item New machine-learning models
+    \item Multiple atoms
+    \item Long-range interactions
+    \item Ensembles
+\end{itemize}
 
-\subsubsection{Improved sampling}
-
-\subsubsection{Ab-initio molecular dynamics}
-
-\subsection{Alternative fingerprinting schemes}
-
-\subsubsection{Optimization}
