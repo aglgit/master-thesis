@@ -63,17 +63,115 @@ which may be achieved working through ASE and/or AMP and making modifications
 or writing your own code from scratch. We will list some of the prospects
 considered while writing this thesis in semi-ordered order of importance,
 though there are likely many which have not been considered.
-TODO: Fill out list.
 
 \begin{itemize}
-    \item Numerical optimization
-    \item Determining symmetry function sets
-    \item Improved sampling methods
-    \item Finding minima
-    \item New descriptors
-    \item New machine-learning models
-    \item Multiple atoms
-    \item Long-range interactions
-    \item Ensembles
+    \item Numerical optimization:
+        In order to speed up the training and deployment of neural
+        networks the AMP authors created efficient Fortran implementations
+        of the Behler-Parrinello symmetry functions.
+        This is an improvement over pure Python code, but not enough to
+        be satisfied.
+        Many parts of the fingerprinting, including neighborlists,
+        dictionary data structures, IF tests and so on are currently
+        implemented in Python code. This means we are limited in terms
+        of CPU time and memory, in how fast we can alter hyperparameters
+        and train neural networks on new datasets, and how quickly
+        the neural networks can be deployed and evaluated in molecular dynamics.
+        First and foremost we would suggest moving the calculation of
+        the neighborlists, fingerprints and fingerprint derivatives entirely
+        to Fortran or some other efficient compiled language.
+        This would reduce the speed of evaluations which are currently performed
+        in Python, and reduce communication overhead between the Python APIs
+        and the Fortran compiled functions.
+        Once we have our input data and labels, training can be performed
+        efficiently using software packages such as Tensorflow or Pytorch,
+        and training moved to GPUs with little effort.
+    \item Parallelization and LAMMPS:
+
+    \item Neural network implementation:
+        Currently AMP provides a neural network implementation written
+        by the authors, and a Tensorflow 0.11 module compatible only
+        with Python 2.7. We would suggest writing a more modern Tensorflow
+        interface, using for example the new Tensorflow 2.0 beta,
+        in order to take full advantage of these mature neural network
+        implementations. This could among other things improve speed,
+        more efficient algorithms for initialization and training
+        and a large set of helpful functions for training neural networks
+        efficiently.
+    \item Determining symmetry function sets:
+        We have discussed some methods of determining symmetry functions,
+        but not in great detail. Generally you want the symmetry functions
+        to cover the radial and angular space, while no two symmetry functions
+        should be highly correlated. However, we have observed that
+        the same general mix of symmetry functions can produce very
+        different results. It would be very beneficial if we had an automated
+        approach or highly specified approach to determining the numbers of
+        and parameters of the symmetry functions for a wide range of
+        potential energies, which would significantly ease the difficulty
+        in training and deploying neural networks using the Behler-Parrinello
+        method.
+    \item Improved sampling method:
+        We have observed that sampling from molecular dynamics trajectories
+        limits us mostly to systems in equilibrium, which limits the
+        range of energies and forces observed in the dataset.
+        Neural networks perform unexpectedly when encountering unseen data,
+        and the training data therefore restricts the generalization
+        properties of the network. Improved sampling algorithms to
+        sample a wider range of energies and forces out of equilibrium
+        would likely improve the long timescale performance of the neural
+        network and make the neural network potential more stable over time.
+    \item Finding minima:
+        The AMP package finds minima in the loss function using an
+        interface to the scipy.optimize library of functions.
+        In this thesis we have only tested with the BFGS optimizer,
+        which is the default in AMP, and the one generally favored
+        by the authors and other users. However, finding minima in the cost
+        function of neural networks is a complicated affair, which has
+        been examined in great detail in the literature.
+        First and foremost one could test other optimizer available
+        through scipy, such as the basin hopping optimizer.
+        If an interface to a more mature neural network software package
+        such as Tensorflow it would be easy to test optimizers such as 
+        ADAM, SGD, Adagrad and many more.
+    \item New descriptors:
+        In this thesis we have restricted our interest to the tried and tested
+        Behler-Parrinello symmetry functions as the mapping from
+        coordinates to inputs. There have since been many suggestions
+        on how to fingerprint atomic systems, such as DPMD, SOAP,
+        Zernike and Bispectrum descriptors and so forth,
+        and if forces can be calculated efficiently and accurately
+        these should be evaluated for use in molecular dynamics.
+    \item New machine-learning models:
+        In this thesis we have only tested neural networks as the
+        machine-learning method for regression, due to the
+        explosion of interest and application in recent times.
+        Neural networks are favorable due to their ability to scale
+        well as the data available increases, but if data is limited
+        other machine-learning algorithms may be competitive.
+        Since we require the calculation of forces for usage
+        in molecular dynamics we require the algorithm to have
+        continuous derivatives, and a good example is Kernel Ridge
+        Regression, which is currently supported in AMP.
+    \item Multiple atom types:
+        In this thesis we have limited our attention to single-atom
+        systems, though AMP provides support for multiple atoms.
+        The Behler-Parrinello method is limited in that a neural network
+        has to be trained for every type-type interaction, for example
+        an O-H interaction must be treated separately. This means that
+        fewer potential energy labels are available for training per neural
+        network, and creates a combinatioral problem as the number of interactions
+        in the system increases. Suggestions have been made to solve this
+        problem such as weighted atom symmetry functions (WASFs),
+        and these could be implemented and evaluated against
+        empirical potentials and neural networks trained using the standard
+        approach.
+    \item Long-range interactions:
+        The Behler-Parrinello approach we have deployed is currently
+        limited to short-range interactions within a cutoff sphere,
+        and this is not sufficient for long-range interactions such
+        as the coulomb interaction. Using methods such as Ewald summation
+        the Behler-Parrinello method could accomadate this, and this
+        would facilitate training on systems containing for example
+        water or biological molecules.
 \end{itemize}
 

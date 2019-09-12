@@ -5,7 +5,7 @@ If we want to study most systems of interest we must turn
 instead to numerical methods and solutions.
 The most prominent methods in the field of manybody
 quantum mechanics are the Hartree-Fock (HF) and the
-Density Functional Theory families of solvers.
+Density Functional Theory (DFT) families of solvers.
 This chapter will give a brief overview of both methods,
 focused more on understanding and intuition than rigor.
 Eventually we will take these methods to be black boxes of
@@ -13,7 +13,7 @@ electronic structure calculations, given some cartesian
 coordinates and outputting energies and forces.
 This section will give a brief overview of the discussion
 of the electronic Hamiltonian in \parencite[Szabo][pages 39-89]
-{szabo1996modern}, which also covers Hartree-Fock theory
+{szabo1996modern}, which also covers the Hartree-Fock theory
 which will be expanded upon in the next section.
 \par
 We want to find solutions to the non-relativistic time-independent
@@ -105,7 +105,8 @@ For the electronic Hamiltonian we would like to make one more
 approximation.
 The electronic Hamiltonian further simplifies if instead
 of considering the relative positions of the nuclei,
-we fix the coordinate system in the center of mass of the nucleus.
+we fix the coordinate system in the center of mass of the nucleus
+and neglect the coordinates of individual nucleic constituents.
 This gives us the final expression we want for the electronic
 Hamiltonian:
 
@@ -190,7 +191,7 @@ which allows us to write the electronic Hamiltonian more compactly as:
 The expectation value of the energy is given as the usual inner product:
 
 \begin{equation}
- \braket{\Psi | \hat{H} | \Psi} .
+ E = \braket{\Psi | \hat{H} | \Psi} .
 \end{equation}
 
 The \textit{variational theorem} states that the expectation
@@ -203,7 +204,7 @@ The Hartree-Fock energy can be written in terms of integrals
 over the onebody and interaction terms:
 
 \begin{equation}
- E_{HF} = \sum_i \braket{i | \hat{h} | i}
+    E_{HF} = \braket{\Psi | \hat{H} | \Psi} = \sum_i \braket{i | \hat{h} | i}
     + \sum_{i < j} \braket{ij | \hat{v} | ij}_{AS} ,
 \end{equation}
 
@@ -423,7 +424,7 @@ which yield the fixed density $n$.
 A search is then performed over densitities $n$
 until we reach an energy minimum. This method
 is known as the \textit{constrained search formulation}.
-Kohn and Sham proposed to decompose $F[n]$ as:
+Kohn and Sham \cite{PhysRev.140.A1133} proposed to decompose $F[n]$ as:
 
 \begin{equation}
  F[n] = T_s[n] + E_{\text{Hxc}}[n] , 

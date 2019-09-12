@@ -1,6 +1,6 @@
 The ab-initio methods discussed in the previous chapter
 are appropriate for systems with a relatively small amount of electrons,
-but suffer from cubic scaling as the number of electrons grows.
+but suffer from cubic time complexity as the number of electrons grows.
 If we would like to study systems of molecules, nanoscale structures
 or calculate transport coefficients we have to make further approximations
 limiting the degrees of freedom of our system.
@@ -92,7 +92,7 @@ degrees of freedom (the nuclear and electronic wave functions
 respectively).
 In the framework of classical molecular dynamics
 we approximate the nuclei as classical point particles.
-This can be done be rewriting the nuclear wave function as
+This can be done by rewriting the nuclear wave function as
 
 \begin{equation}
  \chi = A \exp[iS/\hbar] , 
@@ -200,7 +200,7 @@ This means the nuclei move on a single potential energy surface:
 
 \begin{equation}
  V_e^E = \int d\bm{r} \Phi_0^* \hat{H} \Phi_0 
-    = E_0 \left(\left\{ R_I \right\}\right) , 
+    = E_0 \left(\left\{ R_a \right\}\right) , 
 \end{equation}
 
 that is obtained by solving the Schrodinger equation
@@ -236,7 +236,7 @@ depending on the complexity of the atoms and molecules in the system.
 This renders the problem of computing dynamics purely classical:
 
 \begin{equation}
- M_a \frac{d^2 R_I}{dt^2} = -\nabla_a V_e^{\text{approx}} . 
+ M_a \frac{d^2 R_a}{dt^2} = -\nabla_a V_e^{\text{approx}} . 
 \end{equation}
 
 This reduction in the number of degrees of freedom is a huge simplification

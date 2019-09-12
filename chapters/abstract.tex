@@ -5,7 +5,7 @@ Molecular dynamics trajectories are generated using the Atomic Simulation
 Environment (ASE) and the neural networks are initialized and trained
 using the Atomistic Machine-Learning Package (AMP). AMP is interfaced
 with ASE through the Calculator interface, which is a black box
-that accepts atomic numbers and atomic positions and calculate
+that accepts atomic numbers and atomic positions and calculates
 the energy and, if implemented, forces and stresses.
 \par
 Neural network potentials are constructed for Copper and Silicon
@@ -22,4 +22,5 @@ algorithms for sampling likely configurations out of equilibrium,
 testing different numerical optimization algorithms
 and a more efficient implementation of the Behler-Parrinello
 symmetry functions for facilitating faster training and deployment
-of new architectures and on new training data.
+of different architectures on available training data, as well as
+on new input data.

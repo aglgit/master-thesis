@@ -1,20 +1,33 @@
-In recent years the field of artificial intelligence has
-made great strides, particularly in applications such
-as computer vision, natural language processing,
-speech recognition and user behaviour analytics.
+The field of artificial intelligence (AI) has experienced a tremendous
+growth in recent years, with a large growth in the number of published
+papers, and an influx in funding from both universities and
+commercial entities.
 The exponential growth of available and high quality
-data has brough about a large demand for accurate, efficient
+data has brough about a demand for accurate, efficient
 and semi-automated algorithms, capable of building complicated
 mathematical models and making predictions without human supervision.
-Artificial neural networks in particular, partially inspired by simple
+Artificial neural networks (ANNs) in particular, partially inspired by simple
 models of human cognition, have found success in a large variety
-of task, largely owing to their ability to scale efficiently
-as the size of the dataset increases.
+of tasks, largely owing to their ability to scale efficiently
+as the size of the dataset grows.
+Many trace this recent AI renaissance to
+AlexNet\cite{NIPS2012_4824},
+which was a convolutional neural network that won the
+Imagenet Large Scale Visual Recognition Challenge in 2012\footnote{
+    \href{http://www.image-net.org/challenges/LSVRC/}{Imagenet Large Scale
+    Visual Recognition Challenge}}.
+Artificial intelligence, or machine learning (ML) as it is known within
+the literature, can now boast state-of-the-art performance in areas such
+as image recognition and analysis, computer vision, speech recognition
+and natural language processing\cite{DBLP:journals/corr/abs-1803-01164}.
 \par
-Data analysis and machine learning have become important parts
-of many subfields of physics, such as observational astronomy,
-condensed matter, biophysics and subatomic particle physics.
-Electronic structure calculations are well suited for the
+Data analysis and machine learning has found application
+in many subfields of physics, such as observational astronomy,
+condensed matter, and subatomic particle physics
+\cite{ball2010data}\cite{carrasquilla2017machine}\cite{
+    baldi2014searching}.
+Quantum chemistry, and electronic structure calculations in particular
+is an area which could be well suited for the
 adoption of machine learning methods, as large datasets
 can be produced on demand and relatively free of noise which
 obscures patterns.
@@ -25,14 +38,16 @@ to the manybody Schr\"{o}dinger equation - are methods of modelling
 physical systems based on the principles of quantum mechanics.
 They involve very few parameters, and the results are found
 to be very accurate compared to laboratory measurements.
-However, exponential scaling greatly limits their applications,
+However, exponential time complexity as the system grows in size
+greatly limits their applications,
 and we are typically limited to very small and simple systems.
-Approximations can be made which reduces the scaling
-to polynomial, but this limits the accuracy of the method.
+Approximations can be made which reduces the complexity 
+to polynomial, but this also limits the accuracy of the method.
 The most succesful and widely applied methods
 are the Density Functional Theory (DFT) method
 and the Hartree-Fock (HF) family of methods.
-The Hartree-Fock method scales nominally as $\mathcal{O}(N^4)$,
+The Hartree-Fock method time complexity 
+scales nominally as $\mathcal{O}(N^4)$,
 where $N$ is the number of particles in the system
 (i.e. electrons), owing to the number of two-electron
 integrals which must be computed.
@@ -47,7 +62,7 @@ manner, but often with a larger proportionality term.
 Density Functional Theory can treat both exchange and correlation
 interactions, but this must be done approximately,
 and developing accurate and numerically stable approximations
-remains an active area of research.
+remains an active area of research\cite{gillan2016perspective}.
 \par
 Molecular Dynamics (MD) freezes out the degrees of freedom of the
 electrons, and treats the atoms as point particles centered on
@@ -65,14 +80,17 @@ art than an exact science.
 \par
 An application of machine learning which has shown some promise
 is the development of molecular dynamics potentials
-or Potential Energy Surfaces (PES). Using for example
-Artificial Neural Networks (ANNs) the parameters (i.e. weights and biases)
-are fully determined from the training data.
+or Potential Energy Surfaces (PES)\cite{behler2016perspective}.
+Using for example
+artificial neural networks, the parameters (i.e. weights and biases)
+are fully determined from the training data, and the amount
+of handcrafting involved can be greatly reduced.
 Under mild assumptions imposed on the activation functions in the
 hidden layers, ANNs have been proven to be able to approximate
-any continuous functions on compact subsets of $\mathbb{R}^N$.
+any continuous functions on compact subsets of $\mathbb{R}^N$\cite{
+    hornik1989multilayer}.
 This offers the potential of developing potential energy surfaces
-directly from ab-initio data or from well-developed and tested
+directly from ab-initio data or from mature and tested
 empirical potentials.
 
 \subsection{Atom-centered descriptors}
@@ -87,6 +105,9 @@ In order to apply machine learning methods we require a mapping from
 the cartesian coordinates to a 1D feature vector which conserves
 all of these properties.
 \par
+In their article introducing the Atomistic Machine-learning Package (AMP),
+the authors \parencite[Khorshidi, Peterson]{khorshidi2016amp}
+describe the general process.
 The idea is to approximate the potential energy with a regression model:
 \begin{equation}
 \left\{\bm{R}\right\} \overset{\text{regression}}{\longrightarrow}
@@ -103,7 +124,8 @@ the regression method:
 E = E \left(\bm{G}\left(\left\{\bm{R}\right\}\right)\right)
 \end{equation}
 Once we have a descriptor and a regression model the dynamics
-can be readily obtained by taking derivatives:
+can be readily obtained by taking derivatives. The force on atom $i$
+is calculated as:
 \begin{equation}
 \begin{split}
     \bm{F}_i &= -\nabla_i E \\
@@ -131,7 +153,8 @@ the machine learning method each time.
 The goal of this thesis was to investigate machine learning
 as a tool for bridging the gap between ab-initio electronic structure
 calculations and molecular dynamics. Previous theses at the University
-of Oslo Computational Physics group have investigated the Behler-Parrinello
+of Oslo Computational Physics group have investigated the Behler-Parrinello\cite{
+    behler2007generalized}
 method of atom-centered symmetry functions, in particular the theses of
 \parencite[Stende, John A,]{stende2017constructing} and
 \parencite[Treider, H{\aa}kon Vik{\o}r]{treider2017speeding}.
@@ -143,24 +166,30 @@ We sought to continue this work, and demonstrate and validate machine-learned
 potentials developed using the Behler-Parrinello method, but also apply
 the method to data obtained using ab-initio molecular dynamics
 and compare these potentials to empirical potentials.
-This was initially attemped using a combination of Tensorflow and LAMMPS.
+This was initially attemped using a combination of Tensorflow\footnote{
+    \url{https://www.tensorflow.org/}} and LAMMPS\footnote{
+    \url{https://lammps.sandia.gov/}}.
 However, this was later abandoned, as connecting software packages written
 in different programming languages proved to be tedious and error-prone,
-and the Atomic Simulation Environment (ASE) package provided a Python interface to
-electronic structure calculations.
+and the Atomic Simulation Environment (ASE\footnote{
+    \url{https://wiki.fysik.dtu.dk/ase/}}) package provided a Python\footnote{
+    \url{https://www.python.org/}} 
+interface to electronic structure calculations.
 Initially we sought to implement and test the Deep Potential Molecular Dynamics
-method by \parencite[Zhang et al.]{PhysRevLett.120.143001}, but
+(DPMD) method by \parencite[Zhang et al.]{PhysRevLett.120.143001}, but
 it proved difficult to obtain acceptable results for the energy
-and force Root Mean Squared Errors (RMSEs), and calculating the forces
+and force root mean squared errors (RMSEs), and calculating the forces
 efficiently proved too difficult to implement. This was therefore abandoned
 in favor of the more tried and tested Behler-Parrinello method.
 \par
 We finally settled on a combination of using the ASE package for producing
 molecular dynamics trajectories and the Atomistic Machine-learning Package
-(AMP) for training them. The AMP package provides an interface
+(AMP\footnote{\url{https://amp.readthedocs.io/en/latest/}}) 
+for training them. 
+The AMP package provides an interface
 for generating Behler-Parrinello "fingerprints" of atomic environments
-and training them using neural networks (and potentially other machine-learning)
-models. This allowed us to focus on the accuracy, speed and scaling
+and training them using neural networks (and potentially other machine-learning
+models). This allowed us to focus on the accuracy, speed and scaling
 when training neural networks on empirical potentials and ab-initio
 data in molecular dynamics, and how accurately equilibrium properties
 can be replicated using trained neural networks.
@@ -170,7 +199,8 @@ density functional theory calculations, and the calculations are very
 time-consuming. Further work in this area could focus on generating
 and reproducing trajectories using either Velocity-Verlet dynamics
 and ground state DFT calculations or time-dependent density functional
-theory molecular dynamics for example as described in the GPAW calculator documentation
+theory molecular dynamics described for example in the 
+GPAW calculator documentation
 \footnote{\href{https://wiki.fysik.dtu.dk/gpaw/documentation/ehrenfest/ehrenfest_theory
 .html}{Ehrenfest theory}}.
 
