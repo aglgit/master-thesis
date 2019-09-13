@@ -1,6 +1,7 @@
 In order to demonstrate the construction of a neural network
-potential, we use Tensorflow to reconstruct the Lennard-Jones
-potential. The Lennard-Jones potential is the simplest
+potential, this chapter will demonstrate the use of Tensorflow 
+to reconstruct the Lennard-Jones potential.
+The Lennard-Jones potential is the simplest
 realistic molecular dynamics potential, and since it is a function
 of only radial distance, symmetry functions are not required.
 We can thus use neural networks to perform a simple regression
@@ -31,10 +32,12 @@ producing the plots.
 \begin{minted}{python}
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
+sns.set()
 \end{minted}
 
 Our neural network is a simple feed-forward artificial neural network
@@ -51,7 +54,7 @@ The GradientTape monitors the computation from the input to the output
 and is then able to backpropagate the output in order to obtain
 the gradient.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
@@ -81,7 +84,7 @@ to be fed through the neural network in batches.
 We split the data into train and test using a test fraction of 0.2,
 with the remainder used for training.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 def lennard_jones_data():
     lj = lambda r: 4 * ((1.0 / r) ** (12) - (1.0 / r) ** 6)
 
@@ -103,7 +106,7 @@ the loss. We will use the Adam optimizer, which is currently
 the most popular optimizer for training neural networks,
 and generally outperforms the other less popular optimizers.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 (x_train, y_train), (x_test, y_test) = lennard_jones_data()
 
 train_ds = tf.data.Dataset.from_tensor_slices(
@@ -121,14 +124,14 @@ train_loss = tf.keras.metrics.Mean(name="train_loss")
 test_loss = tf.keras.metrics.Mean(name="test_loss")
 \end{minted}
 
-The train and test steps are wrapped as  Tensorflow functions
+The train and test steps are wrapped as Tensorflow functions
 so that they can be efficiently called and applied to tensors.
 For every train step the loss is computed and then backpropagated
 so that the optimizer can apply updates to the weights and biases.
 We subsequently train the neural network for 100 epochs, computing
 the train and test loss for every epoch.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 @tf.function
 def train_step(images, labels):
     with tf.GradientTape() as tape:
@@ -203,7 +206,7 @@ around one, and we can see that the neural network does not
 have the same asymptotic behaviour. This poses a potential problem
 for the dynamics, as the forces aka the derivatives keep
 the atoms from moving too closely and causing massive
-increases in the potential energy of the system.
+increases in the energy of the system.
 This implies that we should train the potential on a representative
 set of points in order to reproduce the correct asymptotic behaviour,
 especially at the edges of configuration space.

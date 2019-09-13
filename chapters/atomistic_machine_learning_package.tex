@@ -3,11 +3,14 @@ The Atomistic Machine-learning Package (AMP)
 is a software package
 written in Python with the intent of bringing machine learning
 to electronic structure calculations. The software is intended
-to interface with ASE and the OpenKIM API for usage
-in LAMMPS. The interface to AMP is written purely in Python
+to interface with ASE and the OpenKIM API\footnote{\url{
+    https://openkim.org/}}
+for usage in LAMMPS.
+The interface to AMP is written purely in Python
 while computationally intensive tasks are outsourced to Fortran
-modules and the machine learning performed through a Tensorflow
-backend. The Python interface makes AMP flexible and easily
+modules and supports neural networks through both Python code
+and through a Tensorflow backend.
+The Python interface makes AMP flexible and easily
 extended, and this makes the package ideal for prototyping
 and testing both newer and more established machine learning
 methods.
@@ -41,7 +44,7 @@ that accepts cartesian coordinates and outputs energies
 and forces, just as a classical molecular dynamics calculator.
 The primary difference between the AMP calculator
 and ASE calculators such as the Lennard-Jones calculator
-is the train method, which takes a set of \textit{images}, i.e.
+is the \textit{train} method, which accepts a set of \textit{images}, i.e.
 a set of snapshots of atomic configurations labeled
 with the potential energy and forces.
 The calculator is fitted to the images and can subsequently be
@@ -127,7 +130,7 @@ ASE \textit{Trajectory}, which is an object
 storing the time-evolution of a simulation and usually interpreted
 as a time series of atoms.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 traj = ase.io.Trajectory("training.traj", "w")
 calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
@@ -143,7 +146,7 @@ which require a calculator and otherwise raise an error.
 We can then evolve the system forward in time
 and save the atomic configuration every 10 time steps:
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 for i in range(100):
     dyn.run(10)
     atoms.get_potential_energy()
@@ -155,11 +158,11 @@ After the data has been generated we can train the AMP calculator
 using the Lennard-Jones calculations as input. 
 We use a neural network model with three hidden layers,
 each containing 10 neurons.
-The training
-will be satisfied once the energy and force root mean squared errors (RMSE)
-has reached values of $10^{-2}$ or less:
+The training procedure
+will terminate once the energy and force root mean squared errors (RMSE)
+have reached values of $10^{-2}$ or less:
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 calc = Amp(descriptor=Gaussian(),
            model=NeuralNetwork(hiddenlayers=(10, 10, 10)))
 calc.model.lossfunction = LossFunction(
@@ -190,8 +193,11 @@ unless you wish to do it by trial and error - but AMP provides
 defaults for multiple chemical species.
 The Zernike and Bispectrum descriptors are also implemented,
 but without derivatives, which means the trained calculator
-cannot be used for example performing molecular dynamics simulations.
-Currently the neural network model is the only model implemented.
+cannot be used to for example perform molecular dynamics simulation.
+Currently the neural network and kernel ridge regression\footnote{
+    See for example: \url{
+        https://scikit-learn.org/stable/modules/kernel_ridge.html}}
+models are the only models implemented.
 However, the modular nature of AMP should enable more additions
 in time, such as derivatives for the Zernike and Bispectrum descriptors
 or other regression models which have derivatives available.

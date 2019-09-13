@@ -39,12 +39,12 @@ Many problems in machine learning are defined by the same set of ingredients.
 The first is the dataset $\mathcal{D} = (\bm{X}, \bm{Y})$,
 where $\bm{X}$ is a matrix containing observations of the 
 independent variables $\bm{x}$, and $\bm{Y}$ is a matrix containing
-observations of dependent variables.
+observations of dependent variables $\bm{y}$.
 Second is a model $\bm{F}: \bm{x} \rightarrow \bm{y}$
-which is a function of the parameters $\bm{\theta}$. 
+which is a function with parameters $\bm{\theta}$.
 Finally we have a cost function
 $\mathcal{C}\left(\bm{Y}, \bm{F}\left(\bm{X} ; \bm{\theta}\right)\right)$
-that judges the performance of our model at generating predictions.
+that judges the ability of our model to make predictions.
 \newline
 In the case of linear regression we consider a set of independent observations
 $ \bm{X} = 
@@ -79,13 +79,18 @@ are to be determined from the training data.
     \includegraphics[width=\textwidth]{linear_regression.png}
     \caption{Example of simple one-dimensional linear regression.
         Reprinted from \href{https://realpython.com/linear-regression-in-python/}
-        {Linear Regression in Python}.}
+        {www.realpython.com: Linear Regression in Python}.}
     \label{fig:linear-regression}
 \end{figure}
 
 \subsection{Basics of statistical learning}
 Statistical learning theory is a field of statistics dealing with the problem
-of making predictions from data. We start with an unknown function \newline
+of making predictions from data. This section is covered in the slides
+from the MIT course \parencite[9.2520: Statistical Learning Theory and
+    applications]{mitslides} from 2012, and then the remainder of the section
+and chapter is a summary of the most relevant parts of \parencite[Mehta et al.]{
+    mehta2019high} as we mentioned before.
+We start with an unknown function
 $y = f(x)$ and our goal is to develop a function $h(x)$
 such that $h \sim f$. We fix a hypothesis set $\mathcal{H}$ that the
 algorithm is willing to consider. The expected error of a particular $h$
@@ -102,14 +107,14 @@ $\rho$, we instead turn to the \textit{empirical error}. Given $n$ data points
 the empirical error is given as:
 
 \begin{equation}
- E_S[h] = \frac{1}{n} \sum_i^n \mathcal{C}(h(x_i), y_i) .
+ E_E[h] = \frac{1}{n} \sum_i^n \mathcal{C}(h(x_i), y_i) .
 \end{equation}
 
 The \textit{generalization error} is defined as the difference
 between the expected and empirical errors:
 
 \begin{equation}
- G = E[h] - E_S[h] .
+ G = E[h] - E_E[h] .
 \end{equation}
 
 We say an algorithm is able to learn from data or \textit{generalize} if 
@@ -125,8 +130,8 @@ generalization error by subdividing our dataset into a \textit{training} set
 and a \textit{test} set. The value of the cost function on the training set
 is called the \textit{in-sample} error and the value of the cost
 function on the test set the \textit{out-of-sample} error.
-Assuming the dataset is sufficiently large and representative of $f$, and the subsampling
-into train and test datasets is unbiased, the in-sample error
+Assuming the dataset is sufficiently large and representative of $f$,
+and the subsampling into train and test datasets is unbiased, the in-sample error
 can serve as an appropriate proxy for the generalization error.
 \par
 In figure \ref{fig:in-out}
@@ -223,9 +228,10 @@ The second term can be further decomposed as:
 
 \begin{equation}
 \begin{split}
-    &E_{\mathcal{D}}[(f(\bm{x}_i) - f(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2] \\
+    E_{\mathcal{D}}[(f(\bm{x}_i) - f(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}))^2]
     &= (f(\bm{x}_i) - E_{\mathcal{D}}[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}})])^2
-    + E[(h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}) - E[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}])^2]
+    \\
+    &+ E[(h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}) - E[h(\bm{x}_i ; \bm{\theta}_{\mathcal{D}}])^2]
 \end{split}
 \end{equation}
 
@@ -288,10 +294,13 @@ The term $b_i$ is a neuron-specific re-centering of the input.
 Typical choices of non-linearities/activation functions include
 the sigmoid and hyperbolic tangent functions, and Rectified Linear Units (ReLU).
 When the activation function is non-linear, the neural network with a single hidden
-layer can be proven to be a \textit{universal function approximator},
-given an arbitrarily large number of neurons; meaning
-it can reproduce any continuous function on compact subsets of $\mathbb{R}^N$. We typically also
-want activation functions that are monotonic and smooth with a monotonic derivative.
+layer can be proven to be a \textit{universal function approximator}\cite{
+    hornik1989multilayer};
+given an arbitrarily large number of neurons
+it can reproduce any continuous function on 
+compact subsets of $\mathbb{R}^N$.
+We typically also want activation functions that are monotonic and smooth 
+with a monotonic derivative.
 
 % own figure or cite
 \begin{figure}[h]
@@ -302,19 +311,21 @@ want activation functions that are monotonic and smooth with a monotonic derivat
     \label{fig:neural-networks}
 \end{figure}
 
-The simplest neural networks are known as \textit{feed-forward} neural networks (FNN).
+The simplest neural networks are known as \textit{feed-forward} 
+neural networks (FNN).
 The input layer is the vector $\bm{x}$ of inputs, while each neuron in the first
 hidden layer performs a dot product between its weights $\bm{w}_i$ and the inputs
 and passes it through a non-linearity $\sigma_i$. The activation function
-is typically shared across one or multiple layers $\sigma_i = \sigma$. The vector of neuron outputs
-$\bm{a}_i$ serves as input to the next hidden layer until we reach the final layer.
+is typically shared across one or multiple layers $\sigma_i = \sigma$.
+The vector of neuron outputs $\bm{a}$ serves as input to the 
+next hidden layer until we reach the final layer.
 In the final layer the choice of activation function is dependent on the problem
 we are trying to solve. If we are performing non-linear regression the
 final activation function is often the identity $\sigma_i(z) = z$, or if
 we are doing classification the soft-max function is often employed.
 
 Let $\bm{x}$ be a vector of $d = 1,\dots,D$ inputs or 
-\textit{features}. Let $a_i^{(h)}$
+\textit{features}. Let $a_i^{(l)}$
 denote the output of neuron $i = 1,\dots,N_l$ in layer $l = 1,\dots,L$.
 The output of neuron $i$ in the first hidden layer $a_i^{(1)}$ is thus:
 
@@ -342,10 +353,12 @@ Denote the vector of outputs $\bm{o} = \left(o_1,\dots,o_O\right)$:
 
 This allows us to compose a complicated function $\bm{F}: \mathbb{R}^D \rightarrow
 \mathbb{R}^O$, with $D$ the number of inputs and $O$ the number of outputs.
-The \textit{universal approximation theorem} tells us that this simple architecture
+The \textit{universal approximation theorem}\cite{hornik1989multilayer}
+tells us that this simple architecture
 can approximate any of a large set of continuous functions
-given appropriate choice of weights $\bm{w}_i^h$ and mild assumptions
-on the activation functions. The theorem requires only a single hidden layer,
+given appropriate choice of weights $\bm{w}_i^l$ and mild assumptions
+on the activation functions.
+The theorem requires only a single hidden layer,
 where the strength of the approximation relies on the number of neurons.
 In practice it has been found that adding more layers produces
 faster convergence and higher accuracy, which has given rise
@@ -368,8 +381,8 @@ value $\bm{x}_0$ we define an iterative procedure:
 
 where $\eta$ is known as the \textit{learning rate}.
 The procedure terminates when the norm
-$ \left| \nabla F(\bm{x}_n) \right| $ or
-$ \left| x_{n+1} - x_{n} \right| $
+$ \left| \nabla F(\bm{x}_n) \right| $ or alternatively
+$ \left| \bm{x}_{n+1} - \bm{x}_{n} \right| $
 is appropriately small.
 The learning rate is not necessarily fixed throughout the procedure,
 and proves crucial to the convergence of the method. If $f$
@@ -473,8 +486,8 @@ Now, since the derivatives for the weights depend on
 the activations in the preceding layer, this suggests
 an iterative procedure for training the network.
 First we feed the input data through the network
-and obtain activations and an output, then these
-outputs are backpropagated through the network to update the
+and obtain activations and an output, then the
+output is backpropagated through the network to update the
 weights and biases. This is then repeated for some number
 of steps or until the network achieves acceptable accuracy.
 
@@ -485,6 +498,14 @@ Often weights are initialized with small values distributed around zero,
 drawn from a uniform or normal distribution. The bias can be initalized to zero,
 but enforcing that all biases have some small value ensures that every
 neuron has output which can be backpropagated in the first training cycle.
+In recent years a technique known as Xavier initialization has become
+the default technique for initializing the weights of deep neural networks.
+For more information the reader is encouraged to read the paper of
+\parencite[Glorot, Xavier and Bengio, Yoshua]{glorot2010understanding},
+though the lessons
+in this paper do not necessarily generalize to deep convolutional neural
+networks using ReLU activations or other architectures which we will
+not discuss here.
 \par
 A critical choice for building neural networks is the choice of activation function.
 As we have mentioned briefly above, we have a small set of requirements in order
@@ -555,8 +576,9 @@ since the input to any neuron that does not exceed zero
 is set to zero, which means that many neurons may receive
 no weight update.
 From the point of view of the neural network, the inputs are just
-dimensionless numbers, which are passed through layers until it spits
-out some outputs. It is therefore often useful to standardize the inputs.
+dimensionless numbers, which are passed through layers until some output
+is produced.
+It is therefore often useful to standardize the inputs.
 A common method is to shift the inputs by their mean and
 normalize by their standard deviation:
 
@@ -564,13 +586,16 @@ normalize by their standard deviation:
  x_{i}' = \frac{x_{i} - \bar{x}}{\sigma_x} . 
 \end{equation}
 
+Another method is to rescale the inputs to the range of activation
+function, meaning $\left[0, 1\right]$ for the sigmoid
+and $\left[-1, 1\right]$ for the hyperbolic tangent.
 This is often useful in speeding up the training of neural networks.
 In theory any shifting and rescaling can be reproduced simply
 by updating the weights and biases of the network.
 In practice however, as the weights often start as
 small numbers, it can take quite a few training cycles before
 the weights are of appropriate size.
-Standardizing the inputs also imposes a penalty on the weights
+Standardizing or rescaling the inputs also imposes a penalty on the weights
 which in turn reduces overfitting.
 \par
 The most common methods for training neural networks
@@ -592,11 +617,24 @@ The learning rate also controls the numerical stability
 of the method, if it is too large the weights may diverge
 and if it is too small the weight may never converge.
 Gradient descent also tends to exhibit oscillating behaviour
-around the minimum. Often a schedule is imposed
+around the minimum. These basic intuitions can be shown
+in figure \ref{fig:gradient-descent-oscillations}.
+Often a schedule is imposed
 on the learning rate, such as reducing it by a fixed amount
 every few epochs or incorporating an exponentially decaying learning rate.
-As discussed in \parencite[Mehta et. al]{mehta2019high} using gradient descent to optimize
-our neural network imposes some limitations:
+As discussed in \parencite[Mehta et. al]{mehta2019high} 
+using gradient descent to optimize our neural network imposes some limitations:
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{gradient_descent_oscillation.png}
+    \caption{How gradient descent behaves with different (fixed)
+    values of the learning rate.
+    Reprinted from \href{https://www.jeremyjordan.me/nn-learning-rate/}{
+        [www.jeremyjordan.me:
+        Setting the learning rate of your neural network]} (author
+    Jeremy Jordan).}
+    \label{fig:gradient-descent-oscillations}
+\end{figure}
 
 \begin{itemize}
     \item \textit{Gradient descent finds local minima} - 
@@ -636,7 +674,9 @@ the gradient becomes:
 \end{equation}
 
 i.e. instead of averaging the loss over the entire dataset
-we instead average over a minibatch.
+we instead average over a minibatch. The cost function $\mathcal{C}$
+is now decomposed as a sum over the loss function $\mathcal{L}$
+at every datapoint $i$, $\mathcal{L}_i$.
 This significantly speeds up the calculation, since
 we do not use the entire dataset for every update.
 In addition, introducing stochasticity in the
@@ -645,7 +685,7 @@ to the weights update, which should help gradient descent
 in overcoming local minima.
 It is also common to introduce regularization to the weights
 and biases of the networks. Regularization in the context
-of neural networks means adding a term proportional
+of neural networks means adding a term to the cost function proportional
 to the $L_p$ norm of the weights and biases.
 For example using the L2-norm our cost function becomes:
 
@@ -739,5 +779,26 @@ standard deviation of the gradient, which is a natural
 measurement scale. This also has the effect
 of cutting off directions where the gradient varies
 by a lot.
+\par
+Quasi-Newton methods differ from the methods discussed above
+in that they make explicit approximations to the Hessian matrix
+of second order derivatives. These methods are discussed in
+great detail in the book \parencite[Numerical optimization: theoretical
+    and practical aspects]{bonnans2006numerical}.
+Let $W \approx (H^{-1})$ be an approximation to the inverse
+of the Hessian. A schematic algorithm is described in the book (p.53):
 
-% Small paragraph on Quasi-Newton/BFGS?
+\begin{enumerate}
+    \item Step 0: Choose an initial $\bm{x}_0$, stopping tolerance
+        $\epsilon$ and matrix $W$, positive definite.
+        Compute the gradient $\bm{g} = \nabla F(\bm{x}_0)$.
+    \item Step 1: Compute $\bm{d} = - W\bm{g}$.
+    \item Step 2: A line search is performed with a step size
+        $t = 1$, to compute the next iteration
+        $\bm{x}_{+} = \bm{x} + t\bm{d}$ and its gradient $\bm{g}(\bm{x}_{+})$.
+    \item Compute the new matrix $\bm{W}_{+}$ and we return to step 1.
+\end{enumerate}
+
+A full discussion of these methods is beyond the scope of this thesis,
+and the reader is directed to the book\cite{bonnans2006numerical}
+for further details.

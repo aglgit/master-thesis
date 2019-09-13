@@ -78,7 +78,7 @@ for calculating dynamics and create a Velocity Verlet \textit{integrator}
 for evolving the atoms according to their forces.
 Calculators will be discussed in the next section.
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 calc = LennardJones(sigma=3.405, epsilon=1.0318e-2)
 atoms.set_calculator(calc)
 dyn = VelocityVerlet(atoms, 2 * units.fs)
@@ -91,7 +91,7 @@ of 2 femtoseconds, which strikes a balance between accuracy
 and the timescale of the simulation.
 Finally we run the system for 1000 steps:
 
-\begin{minted}{python}
+\begin{minted}[firstnumber=last]{python}
 for i in range(100):
     dyn.run(10)
 \end{minted}
@@ -133,14 +133,16 @@ the fermi level and so on.
 \newline
 In the previous section we used the Lennard-Jones calculator
 as an example, however this calculator is not suited for general use.
-Apart from the Lennard-Jones being a toy potential unsuited
-for real systems, the ASE implementation is also written in pure
+Apart from Lennard-Jones being a toy potential unsuited
+for real systems, the ASE implementation is also written in
 Python, which makes it very, very slow.
 Usually the calculator interface is used as a wrapper for much faster
 compiled code or software packages; for example the
-Asap calculator is a Python wrapper for the Effective Medium Theory
-potential, which is implemented in Fortran and is orders of magnitudes
-faster. A Python molecular dynamics code is justified
+ASAP\footnote{\url{https://wiki.fysik.dtu.dk/asap}}
+calculator is a Python wrapper for the Effective Medium Theory
+potential, which is implemented in the Fortran programming language
+and is orders of magnitudes faster.
+A Python molecular dynamics code is justified
 since the bulk of computation time is spent on computing forces,
 however for large scale molecular dynamics simulations
 one would be advised to use fast compiled code such as LAMMPS\footnote{
@@ -151,5 +153,5 @@ experimentation and testing out new methods, and this is why
 it has been chosen as a basis for this thesis.
 Fortunately, ASE has an extensive code base of calculators
 for Molecular Dynamics and Density Functional Theory codes
-such as Asap, CP2K, LAMMPS, GROMACS which are all
-implemented in lower-level languages.
+such as ASAP, CP2K\footnote{\url{https://www.cp2k.org/}},
+LAMMPS, GROMACS which are all implemented in lower-level languages.
