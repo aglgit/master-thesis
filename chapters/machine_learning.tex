@@ -148,8 +148,7 @@ The out-of-sample error produced from the sampling noise
 is known as \textit{variance}, and will vanish completely
 given an infinite representative data set.
 
-% create own figures or cite properly
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{in_out_sample.png}
     \caption{Typical in-sample and out-of-sample error as a function
@@ -173,8 +172,7 @@ model complexity. We also find that as model complexity increases,
 a larger amount of data points is required to be able to reasonably
 fit the true function.
 
-% create own figures or cite properly
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{bias_variance.png}
     \caption{Typical out-of-sample error as a function
@@ -302,8 +300,7 @@ compact subsets of $\mathbb{R}^N$.
 We typically also want activation functions that are monotonic and smooth 
 with a monotonic derivative.
 
-% own figure or cite
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{neural_networks.png}
     \caption{Neural network building blocks. Reprinted from
@@ -394,7 +391,7 @@ In figure \ref{fig:gradient-descent} we can see how gradient
 descent finds minima in a function of two variables by always walking
 in the steepest direction.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{gradient_descent.png}
     \caption{How gradient descent discovers extrema points.
@@ -491,7 +488,7 @@ output is backpropagated through the network to update the
 weights and biases. This is then repeated for some number
 of steps or until the network achieves acceptable accuracy.
 
-\subsection{Optimization}
+\subsection{Optimization}\label{chap:optimization}
 In order to begin the minimization procedure and find an optimal
 set of weights and biases for our network we first need some initial values.
 Often weights are initialized with small values distributed around zero,

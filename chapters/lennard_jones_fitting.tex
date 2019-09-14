@@ -165,26 +165,19 @@ for epoch in range(epochs):
     )
 \end{minted}
 
-\subsection{Comparison and relative error}
+\subsection{Comparison and absolute error}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{potential_comparison.png}
+    \includegraphics[width=\textwidth]{potential_comparison.png}
     \caption{Neural network potential compared to Lennard-Jones.}
     \label{fig:potential-comparison}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{force_comparison.png}
-    \caption{Neural network derivative compared to Lennard-Jones.}
-    \label{fig:force-comparison}
 \end{figure}
 
 After training the network we can evaluate its performance
 on test data. 
 For the potential energy we obtain a root mean squared error of
-$0.37$ (energy units).
+$0.56$ (energy units).
 However, the root mean squared error does not tell the complete story,
 and the simplest way to evaluate the fit is to plot the potential.
 In figure \ref{fig:potential-comparison} the neural network potential
@@ -196,8 +189,15 @@ The potentials agree very well on most of the input space, and we can
 only spot a small divergence as the potential rises sharply
 around a radial distance of one.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{force_comparison.png}
+    \caption{Neural network derivative compared to Lennard-Jones.}
+    \label{fig:force-comparison}
+\end{figure}
+
 For the error in the derivative we obtain a force root mean squared error
-of $61.7$ (energy units per length units), which is approximately two orders
+of $79.1$ (energy units per length units), which is approximately two orders
 of magnitude larger. The derivatives are plotted in figure
 \ref{fig:force-comparison}.
 The difference in derivatives is more pronounced, as the
@@ -215,18 +215,10 @@ as this is expected to decrease the error in the derivatives.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{potential_absolute_error.png}
+    \includegraphics[width=\textwidth]{potential_absolute_error.png}
     \caption{Absolute error of the neural network potential compared
         to Lennard-Jones.}
     \label{fig:potential-rel-error}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{force_absolute_error.png}
-    \caption{Absolute error of neural network derivative compared
-        to Lennard-Jones.}
-    \label{fig:force-rel-error}
 \end{figure}
 
 In figure \ref{fig:potential-rel-error} we have plotted
@@ -243,8 +235,21 @@ is two orders of magnitude larger than the error in the potential energy fit.
 However, since
 this behaviour occurs only at the edge of the input space,
 dynamics could be preserved by training on a representative set
-of input data. This may also not be a big problem, as
-with appropriate timesteps some configurations of interatomic distances
+of input data. Small distances between atoms in the system are highly
+unlikly configurations which
 should never be observed in molecular dynamics simulations,
-and would cause problems regardless of the accuracy of the
-interatomic potential.
+and they would cause problems regardless of the accuracy of the
+interatomic potential. This is occasionally a problem in conventional
+molecular dynamics, as for large timesteps some atoms may "tunnel"
+too close, causing large spikes in the energy of the system.
+If the force accuracy is poor for some of the atoms and they move too close,
+we may also observe this using the neural network potential.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\textwidth]{force_absolute_error.png}
+    \caption{Absolute error of neural network derivative compared
+        to Lennard-Jones.}
+    \label{fig:force-rel-error}
+\end{figure}
+
