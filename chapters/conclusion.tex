@@ -23,19 +23,23 @@ cutoff radius and the average number of neighbors in the system.
 We believe this could be improved by moving more calculations to lower
 level compiled languages, such as calculations of neighbor lists,
 fingerprints and fingerprint derivatives for every step.
-Although we have only ran the neural network on a single core,
+Although we have only ran the neural networks on a single core,
 the potential could be parallelized over the atoms
 using algorithms such as LAMMPS neighbor lists without
 too much overhead.
 \par
 Unfortunately we were not able to achieve energy conservation
-with out neural network. This a central feature of any neural network potential,
+with our neural networks. 
+This a central feature of any neural network potential,
 and without energy conservation, we cannot sample properties in equilibrium,
 as for example the radial distribution function or the diffusion constant
 is increasing over time and ill defined.
 Generally we find an increase in kinetic energy over time, corresponding
 to an increase in potential energy as the atoms move apart,
 and an increase in translational momentum.
+This indicates holes in the training data from sampling in equilibrium,
+as the network seems to perform poorly on unseen configurations with larger
+forces, and produce large force residuals.
 The results are notably different for the EMT and Stillinger-Weber potential,
 this is caused by among other things the symmetry function sets and the
 average number of neigbors in the system.
@@ -46,13 +50,16 @@ should be decided by more careful analysis of their relative importance.
 \par
 On the test trajectory we achieved reasonable values of the energy and force
 root mean squared errors, approximately 0.1 eV for the energy and 0.05-0.1 eV/Å
-for the force. These are mostly consistent with the results others have achieved,
+for the force. These are mostly consistent with the results others have achieved
+such as \cite{stende2017constructing}\cite{
+    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
 though the energy is often on the order of 1-10 meV, which is lower than
 what we have achieved. This is partly due to the fact that we have emphasized
 training with forces, which comes at the expense of the energy fit.
 Since the training RMSE is substantially lower than the test RMSE this may
 indicate overfitting, though we would not expect this to be a substantial problem
-with such a small network. We note that this has not been tested extensively,
+with such a small network with applied regularization.
+We note that this has not been tested extensively,
 and more testing could produce different results.
 
 \subsection{Prospects and future work}
@@ -74,7 +81,7 @@ though there are likely many which have not been considered.
         Many parts of the fingerprinting, including neighborlists,
         dictionary data structures, IF tests and so on are currently
         implemented in Python code. This means we are limited in terms
-        of CPU time and memory, in how fast we can alter hyperparameters
+        of CPU time and memory in how fast we can alter hyperparameters
         and train neural networks on new datasets, and how quickly
         the neural networks can be deployed and evaluated in molecular dynamics.
         First and foremost we would suggest moving the calculation of
@@ -83,11 +90,31 @@ though there are likely many which have not been considered.
         This would reduce the speed of evaluations which are currently performed
         in Python, and reduce communication overhead between the Python APIs
         and the Fortran compiled functions.
+        For more information see \href{
+            https://listserv.brown.edu/cgi-bin/wa?A2=AMP-USERS;d7c6c98c.1904}{
+            this post} on the AMP mailing list.
         Once we have our input data and labels, training can be performed
         efficiently using software packages such as Tensorflow or Pytorch,
         and training moved to GPUs with little effort.
     \item Parallelization and LAMMPS:
-
+        As we have discussed in the chapter on the Atomistic Machine-learning Package,
+        AMP is planned to provide support for the OpenKIM API which would provide
+        the means to export the neural networks to LAMMPS for deployment.
+        If this is implemented (currently unknown) this could significantly speed up
+        the deployment and testing of the neural networks, as LAMMPS is efficient compiled
+        code, with efficient algorithms for parallelizing the force evaluations over multiple
+        cores.
+    \item Improved sampling method:
+        We have observed that sampling from molecular dynamics trajectories
+        limits us mostly to systems in equilibrium, which limits the
+        range of energies and forces observed in the dataset.
+        Neural networks perform unexpectedly when encountering unseen data,
+        and the training data therefore restricts the generalization
+        properties of the network. Improved sampling algorithms to
+        sample a wider range of energies and forces out of equilibrium
+        would likely improve the long timescale performance of the neural
+        network and make the neural network potential more accurate on
+        new configurations.
     \item Neural network implementation:
         Currently AMP provides a neural network implementation written
         by the authors, and a Tensorflow 0.11 module compatible only
@@ -107,20 +134,10 @@ though there are likely many which have not been considered.
         different results. It would be very beneficial if we had an automated
         approach or highly specified approach to determining the numbers of
         and parameters of the symmetry functions for a wide range of
-        potential energies, which would significantly ease the difficulty
+        potential energy surfaces, which would significantly ease the difficulty
         in training and deploying neural networks using the Behler-Parrinello
         method.
-    \item Improved sampling method:
-        We have observed that sampling from molecular dynamics trajectories
-        limits us mostly to systems in equilibrium, which limits the
-        range of energies and forces observed in the dataset.
-        Neural networks perform unexpectedly when encountering unseen data,
-        and the training data therefore restricts the generalization
-        properties of the network. Improved sampling algorithms to
-        sample a wider range of energies and forces out of equilibrium
-        would likely improve the long timescale performance of the neural
-        network and make the neural network potential more stable over time.
-    \item Finding minima:
+   \item Finding minima:
         The AMP package finds minima in the loss function using an
         interface to the scipy.optimize library of functions.
         In this thesis we have only tested with the BFGS optimizer,
@@ -131,14 +148,15 @@ though there are likely many which have not been considered.
         First and foremost one could test other optimizer available
         through scipy, such as the basin hopping optimizer.
         If an interface to a more mature neural network software package
-        such as Tensorflow it would be easy to test optimizers such as 
+        such as Tensorflow were implemented it would be easy to test optimizers such as 
         ADAM, SGD, Adagrad and many more.
     \item New descriptors:
         In this thesis we have restricted our interest to the tried and tested
         Behler-Parrinello symmetry functions as the mapping from
         coordinates to inputs. There have since been many suggestions
         on how to fingerprint atomic systems, such as DPMD, SOAP,
-        Zernike and Bispectrum descriptors and so forth,
+        Zernike and Bispectrum descriptors and so forth discussed in chapter
+        \ref{chap:acd},
         and if forces can be calculated efficiently and accurately
         these should be evaluated for use in molecular dynamics.
     \item New machine-learning models:
@@ -159,9 +177,10 @@ though there are likely many which have not been considered.
         has to be trained for every type-type interaction, for example
         an O-H interaction must be treated separately. This means that
         fewer potential energy labels are available for training per neural
-        network, and creates a combinatioral problem as the number of interactions
+        network, and creates a combinatorialproblem as the number of interactions
         in the system increases. Suggestions have been made to solve this
-        problem such as weighted atom symmetry functions (WASFs),
+        problem such as weighted atom-centered symmetry functions (WACSFs\cite{
+            gastegger2018wacsf})
         and these could be implemented and evaluated against
         empirical potentials and neural networks trained using the standard
         approach.
@@ -169,8 +188,9 @@ though there are likely many which have not been considered.
         The Behler-Parrinello approach we have deployed is currently
         limited to short-range interactions within a cutoff sphere,
         and this is not sufficient for long-range interactions such
-        as the coulomb interaction. Using methods such as Ewald summation
-        the Behler-Parrinello method could accomadate this, and this
+        as the coulomb interaction. Using methods such as Ewald summation\cite{
+            toukmaji1996ewald},
+        the Behler-Parrinello method could accommodate this, and this
         would facilitate training on systems containing for example
         water or biological molecules.
 \end{itemize}

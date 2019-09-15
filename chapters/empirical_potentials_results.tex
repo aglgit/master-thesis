@@ -150,6 +150,11 @@ For the force errors we obtain an force RMSE of 0.05 eV/Å,
 but some of the force errors considerably higher, up to
 and including values of 0.3 eV/Å, which may pose
 a problem for the long term stability of the system.
+These values are comparable to other works studying neural network
+potential energy surfaces, such as \cite{stende2017constructing}\cite{
+    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
+at least for the forces. For the energy, the energy is higher than usual, and
+this is caused at least partially by training with force terms.
 Generally we observe that large force residuals cause an increase
 in energy and translational momentum over time. As we discussed
 in chapter \ref{chap:symmetry-functions} we believe this is because
@@ -350,6 +355,10 @@ The cutoff radius is set to $R_c = 5$ Angstrom using 14 radial and
 For both the energy training and the force training phases, the 
 losses often rise sharply at the beginning, and then decay smoothly over time,
 reaching something of a convergence after approximately 500-1000 steps.
+These values are somewhat comparable to other works studying neural network
+potential energy surfaces, such as \cite{stende2017constructing}\cite{
+    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
+at least in terms of the forces, though the energies are higher than usual.
 The losses are somewhat higher for the Stillinger-Weber than for the
 EMT potential, this may indicate more difficulty reproducing the distribution
 or overfitting for the EMT potential.
@@ -500,9 +509,13 @@ with ab-initio methods which exhibit much poorer scaling as the system size incr
     \label{fig:silicon-scaling}
 \end{figure}
 
-Since we have added more radial and angular symmetry functions
-we expect this to take much more time than for the copper system,
-as angular derivatives are very expensive to evaluate for every atom.
-Additionally, we used a slightly larger cutoff radius than for the copper system,
-though the silicon system is less dense than the copper system, which also
-affects the time to evaluate the atomic fingerprints and forces.
+Even though the neural network potentials have the same cutoff radius,
+the Stillinger-Weber potential takes roughly 2-4 times faster to evaluate
+the forces for an equivalent size. It is unclear why this is the case,
+as the trained potentials have a comparable number of radial symmetry functions,
+while the Stillinger-Weber potential has a larger amount of angular symmetry functions.
+This may be because the copper atoms have a larger average amount of neighbors,
+or because the potentials have been tested on different computers (due to some
+    difficulty in installing the Stillinger-Weber potential on one computer).
+Otherwise, this may be down to bugs in the code which stalls the network
+when calculating neighborlists, fingerprints or other quantities.
