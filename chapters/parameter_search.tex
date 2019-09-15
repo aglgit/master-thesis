@@ -272,44 +272,44 @@ we calculate the energy and force root mean squared errors (RMSEs).
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
 \midrule
-               tanh-[10] &     3.54E-03 &    5.84E-02 \\
-               tanh-[20] &     2.01E-03 &    1.47E-01 \\
-               tanh-[30] &     1.46E-03 &    9.91E-01 \\
-               tanh-[40] &     1.70E-03 &    9.35E-01 \\
-           tanh-[10, 10] &     1.84E-03 &    1.97E-01 \\
-           tanh-[20, 10] &     2.91E-03 &    9.66E-02 \\
-           tanh-[30, 10] &     3.51E-03 &    8.29E-02 \\
-           tanh-[40, 40] &     1.80E-03 &    1.86E-01 \\
-            sigmoid-[10] &     1.85E-03 &    9.44E-01 \\
-            sigmoid-[20] &     3.73E-03 &    3.25E-01 \\
-            sigmoid-[30] &     1.79E-03 &    1.01E+00 \\
-            sigmoid-[40] &     2.09E-03 &    2.54E-01 \\
-        sigmoid-[10, 10] &     1.93E-03 &    5.98E-01 \\
-        sigmoid-[20, 10] &     1.83E-03 &    2.26E-01 \\
-        sigmoid-[30, 10] &     1.52E-03 &    1.99E+00 \\
-        sigmoid-[40, 40] &     1.94E-03 &    3.36E-01 \\
+               tanh-[10] &     1.78E-03 &    2.67E-01 \\
+               tanh-[20] &     1.83E-03 &    1.80E-01 \\
+               tanh-[30] &     1.71E-03 &    5.71E-01 \\
+               tanh-[40] &     1.81E-03 &    3.17E-01 \\
+           tanh-[10, 10] &     1.73E-03 &    7.71E-02 \\
+           tanh-[20, 10] &     1.65E-03 &    3.95E-01 \\
+           tanh-[30, 10] &     1.83E-03 &    3.68E-01 \\
+           tanh-[40, 40] &     1.87E-03 &    3.42E-01 \\
+            sigmoid-[10] &     4.58E-03 &    8.83E-02 \\
+            sigmoid-[20] &     3.52E-03 &    1.25E-01 \\
+            sigmoid-[30] &     4.72E-03 &    7.27E-02 \\
+            sigmoid-[40] &     5.05E-03 &    6.19E-02 \\
+        sigmoid-[10, 10] &     3.07E-03 &    2.38E-01 \\
+        sigmoid-[20, 10] &     4.89E-03 &    9.93E-02 \\
+        sigmoid-[30, 10] &     4.74E-03 &    9.22E-02 \\
+        sigmoid-[40, 40] &     4.09E-03 &    7.37E-02 \\
 \bottomrule
 \end{tabular}
 \caption{Training defaults}
 \label{table:act-hidden}
 \end{table}
 
-From the results we can see that the results do not
-differ significantly. The larger networks may perform somewhat
-better on the energy, but this is also somewhat influenced by the stochasticity
-of random initialization. For the hyperbolic tangent using
-a single hidden layer of 10 nodes we also achieve a fairly
-low value on the force RMSE - though the network has not been trained
-on forces - and this also matches our intuition that the network
-should not be very large.
-The results also indicate that the hyperbolic tangent may outperform
-the sigmoid function, but the results are not clear cut (except perhaps
-for the forces).
-For the remainder of this thesis we have settled
-on the hyperbolic tangent with $\left[10, 10\right]$ 
-nodes for the neural network, though it remains
-to be seen if a larger network trained for longer could outperform
-the smaller models.
+From the results we can see that the number of hidden layers
+and nodes of the network does not significantly influence the result.
+The hyperbolic tangent clearly
+outperforms the sigmoid for all sizes in the case of the energy,
+while the sigmoid appears to outperform when it comes to the forces.
+This is likely because we have not trained the network with force losses,
+which means the tangent is better able to fit the energy, and this
+degrades somewhat the performance on the forces.
+For the hyperbolic tangent with $\left[10, 10\right]$ we are able
+to achieve a low energy and force error, and we have seen this result
+consistently.
+This implies that this size and activation strikes an appropriate balance
+between the training epochs required and overfitting, and we have settled
+on this architecture for the remainder of the thesis.
+However, it remains to be seen if a larger network trained for longer
+could outperform the smaller models.
 
 \subsection{Cutoff radius}
 The cutoff radius defines the boundary outside of which no interactions
@@ -360,22 +360,22 @@ on the test set. The results are presented in table \ref{table:cutoffs}.
 \centering
 \begin{tabular}{lrr}
 \toprule
-         Cutoff ($R_c$) &  Energy RMSE &  Force RMSE \\
+     Cutoff &  Energy RMSE &  Force RMSE \\
 \midrule
-     Cosine-2.0 &     2.22E-01 &    4.00E-01 \\
- Polynomial-2.0 &     2.22E-01 &    4.00E-01 \\
-     Cosine-3.0 &     4.31E-03 &    3.42E-01 \\
- Polynomial-3.0 &     4.22E-03 &    3.54E-01 \\
-     Cosine-4.0 &     8.41E-04 &    1.41E-01 \\
- Polynomial-4.0 &     7.92E-04 &    1.74E-01 \\
-     Cosine-5.0 &     3.74E-04 &    1.19E-01 \\
- Polynomial-5.0 &     4.94E-04 &    1.40E-01 \\
-     Cosine-6.0 &     2.01E-03 &    8.19E-02 \\
- Polynomial-6.0 &     2.48E-03 &    6.93E-02 \\
-     Cosine-7.0 &     3.21E-03 &    1.50E-01 \\
- Polynomial-7.0 &     7.16E-03 &    4.66E-02 \\
-     Cosine-8.0 &     3.14E-03 &    2.70E-01 \\
- Polynomial-8.0 &     5.95E-03 &    8.90E-01 \\
+     Cosine-2.0 &     2.18E-01 &    4.57E-01 \\
+ Polynomial-2.0 &     2.18E-01 &    4.57E-01 \\
+     Cosine-3.0 &     5.08E-03 &    3.96E-01 \\
+ Polynomial-3.0 &     4.85E-03 &    4.12E-01 \\
+     Cosine-4.0 &     1.34E-03 &    1.57E-01 \\
+ Polynomial-4.0 &     1.21E-03 &    1.42E-01 \\
+     Cosine-5.0 &     7.39E-04 &    2.05E-01 \\
+ Polynomial-5.0 &     9.34E-04 &    1.91E-01 \\
+     Cosine-6.0 &     1.99E-03 &    2.68E-01 \\
+ Polynomial-6.0 &     2.42E-03 &    3.84E-01 \\
+     Cosine-7.0 &     4.46E-03 &    2.04E-01 \\
+ Polynomial-7.0 &     7.71E-03 &    1.18E-01 \\
+     Cosine-8.0 &     6.40E-03 &    2.63E-01 \\
+ Polynomial-8.0 &     1.05E-02 &    3.41E-01 \\
 \bottomrule
 \end{tabular}
 \caption{Cutoffs}
@@ -400,7 +400,7 @@ For the remainder
 of this thesis we settled on the polynomial with a cutoff of 5 Ångstrøm,
 while the cosine may have performed just as well.
 
-\subsection{Symmetry functions}
+\subsection{Symmetry functions}\label{chap:symmetry-functions}
 The symmetry functions determine the local environment of every atom,
 which is then fed to and backpropagated through a neural network
 to produce the potential energy and forces,
@@ -449,57 +449,61 @@ is the number of $\zeta$ values.
 \centering
 \begin{tabular}{lrr}
 \toprule
-Symmetry functions &  Energy RMSE &  Force RMSE \\
+Symmetry function &  Energy RMSE &  Force RMSE \\
 \midrule
-          Default &     1.99E-02 &    8.97E+00 \\
-      Gs-4-8-1-G4 &     2.26E-03 &    8.65E-02 \\
-      Gs-4-8-1-G5 &     2.44E-03 &    1.91E-01 \\
-      Gs-5-9-1-G4 &     2.07E-03 &    3.01E-01 \\
-      Gs-5-9-1-G5 &     2.59E-03 &    8.02E-02 \\
-     Gs-6-10-1-G4 &     1.88E-03 &    1.35E-01 \\
-     Gs-6-10-1-G5 &     2.45E-03 &    1.50E-01 \\
-     Gs-7-11-1-G4 &     1.78E-03 &    4.13E-02 \\
-     Gs-7-11-1-G5 &     2.34E-03 &    1.85E-01 \\
-     Gs-8-12-1-G4 &     1.76E-03 &    6.01E-02 \\
-     Gs-8-12-1-G5 &     2.51E-03 &    8.92E-02 \\
-     Gs-9-13-1-G4 &     2.07E-03 &    6.72E-02 \\
-     Gs-9-13-1-G5 &     2.36E-03 &    1.44E-01 \\
-    Gs-10-14-1-G4 &     3.80E-03 &    1.27E-01 \\
-    Gs-10-14-1-G5 &     2.48E-03 &    4.61E-02 \\
-    Gs-10-14-2-G4 &     2.99E-03 &    8.19E-02 \\
-    Gs-10-14-2-G5 &     2.31E-03 &    4.98E-02 \\
+          Default &     8.07E-02 &    6.99E+00 \\
+      Gs-4-8-1-G4 &     2.55E-03 &    8.54E-02 \\
+      Gs-4-8-1-G5 &     3.11E-03 &    5.26E-02 \\
+      Gs-5-9-1-G4 &     2.08E-03 &    2.42E-01 \\
+      Gs-5-9-1-G5 &     2.65E-03 &    1.36E-01 \\
+     Gs-6-10-1-G4 &     1.88E-03 &    6.60E-02 \\
+     Gs-6-10-1-G5 &     2.14E-03 &    1.99E-01 \\
+     Gs-7-11-1-G4 &     1.68E-03 &    2.98E-01 \\
+     Gs-7-11-1-G5 &     1.96E-03 &    4.54E-02 \\
+     Gs-8-12-1-G4 &     1.75E-03 &    1.38E-01 \\
+     Gs-8-12-1-G5 &     1.66E-03 &    8.30E-02 \\
+     Gs-9-13-1-G4 &     1.70E-03 &    1.00E-01 \\
+     Gs-9-13-1-G5 &     2.58E-03 &    2.08E-01 \\
+    Gs-10-14-1-G4 &     1.52E-03 &    4.30E-02 \\
+    Gs-10-14-1-G5 &     2.58E-03 &    1.70E-01 \\
+    Gs-10-14-2-G4 &     1.18E-03 &    1.71E-01 \\
+    Gs-10-14-2-G5 &     1.92E-03 &    2.04E-01 \\
 \bottomrule
 \end{tabular}
 \caption{Symmetry functions}
 \label{table:symmetry}
 \end{table}
 
-From these results we observe that not much is gained with respect
-to the energy when increasing the number of symmetry functions,
-as this space tends be covered reasonably well.
-However, we may be able to achieve a lower force RMSE
-with adding more symmetry functions. We speculate that 
-since the forces generally represent the change in energy
-from a small perturbation in the position of a single atom,
-this may be better represented by having a larger amount
-of functions sensitive to this change. 
-The G4 functions generally outperform marginally on the force RMSE,
-and a little poorer on the energy RMSE.
+From these results we observe that the energy errors are marginally
+improved by increasing the number of symmetry functions, though the
+errors may be increasing at the upper end. This may indicate
+that an intermediate mix of symmetry functions offers appropriate
+coverage of the radial and angular space, while too many symmetry
+functions makes environments difficult to distinguish.
+The type of angular function seems to matter, but is dependent
+on the mix of symmetry functions, as one type outperforms the other
+dependent on the composition.
+We speculate that the force errors generally improve as we increase
+the number of symmetry functions, as forces represent the change in energy
+from a small perturbation of the position of a single atom,
+and this may be better represented by having a larger number of functions
+sensitive to this change.
 Our method of generating symmetry function markedly outperforms
 the AMP default symmetry functions, which suggest that we exercise
 some care when selecting the symmetry function set.
 As for the number of zetas, we only test two values with
 $\zeta = 1, 2$, thus doubling the number of angular symmetry functions,
 and this does not seem to significantly improve the error rate,
-as we might have predicted.
+though we may have found larger differences if this was tested more.
 
 \subsection{Overfitting and regularization}
-Overfitting describes the phenomenom whereby statistical methods
+Overfitting describes the phenomenom whereby statistical learning methods
 that perform well on a training set perform poorly on the test set,
-and indicate poor generalization.
+and indicates poor generalization.
 In order to guard against overfitting we try to ensure that the
 neural network architecture is not too complicated, and typically
-we add a term to the loss function to the size of the weights and biases,
+we add a term to the loss function proportional
+to the size of the weights and biases,
 as this ensures that no weight can be adjusted to arbitrary size
 to fit the training dataset.
 In order to test whether the neural network is overfitting the training
@@ -534,12 +538,14 @@ From these results we see that for values of the regularization parameter
 that are too large, the regularization is too punishing,
 and the training is not able to find any appropriate minima.
 The errors seem to improve as the regularization decreases,
-and then seems to rise again for the last few values.
+while the force errors rise slightly as the regularization continues
+to decrease.
 Since we have such a small neural network, large values of the regularization
-is too punishing, while small values are equivalent to no regularization,
-and overfitting is not prevented. This suggests that we add some small
-amount of regularization, and the generalization performance from
-the neural networks will likely improve.
+are too punishing, while small values are equivalent to no regularization,
+and overfitting is not prevented. 
+From these results we do not find much evidence of overfitting, but
+they may suggest some small regularization is appropriate for
+optimal generalization performance.
 
 \subsection{Sampling and scaling}
 In order for the neural network to learn patterns from data
@@ -605,7 +611,8 @@ performance, both for electronic structure calculations
 and for other applications.
 Neural networks are known as data-hungry, and typically require
 a large amount of data to perform well and also scale well
-with the number of data points. In order to test the accuracy as we add data points
+with the number of data points. 
+In order to test the accuracy as we add data points
 we train a neural network on progressively larger sets of images generated 
 from molecular dynamics, and evaluate them on a test set.
 The results are shown in table \ref{table:images}.
@@ -616,15 +623,16 @@ The results are shown in table \ref{table:images}.
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\
 \midrule
-             10 &     8.83E-02 &    7.88E-01 \\
-             20 &     9.40E-02 &    3.79E-01 \\
-             50 &     1.51E-02 &    1.51E-01 \\
-            100 &     6.05E-03 &    4.91E-01 \\
-            200 &     1.96E-03 &    6.95E-02 \\
-            500 &     1.40E-03 &    1.15E-01 \\
-           1000 &     1.41E-03 &    1.60E-01 \\
-           2000 &     1.31E-03 &    1.04E-01 \\
-           5000 &     1.23E-03 &    9.65E-02 \\
+             10 &     1.33E-01 &    6.84E-01 \\
+             20 &     2.51E-02 &    3.10E-01 \\
+             50 &     1.07E-02 &    1.32E-01 \\
+            100 &     5.58E-03 &    3.03E-01 \\
+            200 &     2.00E-03 &    1.81E-01 \\
+            500 &     1.78E-03 &    9.79E-02 \\
+           1000 &     1.82E-03 &    3.07E-01 \\
+           2000 &     1.58E-03 &    1.06E-01 \\
+           5000 &     1.36E-03 &    1.62E-01 \\
+          10000 &     1.42E-03 &    9.61E-02 \\
 \bottomrule
 \end{tabular}
     \caption{Neural network accuracy as a function

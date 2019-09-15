@@ -36,7 +36,7 @@ from the U.S. Department of Energy\footnote{\url{
 https://www.brown.edu/news/2018-09-20/simulations}}, 
 which should facilitate further development.
 
-\subsection{Theory}
+\subsection{Theory}\label{chap:amp-theory}
 AMP is intended to interface extensively with ASE,
 and the primary interface to AMP is the AMP calculator.
 The AMP calculator is an ASE compliant calculator
@@ -72,6 +72,27 @@ only compatibable with Python 2.
 The inputs can be backpropagated through the network
 to produce both weight updates and derivatives with respect to
 the inputs.
+For the loss function, AMP provides support for custom implementations,
+but the default is the sum over atom-normalized residuals:
+
+\begin{equation}
+    \mathcal{C} = \frac{1}{2} \sum_{i} \left\{
+        \left(\frac{E_i}{N} - \frac{E_{i, \text{NNP}}}{N}\right)^2 +
+        \frac{\alpha}{3N} \sum_{j} \left(F_{ij} - F_{ij, \text{NNP}}
+        \right)^2 \right\},
+\end{equation}
+
+where $E_{\text{NNP}}$ and $F_{\text{NNP}}$ 
+represents the energies and forces predicted
+by the neural network and
+$\alpha$ is a parameter that determines the relative weighting
+of the energies and forces in the loss function.
+Generally, an atomic configuration with $N$ atoms will have 1 potential
+energy and $3N$ forces, which means incorporating the forces into
+the loss function can provide for much richer information into
+the potential energy surface.
+It is not known to us whether the energy normalization over the number of atoms
+represents an improvement over the simple sum of residuals squared.
 
 \subsection{Installation}
 AMP requires an installation of

@@ -3,6 +3,7 @@
 \usepackage[english]{babel}
 \usepackage[toc,page]{appendix}
 \usepackage[backend=bibtex,style=numeric,sorting=none]{biblatex}
+\usepackage[nottoc,numbib]{tocbibind}
 \usepackage{microtype}
 \usepackage{listings}
 \usepackage{blindtext}
@@ -119,8 +120,10 @@
 \chapter{Codebase}
 \input{chapters/codebase}
 
+\chapter{Bibliography}
+\printbibliography[heading=none]
+
 \end{appendices}
 
-\printbibliography
 
 \end{document}
