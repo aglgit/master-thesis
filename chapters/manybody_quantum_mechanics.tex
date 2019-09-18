@@ -3,7 +3,7 @@ for very small and simple systems, such as the hydrogen atom
 or a system of non-interacting harmonic oscillators.
 If we want to study most systems of interest we must turn
 instead to numerical methods and solutions.
-The most prominent methods in the field of manybody
+The most prominent methods in the field of many-body
 quantum mechanics are the Hartree-Fock (HF) and the
 Density Functional Theory (DFT) families of solvers.
 This chapter will give a brief overview of both methods,
@@ -39,17 +39,17 @@ in atomic units is:
         -\sum_{a=1}^A \frac{1}{M_a} \nabla_a^2
         -\sum_{i=1}^N \sum_{a=1}^A \frac{Z_a}{R_{ia}} \\
         &+ \sum_{i=1}^N \sum_{j=i+1}^N \frac{1}{r_{ij}}
-        + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}}
-    \end{split} .
+        + \sum_{a=1}^A \sum_{b=a+1}^A \frac{Z_a Z_b}{R_{ab}} .
+    \end{split}
 \end{equation}
 
 The first two terms describe the kinetic energy operators
 of the electrons and nuclei, with $M_a$ the ratio of the mass
 of nuclei $a$ to the electron mass. The third term describes the
-coulomb attraction between electrons and nuclei, while the fourth and fifth
+Coulomb attraction between electrons and nuclei, while the fourth and fifth
 terms describe the repulsion between electrons and nuclei respectively.
 \par
-Since the nuclei are approximately 2000 times heavier
+Since the nucleons are approximately 2000 times heavier
 than the electrons, the electrons can to a good approximation
 be described as moving in the field of fixed nuclei. In practice we
 neglect the kinetic energy terms of the nuclei, while considering
@@ -67,7 +67,7 @@ The remaining terms are known as the electronic Hamiltonian:
 
 The electronic wavefunction $\Psi_e = \Psi_e(\{r_i\}; \{R_a\})$
 is a function of the electronic coordinates with a parametric dependence
-on the fixed nucleic coordinates. The electronic energy
+on the fixed nuclear coordinates. The electronic energy
 is obtained in the usual way $E_{e} = \braket{\Psi_e | \hat{H}_e |
 \Psi_e} $. The total energy of our system
 must now include the constant nuclear repulsion:
@@ -78,7 +78,7 @@ must now include the constant nuclear repulsion:
 \end{equation}
 
 If one has solved the Schr\"{o}dinger equation for the electronic
-Hamiltonian, one can subsequently solve for the nucleic motion
+Hamiltonian, one can subsequently solve for the nuclear motion
 using the same trick, i.e. substituting the electronic coordinates
 for their average values, averaged over the electronic wave function.
 We are then left with a nuclear Hamiltonian $\hat{H}_n$:
@@ -106,7 +106,7 @@ approximation.
 The electronic Hamiltonian further simplifies if instead
 of considering the relative positions of the nuclei,
 we fix the coordinate system in the center of mass of the nucleus
-and neglect the coordinates of individual nucleic constituents.
+and neglect the coordinates of the individual nuclear constituents.
 This gives us the final expression we want for the electronic
 Hamiltonian:
 
@@ -131,7 +131,7 @@ Assuming that the electrons do not interact
 the Hamiltonian is separable and the wavefunction
 is simply a product of orbitals $\psi$
 which are solutions to a onebody Hamiltonian.
-This gives us an ansatz for the manybody wavefunction $\Psi$
+This gives us an ansatz for the many-body wavefunction $\Psi$
 known as the \textit{Hartree product}:
 
 \begin{equation}
@@ -319,7 +319,7 @@ $m$ is the number of single-particle states.
 
 \subsection{Density-functional theory}
 Density-functional theory (DFT) is a method for
-investigating the electronic structure of a manybody system
+investigating the electronic structure of a many-body system
 by finding approximations to the ground state
 density $n(\bm{r})$.
 It holds many similarities to the Hartree-Fock method,
@@ -364,7 +364,7 @@ by the Hamiltonian. Hohenberg and Kohn showed in 1964
 can be inverted, i.e. that the one-electron density uniquely
 determines the Hamiltonian of our system (up to an arbitrary constant).
 Taken altogether, this means that all properties of our system, including
-the Hamiltonian and the manybody wavefunction are fixed
+the Hamiltonian and the many-body wavefunction are fixed
 by a one-electron density carrying a dependency on only 3 spatial coordinates.
 The electronic Hamiltonian can be rewritten as:
 
