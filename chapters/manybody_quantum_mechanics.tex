@@ -101,20 +101,21 @@ We are then left with a nuclear Hamiltonian $\hat{H}_n$:
 Under this approximation the nuclei move on a potential energy
 surface obtained by solving the electronic Hamiltonian.
 We will however remain focused on the electronic structure problem.
-For the electronic Hamiltonian we would like to make one more
-approximation.
-The electronic Hamiltonian further simplifies if instead
-of considering the relative positions of the nuclei,
-we fix the coordinate system in the center of mass of the nucleus
-and neglect the coordinates of the individual nuclear constituents.
-This gives us the final expression we want for the electronic
-Hamiltonian:
+The electronic Hamiltonian further simplifies if we restrict our
+attention to a system consisting only of a single nuclei
+and $N$ electrons.
+We fix the coordinate system in the center of mass of the nucleus
+and, which gives us the expression:
 
 \begin{equation}
     \hat{H} = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
     - \sum_{i=1}^N \frac{Z}{r_{i}} + \sum_{i=1}^N \sum_{j=i+1}^N
-    \frac{1}{r_{ij}}
+    \frac{1}{r_{ij}} .
 \end{equation}
+
+For simplicity, we will restrict ourselves to this Hamiltonian
+in our discussion of the Hartree-Fock and Density Functional Theory
+methods.
 
 \subsection{Hartree-Fock}
 The Hartree-Fock method is a method for finding
@@ -127,6 +128,8 @@ The theory in this section is based upon the \parencite[Sherrill]
 and the lecture notes
 on Computational Physics II \parencite[Hjorth-Jensen]
 {hjensen2019} from the University of Oslo.
+We will restrict our attention to a system of $N$ electrons
+orbiting a single nucleus.
 Assuming that the electrons do not interact
 the Hamiltonian is separable and the wavefunction
 is simply a product of orbitals $\psi$
@@ -337,7 +340,8 @@ This section is a brief summary of the material covered
 in the \parencite[Toulouse][pages 1-12]{toulouse2017}
 lecture notes from the Université Pierre et Marie Curie,
 which the reader is encouraged to check out for more detail.
-Our starting point is again the electronic Hamiltonian:
+Our starting point is once again the electronic Hamiltonian
+for a system of $N$ electrons and a single nucleus:
 
 \begin{equation}
     \hat{H} = -\sum_{i=1}^N \frac{1}{2} \nabla_i^2
@@ -346,7 +350,8 @@ Our starting point is again the electronic Hamiltonian:
 \end{equation}
 
 Any electronic wavefunction $\Psi$ which solves this equation
-is in principle a function of $4N$ coordinates $\bm{x}_i = (\bm{r}_i, \sigma_i)
+is in principle a function of $3N$ spatial and $N$ spin coordinates 
+$\bm{x}_i = (\bm{r}_i, \sigma_i)
 , \ i=1,\dots,N$
 where $N$ is the number of electrons.
 Once we have obtained a solution to the Schr\"{o}dinger equation
@@ -648,7 +653,7 @@ and the two-electron integrals are defined as:
     = \int \int \frac{\chi_{\mu}^*(\bm{r}_1) \chi_{\nu}
     \chi_{\lambda}^*(\bm{r}_2) \chi_{\gamma}}
     {\left| \bm{r}_1 - \bm{r}_2 \right|}
-    d\bm{r}_1 d\bm{r}_2 .
+    d\bm{r}_1 d\bm{r}_2 ,
 \end{equation}
 
 and finally the exchange-correlation potential contribution:

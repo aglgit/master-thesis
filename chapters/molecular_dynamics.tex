@@ -18,13 +18,13 @@ In this chapter we will show how quantum mechanics
 and classical mechanics can be bridged semi-rigorously,
 and also give an introduction to central concepts of molecular dynamics,
 such as initialization, integration of the equations of motion
-and construction and evaluation of potentials.
+and the construction and evaluation of potentials.
 
 \subsection{From quantum mechanics to molecular dynamics}
-We will follow the route described in the lecture notes
+This section summarizes the route described in the lecture notes
 \parencite[Marx, Dominik and Hutter, J\"{o}rg][pages 1-10]{marx2000}
 given at the Winterschool 2000 at the John von Neuman Institute
-for Computing, J\"{o}lich.
+for Computing, J\"{u}lich.
 We will be using SI units as we wish to study the equations of motion
 derived from quantum mechanics but in the classical limit.
 Our starting point is the full Hamiltonian 
@@ -86,7 +86,7 @@ reveals the following set of equations:
 
 These coupled equations form the framework for the
 time-dependent self-consistent field (TDSCF) method.
-The electrons and nucleons move on a potential energy surface
+The electrons and nuclei move on a potential energy surface
 obtained from averages over the opposite class of
 degrees of freedom (the nuclear and electronic wave functions
 respectively).
@@ -100,7 +100,9 @@ This can be done by rewriting the nuclear wave function as
 
 with an amplitude factor $A$ and a phase $S$
 which are both considered to be real.
-The TDSCF equations are rewritten in terms of these variables
+The TDSCF equation for the nuclear wavefunction is rewritten 
+in terms of these variables after separating the real
+and imaginary parts:
 
 \begin{equation}
  \frac{\partial S}{\partial t} + \sum_a \frac{1}{2M_a}
@@ -223,7 +225,7 @@ on this energy surface, producing a set of classical trajectories.
 To deal with the large number of degrees of freedom
 as the number of nuclei in the system increases,
 the global potential energy surface
-is approximated as an expansion of manybody contributions:
+is approximated as an expansion of many-body contributions:
 
 \begin{equation}
  V_e^E \approx V_e^{\text{approx}} =
@@ -258,7 +260,7 @@ which explains the physics behind many popular methods
 for computer calculation and simulation.
 Classical molecular dynamics is a method
 for computing equilibrium and transport properties
-of manybody systems obeying classical laws of motion.
+of many-body systems obeying classical laws of motion.
 While a large number of simplifications have to be made
 in order to describe quantum mechanical systems classically,
 the approximation works surprisingly well
@@ -330,8 +332,8 @@ The exact form however will differ from the one we started with.
 \par
 Given these initial conditions, the system will not be in an
 equilibrium state at $t=0$. To evolve the system
-to an equilibrium state one most commonly evolves the system
-for a number of timesteps until fluctuations in dynamic
+to an equilibrium state one most commonly advances the system in time
+until fluctuations in dynamic
 properties such as the total potential energy or the temperature
 settle down. Once we are in equilibrium we can start calculating
 thermodynamic averages.
@@ -339,7 +341,7 @@ thermodynamic averages.
 \newline
 As we mentioned before, the global energy surface
 as a function of nuclear coordinates $\left\{ \bm{r} \right\}$
-is approximated as an expansion of manybody contributions:
+is approximated as an expansion of many-body contributions:
 
 \begin{equation}
  V_e^E \left(\left\{ \bm{r} \right\}\right) =
@@ -347,8 +349,8 @@ is approximated as an expansion of manybody contributions:
     + \sum_{i < j < k} v_3(r_i, r_j, r_k) , 
 \end{equation}
 
-wherein each n-body term is an analytical function
-of $n$ coordinates.
+wherein each $N$-body term is an analytical function
+of $N$ coordinates.
 As an atom moves on the energy surface
 it feels a force which is the gradient of the potential energy surface.
 This means atom $i$ feels an acceleration:
@@ -465,13 +467,13 @@ and the dynamics which are being studied.
 \newline
 Thus far we have discussed molecular dynamics for a system of $N$ particles
 within a fixed volume $V$ and constant energy $E$, i.e. in the
-microcanonical ensemble NVE. Other ensembles are also impossible,
+microcanonical ensemble NVE. Other ensembles are also possible,
 such as the canonical ensemble NVT and the isothermal-isobaric ensemble
 NPT.
 \par
 Simulations in the canonical ensemble can be achieved by modifying the Verlet
 integration algorithm. The simplest thermostat possible
-follows from the equipartion theorem:
+follows from the equipartion theorem (see for example \cite{equipart}):
 
 \begin{equation}
  T \propto \langle mv^2 \rangle , 
@@ -482,7 +484,7 @@ can be added or subtracted to every atom in order to maintain
 a constant temperature at every timestep.
 Multiplying every velocity by a factor $\lambda = \sqrt{T_0 / T(t)}$
 where $T(t)$ is the instantaneous temperature and $T_0$
-is the desired temperature will achieve desired effect.
+is the desired temperature will achieve the desired effect.
 This approach significantly alters the trajectories of the system however,
 which means this thermostat should only be applied for adjusting
 the temperature of the system and not for taking ensemble averages
@@ -696,7 +698,7 @@ a pair-potential approximation leads to the expression:
     E   &=\sum_i \left[ E_{c,i}(n_i) + \Delta E_{AS} \right] \\
         &= \sum_i \left\{E_{c,i}(n_i) + \frac{1}{2} \left[
         \sum_{j \neq i} V_{ij}(r_{ij}) - \sum_{j \neq i}^{\text{ref}}
-        V_{ij}(r_{ij}) \right] \right\}
+        V_{ij}(r_{ij}) \right] \right\} .
     \end{split}
 \end{equation}
 
