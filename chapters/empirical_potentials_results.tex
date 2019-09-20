@@ -1,14 +1,17 @@
 In order to test the validity of using neural networks trained
 on molecular dynamics trajectories to generate new trajectories
 we train neural networks on systems of copper and silicon atoms
-using the Effective Medium Theory and Stillinger-Weber potentials
+using the Effective Medium Theory \cite{jacobsen1996semi}
+and Stillinger-Weber \cite{che8002013} potentials
 respectively.
 These potentials have efficient implementations
-through ASE and their ASAP interface, which makes
+through the Atomic Simulation Environment (ASE)
+and their As Soon As Possible (ASAP) interface, which makes
 it ideal for our purposes. Additionally these potentials
 have an intermediate complexity, with Stillinger-Weber explicitly
-including threebody interactions, which makes them ideal
-for testing whether the Behler-Parrinello method can replicate this.
+including three-body interactions, which makes them ideal
+for testing whether the Behler-Parrinello method \cite{behler2007generalized}
+can replicate this.
 At temperatures which are not too large these potentials describe
 atoms in a crystalline structure in equilibrium,
 and we test whether the neural network can reproduce the correct potential
@@ -16,7 +19,7 @@ energy, forces, radial distribution and mean squared displacement.
 In table \ref{tab:hyperparam} we have listed the parameters we have
 used in the training process. While we have used a large amount
 of training images for the energy training, since this is relatively
-inexpensive, 8000 training images was not a noticeable improvement
+inexpensive, 8000 training images were not a noticeable improvement
 over approximately 5000-1000 images,
 and only seemed to affect the speed of convergence.
 We finally used 1000 images to refine the force accuracy,
@@ -32,6 +35,9 @@ matter much in the final analysis.
 
 \begin{table}[H]
 \centering
+\caption{Hyperparameters used in fitting the neural network
+    to the copper and silicon images.}
+\label{tab:hyperparam}
 \begin{tabular}{|c c|}
 \hline
 Hyperparameter & Value \\
@@ -48,12 +54,13 @@ Energy coefficient & 1.0 \\
 Force coefficient & 0.1 \\
 \hline
 \end{tabular}
-\caption{Hyperparameters used in fitting.}
-\label{tab:hyperparam}
 \end{table}
 
 \begin{table}[H]
 \centering
+\caption{Hyperparameters used in testing the trained copper and
+    silicon neural networks.}
+\label{tab:hyperparam-test}
 \begin{tabular}{|c c|}
 \hline
 Hyperparameter & Value \\
@@ -65,12 +72,12 @@ Activation & Hyperbolic tangent \\
     Sampling intervall (timesteps) & 10 \\
 \hline
 \end{tabular}
-\caption{Hyperparameters used in testing.}
-\label{tab:hyperparam-test}
 \end{table}
 
-\subsection{Effective Medium Theory}
-The Effective Medium Theory (EMT) potential gives a good description
+\subsection{Effective Medium Theory}\label{chap:emt}
+The Effective Medium Theory (EMT) potential 
+\cite{jacobsen1987interatomic, jacobsen1996semi}
+gives a good description
 of the late transition metals in a Face-Centered Cubic (FCC) crystal
 lattice, and has a very efficient implementation in ASE,
 which makes it ideal for producing large amounts of data.
@@ -93,6 +100,14 @@ of 32 atoms with a temperature of 300 Kelvin for 5000 steps
 writing to file every 100 steps.
 
 \begin{figure}[H]
+\caption{Training loss, energy and force RMSE for the copper
+    system (using logarithmic axes).
+    The loss function is discussed in chapter \ref{chap:amp-theory}.
+    The network is first trained only with energies, and subsequently
+    using both energies and forces.
+    The neural network weight updates are generally small after approximately
+    1000 training epochs.}
+    \label{fig:copper-log}
 \begin{adjustbox}{max width=1.2\linewidth,center}
 \centering
   \begin{subfigure}[b]{0.55\textwidth}
@@ -105,9 +120,6 @@ writing to file every 100 steps.
       \caption{Training loss and energy and force RMSE.}
   \end{subfigure}
 \end{adjustbox}
-\caption{Training loss, energy and force RMSE for the copper
-    system (using logarithmic axes).}
-    \label{fig:copper-log}
 \end{figure}
 
 In figure \ref{fig:copper-log} we have plotted the loss and root mean
@@ -138,7 +150,9 @@ root mean squared errors, as discussed in chapter \ref{chap:amp-theory}.
       \caption{Force component error.}
   \end{subfigure}
 \end{adjustbox}
-    \caption{Energy and force component errors on test trajectory.}
+    \caption{Energy and force component errors on the test images.
+        Root mean squared errors in dotted lines.
+        The errors are measured in units of eV and eV/Å respectively.}
     \label{fig:copper_error}
 \end{figure}
 
@@ -151,8 +165,8 @@ but some of the force errors considerably higher, up to
 and including values of 0.3 eV/Å, which may pose
 a problem for the long term stability of the system.
 These values are comparable to other works studying neural network
-potential energy surfaces, such as \cite{stende2017constructing}\cite{
-    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
+potential energy surfaces, such as \cite{stende2017constructing,
+treider2017speeding, khorshidi2016amp, PhysRevLett.120.143001},
 at least for the forces. For the energy, the energy is higher than usual, and
 this is caused at least partially by training with force terms.
 Generally we observe that large force residuals cause an increase
@@ -164,7 +178,9 @@ the sampling has left holes in the neural network.
     \centering
     \includegraphics[width=\textwidth]{copper_rdf.png}
     \caption{AMP radial distribution function plotted against
-        EMT radial distribution.}
+        EMT radial distribution.
+        The radial distribution function of the neural network potential is
+        generally more dispersed due to the increase in kinetic energy.}
     \label{fig:copper-rdf}
 \end{figure}
 
@@ -180,7 +196,10 @@ makes the atoms more dispersed.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_pot.png}
-    \caption{AMP and EMT potential energy as a function of time.}
+    \caption{AMP and EMT potential energy as a function of time.
+        The potential energy of the neural network generally performs well
+        for the first 1000 steps, and then starts to increase
+        likely due to an increase in kinetic energy and total energy.}
     \label{fig:copper-pot}
 \end{figure}
 
@@ -203,7 +222,11 @@ in translational momentum.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_energy.png}
-    \caption{AMP and EMT total energy as a function of time.}
+    \caption{AMP and EMT total energy as a function of time.
+    The energy starts increasing after approximately 500 steps,
+    and the increase seems to be non-linear. This is hypothesized
+    to be due to large force error residuals causing increases in
+    the kinetic energy of the atoms.}
     \label{fig:copper-energy}
 \end{figure}
 
@@ -214,15 +237,18 @@ We observe that the MSD for the neural network is significantly larger
 than for the EMT potential, and increasing non-linearly.
 In equilibrium we expect for a crystal lattice
 that the mean squared displacement be linear, as the atoms
-mostly oscillate in stable energy minimums.
+mostly oscillate in stable energy minima.
 For the neural network potential the motion in the system appears
-to be increasing significantly, as the kinetic and total energy is increased
+to be increasing significantly, as the kinetic and total energy is increasing
 over time.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{copper_msd.png}
-    \caption{AMP and EMT mean squared displacements as a function of time.}
+    \caption{AMP and EMT mean squared displacements as a function of time.
+        For the neural network potential the system picks up energy
+        and momentum over time, while the atoms governed by the EMT
+        potential mostly oscillate in stable energy minima.}
     \label{fig:copper-msd}
 \end{figure}
 
@@ -243,7 +269,7 @@ stability of the trajectory. In order to obtain better results we would likely
 require datasets containing more unlikely configurations and forces
 (i.e. slightly out of equilibrium). We also generally find that the performance
 improves as we add more symmetry functions, particularly radial functions
-are belivied to improve the accuracy with this potential,
+are believed to improve the accuracy with this potential,
 as the potential contains no explicit treatment of angular interactions.
 However, more symmetry functions add significant CPU-time cost,
 and the set of symmetry functions would have to be pruned
@@ -262,19 +288,26 @@ to remove significant correlations.
       \caption{Copper atoms after 5000 steps.}
   \end{subfigure}
 \end{adjustbox}
-    \caption{The system of copper atoms after 10 and 5000 timesteps.}
+    \caption{The system of copper atoms governed by the neural network
+    potential after 10 and 5000 timesteps.
+    The system has picked up kinetic energy and momentum and is moving
+    over time.}
     \label{fig:copper_sw}
 \end{figure}
 
 Finally, we tested the time-scaling of the neural network as the number of atoms
 increased. To test this we simply made a forces call on lattices of different
-sizes, which returns the force on every atom in the system.
+sizes, in order to obtain the force on every atom in the system.
 Ideally we would have taken averages over multiple force calls, however
 at these time scales we did not think it would significantly impact the results.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{copper_scaling.png}
-\caption{Time scaling of the neural network as the number of atoms increases.}
+\caption{Time scaling of the neural network as the number of atoms increases.
+    The time scaling is measured using the time it takes to obtain
+    the forces on every atom in the system. The time it takes to obtain
+    the forces is generally a linear function of the number of atoms
+    in the system.}
 \label{fig:copper-scaling}
 \end{figure}
 
@@ -310,12 +343,12 @@ training and testing of larger and more complex systems\footnote{
     https://listserv.brown.edu/cgi-bin/wa?A2=AMP-USERS;d7c6c98c.1904}{
     AMP mailing list}.}.
 
-\subsection{Stillinger-Weber}
+\subsection{Stillinger-Weber}\label{chap:sw}
 The Stillinger-Weber is a potential which describes accurately
 Silicon atoms in the diamond lattice structure, and was
 one of the first potentials used to describe a realistic atomic-scale
 model of Silicon. It is also one of the most common examples
-of a potential with a threebody interaction, and its intermediate complexity
+of a potential with a three-body interaction, and its intermediate complexity
 makes it ideal for verification with for example quantum calculations
 or in our case machine learning methods.
 We initialize a system of 8 unit cells with 8 atoms in each unit cell
@@ -348,7 +381,12 @@ The cutoff radius is set to $R_c = 5$ Angstrom using 14 radial and
     \caption{Training loss and energy and force RMSE.}
   \end{subfigure}
 \end{adjustbox}
-\caption{Training losses and energy and force root mean squared errors.}
+\caption{Training losses and energy and force root mean squared errors.
+    The loss function is discussed in chapter \ref{chap:amp-theory}.
+    The network is first trained only with energies, and subsequently
+    using both energies and forces.
+    The neural network weight updates are generally small after approximately
+    1000 epochs.}
     \label{fig:silicon-log}
 \end{figure}
 
@@ -356,8 +394,8 @@ For both the energy training and the force training phases, the
 losses often rise sharply at the beginning, and then decay smoothly over time,
 reaching something of a convergence after approximately 500-1000 steps.
 These values are somewhat comparable to other works studying neural network
-potential energy surfaces, such as \cite{stende2017constructing}\cite{
-    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
+potential energy surfaces, such as \cite{stende2017constructing,
+treider2017speeding, khorshidi2016amp, PhysRevLett.120.143001},
 at least in terms of the forces, though the energies are higher than usual.
 The losses are somewhat higher for the Stillinger-Weber than for the
 EMT potential, this may indicate more difficulty reproducing the distribution
@@ -383,7 +421,9 @@ it paints a better picture than for the EMT potential.
       \caption{Force component error.}
   \end{subfigure}
 \end{adjustbox}
-    \caption{Energy and force component errors on test trajectory.}
+    \caption{Energy and force component errors on test trajectory.
+        Root mean squared errors in dotted lines.
+        The errors are measured in units of eV and eV/Å respectively.}
     \label{fig:silicon-error}
 \end{figure}
 
@@ -398,7 +438,13 @@ is now significantly smaller.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_energy.png}
-    \caption{AMP and Stillinger-Weber total energy as a function of time.}
+    \caption{AMP and Stillinger-Weber total energy as a function of time.
+        The energy conservation is generally much better for the
+        neural network trained on the Stillinger-Weber potential
+        than the one trained on the EMT potential.
+        The energy is increasing over time, but may have
+        stabilized after approximately 2500 steps. Longer trajectories
+        would have to be produced in order to verify this.}
     \label{fig:silicon-energy}
 \end{figure}
 
@@ -421,7 +467,9 @@ we are limited by the time it takes to evaluate their derivatives.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{silicon_pot.png}
-    \caption{AMP and Stillinger-Weber potential energy as a function of time.}
+    \caption{AMP and Stillinger-Weber potential energy as a function of time.
+    The neural network is able to reproduce the Stillinger-Weber potential
+    well, but appears to be increasing slightly over time.}
     \label{fig:silicon-pot}
 \end{figure}
 
@@ -438,7 +486,9 @@ both kinetic energy and translational momentum.
     \centering
     \includegraphics[width=\textwidth]{silicon_rdf.png}
     \caption{Radial distribution functions for the Stillinger-Weber and
-        neural network potentials.}
+        neural network potentials.
+        The system governed by the neural network potential is more dispersed
+        over time, due to an increase in kinetic and total energy.}
     \label{fig:silicon-rdf}
 \end{figure}
 
@@ -459,7 +509,10 @@ than what we have observed for the EMT potential.
     \centering
     \includegraphics[width=\textwidth]{silicon_msd.png}
     \caption{Mean squared displacement over time for the Stillinger-Weber
-        and neural network potentials.}
+        and neural network potentials.
+        For the neural network potential the system picks up some energy
+        and momentum over time, while the atoms governed by the Stillinger-Weber
+        potential mostly oscillate in stable energy minima.}
     \label{fig:silicon-msd}
 \end{figure}
 
@@ -476,7 +529,10 @@ than what we have observed for the EMT potential.
       \caption{Silicon atoms after 5000 steps.}
   \end{subfigure}
 \end{adjustbox}
-    \caption{The system of silicon atoms after 10 and 5000 steps.}
+    \caption{The system of silicon atoms governed by the neural
+    network potential after 10 and 5000 steps.
+    The system has picked up some kinetic energy and momentum and is moving
+    over time.}
     \label{fig:silicon-time}
 \end{figure}
 
@@ -505,15 +561,20 @@ with ab-initio methods which exhibit much poorer scaling as the system size incr
     \centering
     \includegraphics[width=\textwidth]{silicon_scaling.png}
     \caption{Time scaling of the neural network potential
-        as a function of the size of the system.}
+        as a function of the size of the system.
+    The time scaling is measured using the time it takes to obtain
+    the forces on every atom in the system. The time it takes to obtain
+    the forces is generally a linear function of the number of atoms
+    in the system.}
     \label{fig:silicon-scaling}
 \end{figure}
 
 Even though the neural network potentials have the same cutoff radius,
-the Stillinger-Weber potential takes roughly 2-4 times faster to evaluate
+the Stillinger-Weber potential takes roughly 2-4 times fewer seconds to evaluate
 the forces for an equivalent size. It is unclear why this is the case,
 as the trained potentials have a comparable number of radial symmetry functions,
-while the Stillinger-Weber potential has a larger amount of angular symmetry functions.
+while the Stillinger-Weber potential has a larger amount of angular symmetry 
+functions.
 This may be because the copper atoms have a larger average amount of neighbors,
 or because the potentials have been tested on different computers (due to some
     difficulty in installing the Stillinger-Weber potential on one computer).

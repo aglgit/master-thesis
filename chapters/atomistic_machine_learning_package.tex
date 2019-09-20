@@ -55,6 +55,10 @@ atomic configurations.
 \centering
 \includegraphics[width=\linewidth]{scheme.png}
 \caption{Schematics of how AMP works in atom-centered mode.
+    The cartesian coordinates representing the environment
+    of every atom is mapped to a 1D representation using the
+    symmetry function set. The input vector is fed through the neural
+    network to produce an atomic potential energy contribution.
     Reprinted from \parencite[AMP paper]{khorshidi2016amp}.}
 \label{fig:scheme}
 \end{figure}
@@ -63,7 +67,7 @@ AMP provides interfaces for both atom-centered descriptors, as we
 discussed in chapter 6, and image-centered descriptors,
 which are formed from the complete set of cartesian coordinates.
 Figure \ref{fig:scheme} shows the schematics of how the
-potential energy and forces is computed in atom-centered mode.
+potential energy and forces are computed in the atom-centered mode.
 A set of feature vectors are formed from an image, which are fed
 through a neural network to produce the potential energy.
 The neural network including backpropagation is written by the
@@ -83,7 +87,7 @@ but the default is the sum over atom-normalized residuals:
 \end{equation}
 
 where $E_{\text{NNP}}$ and $F_{\text{NNP}}$ 
-represents the energies and forces predicted
+represent the energies and forces predicted
 by the neural network and
 $\alpha$ is a parameter that determines the relative weighting
 of the energies and forces in the loss function.

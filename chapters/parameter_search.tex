@@ -1,8 +1,10 @@
 In order to obtain optimal performance from the neural network
 given a set of atomistic configurations we need a careful choice of parameters
 and neural network architecture. The parameters can be classified as either
-\textit{training parameters} - such as learning rate and force loss coefficient -
-or \textit{architectural parameters} - such as the number of neurons and hidden layers,
+\textit{training parameters} - such as the learning rate 
+and the force loss coefficient -
+or \textit{architectural parameters} - 
+such as the number of neurons and hidden layers,
 or the choice of interaction cutoff radius. The former are important
 in the training of the neural network, i.e. adjusting weights and biases
 while the latter influence both the training process and the final
@@ -24,7 +26,8 @@ of search space larger than 3 or 4. However, since we have tested
 a small number of parameters (since training and testing is costly)
 and we have a general idea of what parameters are appropriate, we
 have chosen to employ Grid Search.
-AMP has a built in simulated annealing (see for example \cite{
+The Atomistic Machine-learning Package (AMP) 
+has a built in simulated annealing (see for example \cite{
     bertsimas1993simulated}) module, which performs
 simulated annealing on the weights and biases of the network,
 in order to find values for which the loss is lowest.
@@ -46,6 +49,9 @@ as we discussed briefly in chapter \ref{chap:optimization}.
 
 \begin{table}[H]
 \centering
+\caption{Default values used in parameter search.
+    The parameters are roughly divided into architecture and training parameters.}
+\label{table:defaults}
 \begin{tabular}{@{}lll@{}}
 \toprule
 \multicolumn{3}{l}{Hyperparameters}                                    \\ \midrule
@@ -60,8 +66,6 @@ Training     & Epochs             & 2000                               \\
              & Regularization     & $\lambda = 10^{-8}$                \\
              & Optimizer          & BFGS                               \\ \bottomrule
 \end{tabular}
-\caption{Training default values.}
-\label{table:defaults}
 \end{table}
 
 The AMP package provides a set of defaults for most elements,
@@ -84,7 +88,8 @@ These symmetry functions are displayed in figure \ref{fig:selected}.
 We have also chosen to employ the polynomial cutoff introduced in AMP
 with $\gamma = 5.0$,
 since this has a larger set of values inside the cutoff boundary.
-The numerical values of the parameters are available in \ref{chap:appendix-a}.
+The numerical values of the parameters are available in 
+appendix \ref{chap:appendix-a}.
 
 \begin{figure}[H]
 \begin{adjustbox}{max width=1.2\linewidth,center}
@@ -101,8 +106,11 @@ The numerical values of the parameters are available in \ref{chap:appendix-a}.
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-    \caption{AMP default symmetry function set. Radial functions
-    plotted with radial distribution function.}
+    \caption{The AMP default symmetry function set. The radial functions
+    are plotted with the radial distribution function within
+    the cutoff radius of $R\_c = 6$ Angstrom. The angular symmetry
+    functions cover an angular space from $\left[0, \pi\right]$ radians.
+    The $y$-axis is dimensionless.}
     \label{fig:default}
 \end{figure}
 
@@ -122,7 +130,10 @@ The numerical values of the parameters are available in \ref{chap:appendix-a}.
   \end{subfigure}
 \end{adjustbox}
     \caption{Selected symmetry function set used for parameter search.
-    Radial functions are plotted with radial distribution function.}
+    The radial functions
+    are plotted with the radial distribution function within
+    the cutoff radius of $R_c = 6$ Angstrom. The angular symmetry
+    functions cover an angular space from $\left[0, \pi\right]$ radians.}
     \label{fig:selected}
 \end{figure}
 
@@ -143,7 +154,8 @@ from molecular dynamics we would expect much better
 accuracy and numerical stability if we could improve the fit of
 the derivatives.
 The real drawback is the calculation of the derivatives in the input layer - 
-aka the \textit{fingerprintprimes}, of which there are a lot for every coordinate
+also known as the \textit{fingerprintprimes},
+of which there are a lot for every coordinate
 and input symmetry function - as they consume a lot of disk space,
 memory and CPU time.
 \par
@@ -177,8 +189,8 @@ integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{Energy and force component absolute errors and root mean
-    squared errors without force training.}
+\caption{Energy and force component absolute errors training without
+    force loss. The root mean squared errors are shown with dotted lines.}
     \label{fig:noforcetrain}
 \end{figure}
 
@@ -197,28 +209,29 @@ integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
     \label{fig:f2}
   \end{subfigure}
 \end{adjustbox}
-\caption{Energy and force component absolute errors and root mean squred
-    errors with force training.}
+\caption{Energy and force component absolute errors with forces in the
+    loss function. Root mean squared errors are shown with dotted lines.}
     \label{fig:forcetrain}
 \end{figure}
 
 In figure \ref{fig:noforcetrain} we have created a scatterplot
-of the energies and force components vs the absolute error after training without
+of the energies and force components versus 
+the absolute error after training without
 forces, and labeled the plots with the energy and force RMSEs.
 We observe that the potential energies can achieve fairly
-low error values of approximately 0.01 to 0.03 eV, and the
+low error values of approximately 0.005 to 0.03 eV, and the
 result does not depend very much on the value of the exact potential
 energy.
 The force error however is approximately an order of magnitude
 larger, which echoes some of the concerns raised in the previous
 chapter with fitting derivatives. The force errors produced by the neural
-also appear to be increasing as we move away from zero.
+network also appear to be increasing as we move away from zero.
 \par
 In figure \ref{fig:forcetrain} we have a scatterplot of energies
 and force components generated from a force-trained neural network
 with a force loss coefficient of $0.1$.
-While the error in the potential energy is now approximately 3.5 times higher,
-the error in the forces is now about $60 \%$ smaller.
+While the error in the potential energy is now approximately 4 times higher,
+the error in the forces is now about 8 times smaller.
 This is arguably a good tradeoff, since the force error matters
 much more for long molecular dynamics trajectories, and will make
 any simulation requiring large amounts of data more stable.
@@ -237,7 +250,7 @@ of hidden layers and nodes.
 At our chosen range of values, we do not expect a 
 large variation in the performance.
 Since we do not have a large set of input parameters, we do not expect
-a large amount of nodes and hidden layers is required, as this would
+that a large amount of nodes and hidden layers is required, as this would
 only increase the training time,
 and larger neural networks with a large amount of hidden layers
 might be expected to overfit the training data and generalize poorly.
@@ -268,6 +281,10 @@ we calculate the energy and force root mean squared errors (RMSEs).
 
 \begin{table}[H]
 \centering
+\caption{Neural network architectures evaluated using root mean
+    squared errors. The hyperbolic tangent and sigmoid is evaluated
+    with varying sizes of the hidden layers.}
+\label{table:act-hidden}
 \begin{tabular}{lrr}
 \toprule
 Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
@@ -290,8 +307,6 @@ Activation/Hidden layers &  Energy RMSE &  Force RMSE \\
         sigmoid-[40, 40] &     4.09E-03 &    7.37E-02 \\
 \bottomrule
 \end{tabular}
-\caption{Training defaults}
-\label{table:act-hidden}
 \end{table}
 
 From the results we can see that the number of hidden layers
@@ -302,21 +317,22 @@ while the sigmoid appears to outperform when it comes to the forces.
 This is likely because we have not trained the network with force losses,
 which means the tangent is better able to fit the energy, and this
 degrades somewhat the performance on the forces.
-For the hyperbolic tangent with $\left[10, 10\right]$ we are able
+For the hyperbolic tangent with hidden layers of size 
+$\left[10, 10\right]$ we are able
 to achieve a low energy and force error, and we have seen this result
-consistently.
+consistently throughout our work.
 This implies that this size and activation strikes an appropriate balance
 between the training epochs required and overfitting, and we have settled
 on this architecture for the remainder of the thesis.
 However, it remains to be seen if a larger network trained for longer
-could outperform the smaller models.
+periods could outperform the smaller models.
 
 \subsection{Cutoff radius}
 The cutoff radius defines the boundary outside of which no interactions
 between atoms take place, and the magnitude of the interactions
 which take place within. We therefore expect it to have a reasonable
-effect on the final result. Ideally we might like all atoms to interact,
-as they plausibly do in the real world.
+effect on the final result. Ideally we would like all atoms to interact,
+as they do in the real world.
 However, since the cutoff radius defines a sphere
 with a volume $V \propto R_c^3$, the average number of neighbors and therefore
 calculations increases substantially with the cutoff radius.
@@ -327,7 +343,7 @@ larger the cutoff radius.
 Accuracy may also be impacted if any
 atom interacts with an atom which in actuality does not have a substantial
 energy and force contribution.
-In figure \ref{fig:copper-rdf} we have plotted the radial distribution
+In figure \ref{fig:copper-cutoff} we have plotted the radial distribution
 function of copper atoms governed by the EMT potential, together
 with the polynomial cutoff function with $\gamma = 5.0$.
 The radial distribution function is scaled to $1$ in order to compare
@@ -344,8 +360,11 @@ would perform well, without sacrificing too much accuracy.
     \centering
     \includegraphics[width=\textwidth]{rdf.png}
     \caption{Radial distribution function of copper atoms
-        governed by the EMT potential.}
-    \label{fig:copper-rdf}
+        governed by the EMT potential. The radial distribution function
+        is plotted with the polynomial cutoff function with $\gamma = 5.0$.
+        The radial distribution function is mostly peaked at the lattice sites,
+        with few atoms in between.}
+    \label{fig:copper-cutoff}
 \end{figure}
 
 We will be comparing the cosine and polynomial cutoffs at different
@@ -358,6 +377,10 @@ on the test set. The results are presented in table \ref{table:cutoffs}.
 
 \begin{table}[H]
 \centering
+\caption{Cutoff radius evaluated using root mean squared errors.
+    Each cutoff radius is tested with the cosine and polynomial functions
+    with $\gamma = 5.0$.}
+\label{table:cutoffs}
 \begin{tabular}{lrr}
 \toprule
      Cutoff &  Energy RMSE &  Force RMSE \\
@@ -378,8 +401,6 @@ on the test set. The results are presented in table \ref{table:cutoffs}.
  Polynomial-8.0 &     1.05E-02 &    3.41E-01 \\
 \bottomrule
 \end{tabular}
-\caption{Cutoffs}
-\label{table:cutoffs}
 \end{table}
 
 From the energy RMSEs we can see that the intermediate values of the
@@ -422,15 +443,17 @@ In their article on Weighted Atom-Centered Symmetry Functions
 aka shifted radial symmetry functions perform better than symmetry functions
 centered at $R_s = 0$, since these offer better coverage of the radial space.
 They also suggest that this is not the case for angular symmetry functions,
-since they are products of multiple gaussians which narrows their range
-of values. 
+since they contain the products of gaussian functions of the interatomic
+distances in a triplet configuration, narrowing their range of values.
 Furthermore they suggest that for angular symmetry functions
-the parameter $\zeta$ should be limited to values of 1 or 2,
+the parameter $\zeta$ controlling the power of the angular term
+should be limited to values of 1 or 2,
 and they demonstrate that increasing this parameter narrows
 the functions to a smaller range of angles close to the maxima
 (i.e. 0 or 90 degrees).
 We follow some of their suggestions and use a combined set of
 centered and uncentered radial functions. 
+\par
 In the introduction to this chapter we defined a method
 for constructing the set of symmetry functions, with the parameters
 being the number of radial functions, angular functions, zetas
@@ -438,15 +461,27 @@ and the type of angular function.
 To find the optimal set
 we perform tests of the energy and force RMSE while varying the
 number of radial and angular symmetry functions, and testing
-whether the G4 or G5 type of angular functions performs noticeably
+whether the G4 or G5 types (see \ref{chap:gaussian})
+of angular functions performs noticeably
 better than the other type.
 The results are presented in table \ref{table:symmetry}.
-The first parameter is the number of radial $\eta$'s,
+The first parameter is the number of radial $\eta$'s
+controlling the width of the gaussian functions,
 the second is the number of angular $\eta$'s and the third
 is the number of $\zeta$ values.
 
 \begin{table}[H]
 \centering
+\caption{Symmetry function sets evaluated on the energy and
+    force root mean squared errors. The AMP default set for copper
+    is compared to our method described in the introduction to this chapter.
+    The first two numbers tell us half of how many radial and angular symmetry
+    functions are employed respectively, while the second number tells us
+    how many $\zeta$ values are employed.
+    Finally the symmetry function
+    set is labeled with either the G4 or G5 type 
+    of angular symmetry functions.}
+\label{table:symmetry}
 \begin{tabular}{lrr}
 \toprule
 Symmetry function &  Energy RMSE &  Force RMSE \\
@@ -470,8 +505,6 @@ Symmetry function &  Energy RMSE &  Force RMSE \\
     Gs-10-14-2-G5 &     1.92E-03 &    2.04E-01 \\
 \bottomrule
 \end{tabular}
-\caption{Symmetry functions}
-\label{table:symmetry}
 \end{table}
 
 From these results we observe that the energy errors are marginally
@@ -493,8 +526,7 @@ the AMP default symmetry functions, which suggest that we exercise
 some care when selecting the symmetry function set.
 As for the number of zetas, we only test two values with
 $\zeta = 1, 2$, thus doubling the number of angular symmetry functions,
-and this does not seem to significantly improve the error rate,
-though we may have found larger differences if this was tested more.
+and this does not seem to significantly improve the error rate.
 
 \subsection{Overfitting and regularization}
 Overfitting describes the phenomenom whereby statistical learning methods
@@ -514,9 +546,13 @@ performance on the test set. The results are shown in table \ref{table:overfit}.
 
 \begin{table}[H]
 \centering
+\caption{Regularization parameter search. The value of the regularization
+    proportionality term $\lambda$ is evaluated on the energy and force
+    root mean squared errors.}
+\label{table:overfit}
 \begin{tabular}{lrr} 
 \toprule
-Regularization &  Energy RMSE &  Force RMSE \\
+Regularization $\lambda$ &  Energy RMSE &  Force RMSE \\
 \midrule
      1.00e+00 &     9.36E-02 &    3.92E-01 \\
      1.00e-01 &     9.33E-02 &    3.92E-01 \\
@@ -530,11 +566,10 @@ Regularization &  Energy RMSE &  Force RMSE \\
      1.00e-09 &     1.32E-03 &    2.35E-01 \\
 \bottomrule
 \end{tabular}
-\caption{Regularization parameter search.}
-\label{table:overfit}
 \end{table}
 
 From these results we see that for values of the regularization parameter
+$\lambda$
 that are too large, the regularization is too punishing,
 and the training is not able to find any appropriate minima.
 The errors seem to improve as the regularization decreases,
@@ -572,21 +607,22 @@ suggest using a variable time interval dependent on the maximum acceleration:
 \begin{equation}
     \tau = 
     \begin{cases}
-        \text{trunc}[\alpha / a_{max}]\Delta t & \text{trunc}
+        \text{floor}[\alpha / a_{max}]\Delta t & \text{floor}
         [\alpha / a_{max}] > 0, \\
-        \Delta t & \text{trunc}
+        \Delta t & \text{floor}
         [\alpha / a_{max}] = 0,
     \end{cases}
 \end{equation}
 
-where $\Delta t$ is a minimum time interval and $\alpha$ is a parameter
+where $\text{floor}(x)$ is the floor function,
+$\Delta t$ is a minimum time interval and $\alpha$ is a parameter
 which must be determined empirically.
 The rationale behind this is that we will sample more from
 areas where the forces are large, while skipping areas
 where the forces are small.
 In our experiments using this algorithm (slightly modified)
 we find that appropriate choices of $\Delta t$ and $\alpha$
-can broaden the distribution of force somewhat.
+can broaden the distribution of the force somewhat.
 However it does not add a substantial amount of larger forces, since
 these are simply not present in equilibrium.
 Other sampling algorithms have been suggested, for example iteratively

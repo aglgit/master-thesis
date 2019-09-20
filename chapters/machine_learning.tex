@@ -78,6 +78,8 @@ are to be determined from the training data.
     \centering
     \includegraphics[width=\textwidth]{linear_regression.png}
     \caption{Example of simple one-dimensional linear regression.
+        The relationship between the dependent and independent
+        variables $x$ and $y$ is estimated using a simple linear function.
         Reprinted from \href{https://realpython.com/linear-regression-in-python/}
         {www.realpython.com: Linear Regression in Python}.}
     \label{fig:linear-regression}
@@ -152,7 +154,9 @@ given an infinite representative data set.
     \centering
     \includegraphics[width=0.75\linewidth]{in_out_sample.png}
     \caption{Typical in-sample and out-of-sample error as a function
-    of the number of data points. It is assumed that the number
+    of the number of data points. The error on the test set decreases
+    as the sampling noise decreases while the error on the training set
+    increases as the function cannot be fit exactly. It is assumed that the number
     of data points is not small, and that the true function
     cannot be exactly fit. Reprinted from \parencite[Mehta et al. page 11]{
         mehta2019high}.}
@@ -303,7 +307,10 @@ with a monotonic derivative.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{neural_networks.png}
-    \caption{Neural network building blocks. Reprinted from
+    \caption{Neural network building blocks. 
+    Each neuron performs a dot product on the inputs followed
+    by a non-linear activation function which is then fed to the
+    next layer in the network. Reprinted from
     \parencite[Vieira, Pinaya, Mechelli]{vieira2017using}.}
     \label{fig:neural-networks}
 \end{figure}
@@ -395,6 +402,10 @@ in the steepest direction.
     \centering
     \includegraphics[width=0.75\linewidth]{gradient_descent.png}
     \caption{How gradient descent discovers extrema points.
+    Gradient descent considers its nearest environment and walks
+    in the direction where the cost function decreases the most.
+    If the cost function cannot be decreased in the nearest environment
+    the procedure terminates.
     Reprinted from [Gradient Descent: All You Need to Know] (\href{
         https://hackernoon.com/gradient-descent-aynk-7cbe95a778da}{Hacker Noon}).}
     \label{fig:gradient-descent}
@@ -626,6 +637,9 @@ using gradient descent to optimize our neural network imposes some limitations:
     \includegraphics[width=\textwidth]{gradient_descent_oscillation.png}
     \caption{How gradient descent behaves with different (fixed)
     values of the learning rate.
+    For low values the procedure will require many iterations, for
+    close to optimal values the procedure will terminate quickly
+    and too large values can lead to divergent behaviour.
     Reprinted from \href{https://www.jeremyjordan.me/nn-learning-rate/}{
         [www.jeremyjordan.me:
         Setting the learning rate of your neural network]} (author
@@ -797,5 +811,5 @@ of the Hessian. A schematic algorithm is described in the book (p.53):
 \end{enumerate}
 
 A full discussion of these methods is beyond the scope of this thesis,
-and the reader is directed to the book\cite{bonnans2006numerical}
+and the reader is directed to the book \cite{bonnans2006numerical}
 for further details.

@@ -43,7 +43,7 @@ forces, and produce large force residuals.
 The results are notably different for the EMT and Stillinger-Weber potential,
 this is caused by among other things the symmetry function sets and the
 average number of neigbors in the system.
-The Stillinger-Weber explicitly includes threebody interactions,
+The Stillinger-Weber explicitly includes three-body interactions,
 while the EMT potential is a function of interatomic distances, and our
 results suggest that the balance between the number of radial and symmetry functions
 should be decided by more careful analysis of their relative importance.
@@ -51,12 +51,13 @@ should be decided by more careful analysis of their relative importance.
 On the test trajectory we achieved reasonable values of the energy and force
 root mean squared errors, approximately 0.1 eV for the energy and 0.05-0.1 eV/Å
 for the force. These are mostly consistent with the results others have achieved
-such as \cite{stende2017constructing}\cite{
-    treider2017speeding}\cite{khorshidi2016amp}\cite{PhysRevLett.120.143001},
+such as \cite{stende2017constructing, treider2017speeding, khorshidi2016amp,
+    PhysRevLett.120.143001},
 though the energy is often on the order of 1-10 meV, which is lower than
 what we have achieved. This is partly due to the fact that we have emphasized
 training with forces, which comes at the expense of the energy fit.
-Since the training RMSE is substantially lower than the test RMSE this may
+Since the training Root Mean Squared Errors (RMSEs) 
+is substantially lower than the test RMSE this may
 indicate overfitting, though we would not expect this to be a substantial problem
 with such a small network with applied regularization.
 We note that this has not been tested extensively,
@@ -74,7 +75,8 @@ though there are likely many which have not been considered.
 \begin{itemize}
     \item Numerical optimization:
         In order to speed up the training and deployment of neural
-        networks the AMP authors created efficient Fortran implementations
+        networks the Atomistic Machine-learning Package (AMP)
+        authors created efficient Fortran implementations
         of the Behler-Parrinello symmetry functions.
         This is an improvement over pure Python code, but not enough to
         be satisfied.
@@ -99,11 +101,13 @@ though there are likely many which have not been considered.
     \item Parallelization and LAMMPS:
         As we have discussed in the chapter on the Atomistic Machine-learning Package,
         AMP is planned to provide support for the OpenKIM API which would provide
-        the means to export the neural networks to LAMMPS for deployment.
+        the means to export the neural networks to LAMMPS molecular dynamics
+        software for deployment.
         If this is implemented (currently unknown) this could significantly speed up
-        the deployment and testing of the neural networks, as LAMMPS is efficient compiled
-        code, with efficient algorithms for parallelizing the force evaluations over multiple
-        cores.
+        the deployment and testing of the neural networks, as LAMMPS 
+        is an efficient compiled code,
+        with efficient algorithms for parallelizing the force evaluations
+        over multiple cores.
     \item Improved sampling method:
         We have observed that sampling from molecular dynamics trajectories
         limits us mostly to systems in equilibrium, which limits the
@@ -148,17 +152,20 @@ though there are likely many which have not been considered.
         First and foremost one could test other optimizer available
         through scipy, such as the basin hopping optimizer.
         If an interface to a more mature neural network software package
-        such as Tensorflow were implemented it would be easy to test optimizers such as 
-        ADAM, SGD, Adagrad and many more.
+        such as Tensorflow is 
+        implemented it would be easy to test optimizers such as 
+        ADAM, SGD, Adagrad and many more \cite{kingma2014adam}.
     \item New descriptors:
         In this thesis we have restricted our interest to the tried and tested
         Behler-Parrinello symmetry functions as the mapping from
         coordinates to inputs. There have since been many suggestions
         on how to fingerprint atomic systems, such as DPMD, SOAP,
-        Zernike and Bispectrum descriptors and so forth discussed in chapter
-        \ref{chap:acd},
-        and if forces can be calculated efficiently and accurately
-        these should be evaluated for use in molecular dynamics.
+        Zernike and Bispectrum descriptors and so forth
+        \cite{PhysRevLett.120.143001, bartok2013representing, khorshidi2016amp},
+        some of which are discussed in chapter
+        \ref{chap:acd}.
+        If the forces can be calculated efficiently and accurately
+        these descriptors should be evaluated for use in molecular dynamics.
     \item New machine-learning models:
         In this thesis we have only tested neural networks as the
         machine-learning method for regression, due to the
@@ -177,7 +184,7 @@ though there are likely many which have not been considered.
         has to be trained for every type-type interaction, for example
         an O-H interaction must be treated separately. This means that
         fewer potential energy labels are available for training per neural
-        network, and creates a combinatorialproblem as the number of interactions
+        network, and creates a combinatorial problem as the number of interactions
         in the system increases. Suggestions have been made to solve this
         problem such as weighted atom-centered symmetry functions (WACSFs\cite{
             gastegger2018wacsf})
@@ -188,7 +195,7 @@ though there are likely many which have not been considered.
         The Behler-Parrinello approach we have deployed is currently
         limited to short-range interactions within a cutoff sphere,
         and this is not sufficient for long-range interactions such
-        as the coulomb interaction. Using methods such as Ewald summation\cite{
+        as the Coulomb interaction. Using methods such as Ewald summation\cite{
             toukmaji1996ewald},
         the Behler-Parrinello method could accommodate this, and this
         would facilitate training on systems containing for example

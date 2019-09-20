@@ -45,8 +45,8 @@ which inherits from the tensorflow.keras base model.
 It contains 2 layers with 50 and 10 neurons respectively
 using the hyperbolic tangent as the activation function.
 The neural network produces a single output which represents
-the potential energy and is computed as a linear function
-aka a dot product of the activations in the final hidden layer
+the potential energy and is computed as a dot product 
+of the activations in the final hidden layer
 and the weights in the output layer.
 The gradient of the neural network with respect to the input
 can be computed using the tensorflow.GradientTape object.
@@ -78,7 +78,7 @@ class MyModel(Model):
 \end{minted}
 
 The data is produced using the Lennard-Jones potential,
-which is a simple function of radial distance. The inputs
+which is a simple function of the radial distance. The inputs
 need to be in the shape of matrices in order
 to be fed through the neural network in batches.
 We split the data into train and test using a test fraction of 0.2,
@@ -204,7 +204,7 @@ The difference in derivatives is more pronounced, as the
 difference is much larger as the radial distance decreases from
 around one, and we can see that the neural network does not
 have the same asymptotic behaviour. This poses a potential problem
-for the dynamics, as the forces aka the derivatives keep
+for the dynamics, as the forces keep
 the atoms from moving too closely and causing massive
 increases in the energy of the system.
 This implies that we should train the potential on a representative

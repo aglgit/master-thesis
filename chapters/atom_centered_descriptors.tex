@@ -143,9 +143,10 @@ into derivatives with respect to the network inputs (obtained through
 backpropagation) and derivatives of the network inputs with
 respect to the coordinates of atom $i$.
 Once we have obtained the forces the system can be propagated through time
-classically using for example the Velocity-Verlet equations.
+classically using for example the Velocity-Verlet equations (see for
+example \ref{cite:martys1999velocity}).
 
-\subsection{Gaussian descriptors}
+\subsection{Gaussian descriptors}\label{chap:gaussian}
 In their paper on neural-network representations of
 potential energy surfaces \parencite[Behler, J\"{o}rg and
 Parrinello, Michele]{behler2007generalized}
@@ -161,6 +162,9 @@ sums of gaussian functions of the pairwise distance $R_{ij}$:
 \end{equation}
 
 with the sum over the local environment of atom $i$.
+This form of the radial symmetry functions is known as the G2 type,
+while other forms are possible such as the G1 type which sums over
+cutoff functions only.
 The parameters $\eta$ and $R_s$ represent the width and center
 of the gaussian functions respectively. The term $f_c$
 is a cutoff function which decays smoothly to zero
@@ -203,7 +207,10 @@ with different parameter values, where the radial functions are centered at $R_s
     \centering
     \includegraphics[width=0.7\textwidth]{cutoff.jpg}
     \caption{Cosine and polynomial cutoff functions plotted within
-        the cutoff radius. Reprinted from \parencite[
+        the cutoff radius. 
+        The polynomial cutoff reproduces the cosine cutoff for small values
+        of $\gamma$.
+        Reprinted from \parencite[
             Khorshidi, Alireza and Peterson, Andrew A.]{khorshidi2016amp}.}
     \label{fig:cutoff}
 \end{figure}
@@ -231,6 +238,8 @@ the angles $\theta_{ijk}$ between every triplet of atoms:
 \end{split}
 \end{equation}
 
+This form of angular function is known as the G5 type, while the G4
+angular symmetry functions do not contain the $R_{jk}$ terms.
 The components for each subvector is calculated by varying
 the different parameters $\eta, R_s, \zeta, \lambda$.
 The choice of neither symmetry functions, cutoff, nor the parameters
@@ -294,7 +303,7 @@ The Zernike descriptors are able to incorporate quadruple
 atomic interactions involving for example dihedral angles,
 while the gaussian descriptors are truncated at threebody
 interactions. The Zernike coefficients can also often be represented
-in terms of monomials, making them computionally cheaper
+in terms of monomials, making them computationally cheaper
 than the bispectrum descriptors.
 \par
 Bispectrum descriptors are computed much in the same way
@@ -398,9 +407,15 @@ is computed for the environment of a hydrogen atom.
     \centering
     \includegraphics[width=\textwidth]{dpmd.png}
     \caption{Computation of the neural network input vector for atom $i$.
-        The coordinates of atom $j$ are computed in the reference system of atom $i$.
+        Hydrogen in white and oxygen in red.
+        The coordinates of atom $j$ are computed in the 
+        reference system of atom $i$.
         The vector $\bm{e}_x$ is along the OH bond, $\bm{e}_y$ is perpendicular
         to the plane of the water molecule and $\bm{e}_z$ is the cross product.
+        The subvector $\bm{D}_{ij}$ forms part of the input vector
+        $\bm{D}_i$ computed from the atom's nearest neighbors.
+        The vector $\bm{D}_i$ is fed through a neural network
+        to produce an atomic potential energy contribution.
         Reprinted from \parencite[Zhang et al.]{PhysRevLett.120.143001}.}
     \label{fig:dpmd}
 \end{figure}
