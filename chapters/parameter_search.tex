@@ -133,7 +133,8 @@ appendix \ref{chap:appendix-a}.
     The radial functions
     are plotted with the radial distribution function within
     the cutoff radius of $R_c = 6$ Angstrom. The angular symmetry
-    functions cover an angular space from $\left[0, \pi\right]$ radians.}
+    functions cover an angular space from $\left[0, \pi\right]$ radians.
+    The $y$-axis is dimensionless.}
     \label{fig:selected}
 \end{figure}
 
@@ -190,7 +191,8 @@ integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
   \end{subfigure}
 \end{adjustbox}
 \caption{Energy and force component absolute errors training without
-    force loss. The root mean squared errors are shown with dotted lines.}
+    force loss. The root mean squared errors are shown with dotted lines.
+    Units are in electronvolts and electronvolts/Angstrom respectively.}
     \label{fig:noforcetrain}
 \end{figure}
 
@@ -210,7 +212,8 @@ integrated for $1 \cdot 10^4$ steps for a total of 100 atomic configurations.
   \end{subfigure}
 \end{adjustbox}
 \caption{Energy and force component absolute errors with forces in the
-    loss function. Root mean squared errors are shown with dotted lines.}
+    loss function. Root mean squared errors are shown with dotted lines.
+    Units are in electronvolts and electronvolts/Angstrom respectively.}
     \label{fig:forcetrain}
 \end{figure}
 
@@ -640,7 +643,7 @@ However, we have not had time to test these different methods.
 Other methods such as metadynamics\footnote{
 \url{https://parrinello.ethz.ch/research/metadynamics.html}}
 have seen increasing application and there are now numerous implementations
-available such as PLUMED \footnote{\url{https://www.plumed.org/}}.
+available such as PLUMED\footnote{\url{https://www.plumed.org/}}.
 In general, though sampling has not been studied closely in this thesis,
 an increase in high quality data is an increase in neural network
 performance, both for electronic structure calculations
@@ -655,6 +658,11 @@ The results are shown in table \ref{table:images}.
 
 \begin{table}[H]
 \centering
+    \caption{Neural network accuracy as a function
+        of the number of images. The number of images
+        is a function of the length of the molecular dynamics
+        trajectory, using a constant sampling interval.}
+    \label{table:images}
 \begin{tabular}{lrr}
 \toprule
 Number of images &  Energy RMSE &  Force RMSE \\
@@ -671,9 +679,6 @@ Number of images &  Energy RMSE &  Force RMSE \\
           10000 &     1.42E-03 &    9.61E-02 \\
 \bottomrule
 \end{tabular}
-    \caption{Neural network accuracy as a function
-        of the number of images.}
-    \label{table:images}
 \end{table}
 
 From these results we see that the energy RMSE scales favorably as
